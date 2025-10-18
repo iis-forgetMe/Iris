@@ -10,16 +10,22 @@
             font-family: 'OMORI';
             src: url('OMORI_GAME2.ttf') format('truetype');
         }
-        
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
         body {
             font-family: 'OMORI', Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
             background-color: #000000;
             color: #F5F5F5;
             font-size: 1.25em;
             word-break: keep-all;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
         header {
             text-align: center;
@@ -27,13 +33,13 @@
             background: #000000;
             color: #F5F5F5;
             border-radius: 10px;
-            margin-bottom: 30px;
             border: 2px solid #8B0000;
             box-shadow: 0 0 20px rgba(220, 0, 0, 0.8),
                         0 0 40px rgba(220, 0, 0, 0.5),
                         inset 0 0 20px rgba(220, 0, 0, 0.2);
             box-sizing: border-box;
-            max-width: 100%;
+            max-width: 800px;
+            width: 100%;
             transition: opacity 1s;
             opacity: 1;
         }
@@ -66,28 +72,16 @@
             font-size: 1.15em;
             word-break: keep-all;
         }
-
         @media (max-width: 600px) {
-            body {
-                padding: 10px;
-                font-size: 1em;
-            }
             header {
-                padding: 30px 10px;
-                margin-bottom: 16px;
+                padding: 30px 5px;
+                margin-bottom: 0;
+                max-width: 98vw;
             }
-            h1 {
-                font-size: 2em;
-            }
-            h2 {
-                font-size: 1.2em;
-            }
-            .subtitle {
-                font-size: 1em;
-            }
-            p {
-                font-size: 1em;
-            }
+            h1 { font-size: 2em; }
+            h2 { font-size: 1.2em; }
+            .subtitle { font-size: 1em; }
+            p { font-size: 1em; }
         }
     </style>
 </head>
@@ -111,12 +105,10 @@
                 document.getElementById("afk-banner").classList.add('afk-hidden');
             }, 8000);
         }
-
         window.addEventListener('mousemove', setAfkTimer);
         window.addEventListener('keydown', setAfkTimer);
         window.addEventListener('touchstart', setAfkTimer);
-        window.addEventListener('mousedown', setAfkTimer); // Добавлен клик мыши
-
+        window.addEventListener('mousedown', setAfkTimer);
         setAfkTimer();
     </script>
 </body>

@@ -48,10 +48,52 @@
             pointer-events: none;
             filter: brightness(0.5);
         }
+        .volume-controller {
+            position: fixed;
+            top: 24px;
+            left: 24px;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(40, 40, 40, 0.74);
+            border-radius: 999px;
+            padding: 7px 14px 7px 7px;
+            transition: background 0.3s, width 0.4s;
+            box-shadow: 0 3px 18px 0 #0007;
+            width: 40px;
+            overflow: visible;
+        }
+        .volume-slider {
+            width: 90px;
+            max-width: 28vw;
+            margin-left: 8px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.44s;
+        }
+        .volume-controller:hover,
+        .volume-controller:focus-within {
+            width: 148px;
+            background: rgba(30,30,35,0.85);
+        }
+        .volume-controller:hover .volume-slider,
+        .volume-controller:focus-within .volume-slider {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .volume-icon {
+            cursor: pointer;
+            outline: none;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
         header {
             text-align: center;
             padding: 60px 40px 36px 40px;
-            background: rgba(0, 0, 0, 0.8); /* Чуть прозрачный фон чтобы текст был читаемым */
+            background: rgba(0, 0, 0, 0.80);
             color: #F5F5F5;
             border-radius: 10px;
             border: 2px solid rgb(255, 8, 0);
@@ -132,6 +174,7 @@
             p { font-size: 15px !important; }
             .afk-gif { display: none !important; }
             #video-bg { display: none !important; }
+            .volume-controller { display: none !important; }
         }
     </style>
 </head>
@@ -140,9 +183,18 @@
     oncut="return false"
     onpaste="return false"
     oncontextmenu="return false">
-    <video autoplay loop playsinline id="video-bg">
+    <!-- Кастомный контроллер громкости -->
+    <div class="volume-controller">
+        <div class="volume-icon" tabindex="0">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M4 9v6h4l5 5V4L8 9H4z" fill="#fff"/><path d="M16 7.82A6 6 0 0 1 16 16.18" stroke="#fff" stroke-width="2" fill="none"/></svg>
+        </div>
+        <input type="range" min="0" max="100" value="50" class="volume-slider">
+    </div>
+    <!-- Видео на бекграунде с автозапуском -->
+    <video loop playsinline id="video-bg" preload="auto">
         <source src="SAVE BADWARE BRO.mp4" type="video/mp4" />
     </video>
+
     <header id="afk-banner">
         <h1>Yo! It's Iris!</h1>
         <h2>About me</h2>
@@ -154,7 +206,9 @@
         <p>Links: There's nothing now.. But in the future I will add something like discord, roblox profile and etc.</p>
     </header>
     <img src="zetsy-lemonss-kuiper.gif" alt="AFK GIF" class="afk-gif" id="afk-gif">
+
     <script>
+        // Смена шрифта под русский
         function checkRussianFont() {
             const bodyText = document.body.innerText || document.body.textContent;
             if (/[А-Яа-яЁё]/.test(bodyText)) {
@@ -216,6 +270,36 @@
             }
         });
         setAfkTimer();
+
+        // --- Контроллер громкости и запуск видео ---
+        const volumeSlider = document.querySelector('.volume-slider');
+        const videoBg = document.getElementById('video-bg');
+
+        videoBg.volume = 0.5; // стартовое значение
+
+        // Изменение громкости по слайдеру
+        volumeSlider.addEventListener('input', function () {
+            videoBg.volume = +this.value / 100;
+            videoBg.muted = false;
+        });
+
+        // Мьют/размьют по клику на иконке
+        document.querySelector('.volume-icon').addEventListener('click', function () {
+            videoBg.muted = !videoBg.muted;
+        });
+
+        // Автозапуск видео со звуком после первого взаимодействия пользователя
+        let videoTriedToPlay = false;
+        function tryPlayVideoWithSound() {
+            if (!videoTriedToPlay) {
+                videoTriedToPlay = true;
+                videoBg.play().catch(()=>{});
+            }
+        }
+        if (videoBg.paused) {
+            document.addEventListener('click', tryPlayVideoWithSound, { once: true });
+            document.addEventListener('keydown', tryPlayVideoWithSound, { once: true });
+        }
     </script>
 </body>
 </html>

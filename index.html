@@ -10,6 +10,7 @@
             font-family: 'OMORI';
             src: url('OMORI_GAME2.ttf') format('truetype');
         }
+        
         body {
             font-family: 'OMORI', Arial, sans-serif;
             max-width: 800px;
@@ -17,7 +18,8 @@
             padding: 20px;
             background-color: #000000;
             color: #F5F5F5;
-            font-size: 1.25em;
+            font-size: 1.25em; /* увеличенный базовый размер */
+            word-break: keep-all; /* предотвращает разрывы слов */
         }
         header {
             text-align: center;
@@ -33,31 +35,28 @@
         }
         h1 {
             margin: 0;
-            font-size: 3em;
+            font-size: 3em; /* увеличено */
             font-weight: 700;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
             letter-spacing: 2px;
             color: #F5F5F5;
-            white-space: nowrap;
         }
         h2 {
             color: #F5F5F5;
-            font-size: 2em;
-            white-space: nowrap;
+            font-size: 2em; /* увеличено */
         }
         .subtitle {
             margin-top: 15px;
-            font-size: 1.7em;
+            font-size: 1.7em; /* увеличено */
             font-weight: 300;
             opacity: 0.95;
             letter-spacing: 1px;
-            white-space: nowrap;
         }
         p {
             color: #F5F5F5;
             line-height: 1.7;
-            font-size: 1.15em;
-            white-space: nowrap;
+            font-size: 1.15em; /* увеличено */
+            word-break: keep-all; /* предотвращает переносы внутри слов */
         }
     </style>
 </head>
@@ -66,7 +65,8 @@
         <h1>Iris's page</h1>
         <p class="subtitle">Yo! It's Iris!</p>
         <h2>About me</h2>
-        <p>Just a silly guy, who likes furries. Also I can adapt literally to everything! Bisexual and yep, taken :3</p>
+        <p>Just a silly guy, who likes furries. Also I can adapt literally to everything! 
+            Bisexual and yep, taken :3</p>
         <p>Name: Iris</p>
         <p>Age: 15</p>
         <p>What I do: Well.. I'm just playing computer games, studying at school and learning english</p>

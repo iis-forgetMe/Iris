@@ -26,9 +26,9 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            user-select: none;          /* Запретить выделение */
-            -webkit-user-select: none;  /* Для Safari/Chrome */
-            -ms-user-select: none;      /* Для IE/Edge */
+            user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
         }
         body.comic-sans {
             font-family: "Comic Sans MS", "Comic Sans", cursive !important;
@@ -69,8 +69,9 @@
             left: 32px;
             bottom: 32px;
             width: 300px;
-            max-width: 38vw;
-            max-height: 38vw;
+            max-width: 28vw;
+            max-height: 28vw;
+            height: auto;
             z-index: 10;
             border-radius: 16px;
             box-shadow: 0 0 36px #8B000080;
@@ -78,9 +79,21 @@
             pointer-events: none;
             transition: opacity 1.1s;
         }
-        .afk-gif.afk-active {
-            opacity: 1;
-            pointer-events: auto;
+        @media (max-width: 1200px) {
+            .afk-gif {
+                width: 200px;
+                max-width: 36vw;
+                max-height: 36vw;
+            }
+        }
+        @media (max-width: 850px) {
+            .afk-gif {
+                left: 10px;
+                bottom: 10px;
+                width: 120px;
+                max-width: 44vw;
+                max-height: 44vw;
+            }
         }
         @media (max-width: 600px) {
             header {
@@ -123,7 +136,7 @@
         document.addEventListener('DOMContentLoaded', checkRussianFont);
         setInterval(checkRussianFont, 1500);
 
-        // JS-блокировка мышиных и клавиатурных выделений/копирований (дополнительно к CSS)
+        // Блокировка выделения и копирования
         document.addEventListener('selectstart', e => e.preventDefault());
         document.addEventListener('copy', e => e.preventDefault());
         document.addEventListener('cut', e => e.preventDefault());

@@ -67,7 +67,6 @@
             word-break: keep-all;
         }
 
-        /* Адаптивность для мобильных */
         @media (max-width: 600px) {
             body {
                 padding: 10px;
@@ -110,14 +109,15 @@
             document.getElementById("afk-banner").classList.remove('afk-hidden');
             afkTimer = setTimeout(() => {
                 document.getElementById("afk-banner").classList.add('afk-hidden');
-            }, 8000); // 8 секунд AFK для исчезновения
+            }, 8000);
         }
 
         window.addEventListener('mousemove', setAfkTimer);
         window.addEventListener('keydown', setAfkTimer);
         window.addEventListener('touchstart', setAfkTimer);
+        window.addEventListener('mousedown', setAfkTimer); // Добавлен клик мыши
 
-        setAfkTimer(); // стартуем таймер при загрузке
+        setAfkTimer();
     </script>
 </body>
 </html>

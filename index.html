@@ -132,9 +132,8 @@
     </div>
     <img src="zetsy-lemonss-kuiper.gif" alt="AFK GIF" class="afk-gif" id="afk-gif">
     <script>
-        let afkTimer;
+        let afkTimer = null;
         let afkState = false;
-
         function isMobile() {
             return window.matchMedia("(max-width: 600px)").matches;
         }
@@ -147,9 +146,9 @@
 
         function showAfk() {
             afkState = true;
-            if (document.hidden) return; // Не показать если вкладка неактивна
             if (isMobile()) {
                 document.getElementById("afk-banner").classList.add('afk-hidden');
+                document.getElementById("afk-gif").classList.remove('afk-active');
             } else {
                 document.getElementById("afk-gif").classList.add('afk-active');
             }
@@ -167,13 +166,19 @@
         window.addEventListener('mousedown', setAfkTimer);
 
         document.addEventListener('visibilitychange', function() {
-            if (!document.hidden && afkState) {
-                // пользователь вернулся
+            if (document.hidden) {
+                // Вкладка свернута, надо посмотреть, не истёк ли таймер
+                if (afkTimer) {
+                    setTimeout(() => {
+                        if (afkTimer) {
+                            showAfk();
+                        }
+                    }, 8000);
+                }
+            } else {
+                // Вернулся на вкладку
                 removeAfk();
                 setAfkTimer();
-            } else if (document.hidden) {
-                // если ушёл с вкладки и таймер уже истёк — убрать афк элементы
-                removeAfk();
             }
         });
 

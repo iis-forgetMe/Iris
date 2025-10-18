@@ -10,6 +10,7 @@
             font-family: 'OMORI';
             src: url('OMORI_GAME2.ttf') format('truetype');
         }
+        
         body {
             font-family: 'OMORI', Arial, sans-serif;
             max-width: 800px;
@@ -17,19 +18,16 @@
             padding: 20px;
             background-color: #000000;
             color: #F5F5F5;
-            font-size: 1.25em;
-            word-break: keep-all;
+            font-size: 1.25em; /* увеличенный базовый размер */
+            word-break: keep-all; /* предотвращает разрывы слов */
         }
         header {
-            box-sizing: border-box;
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto 30px auto;
             text-align: center;
-            padding: 60px 48px; /* увеличенный боковой отступ */
+            padding: 60px 40px;
             background: #000000;
             color: #F5F5F5;
             border-radius: 10px;
+            margin-bottom: 30px;
             border: 2px solid #8B0000;
             box-shadow: 0 0 20px rgba(220, 0, 0, 0.8),
                         0 0 40px rgba(220, 0, 0, 0.5),
@@ -37,6 +35,42 @@
         }
         h1 {
             margin: 0;
-            font-size: 3em;
+            font-size: 3em; /* увеличено */
             font-weight: 700;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            letter-spacing: 2px;
+            color: #F5F5F5;
+        }
+        h2 {
+            color: #F5F5F5;
+            font-size: 2em; /* увеличено */
+        }
+        .subtitle {
+            margin-top: 15px;
+            font-size: 1.7em; /* увеличено */
+            font-weight: 300;
+            opacity: 0.95;
+            letter-spacing: 1px;
+        }
+        p {
+            color: #F5F5F5;
+            line-height: 1.7;
+            font-size: 1.15em; /* увеличено */
+            word-break: keep-all; /* предотвращает переносы внутри слов */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Iris's page</h1>
+        <p class="subtitle">Yo! It's Iris!</p>
+        <h2>About me</h2>
+        <p>Just a silly guy, who likes furries. Also I can adapt literally to everything! 
+            Bisexual and yep, taken :3</p>
+        <p>Name: Iris</p>
+        <p>Age: 15</p>
+        <p>What I do: Well.. I'm just playing computer games, studying at school and learning english</p>
+        <p>Links: There's nothing now.. But in the future I will add something like discord, roblox profile and etc.</p>
+    </header>
+</body>
+</html>

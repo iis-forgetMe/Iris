@@ -1,3 +1,3 @@
-# Iris-s-page
+# My first try
 
-Мой персональный сайт на GitHub Pages
+Goodluck to me :3 

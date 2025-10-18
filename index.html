@@ -1,88 +1,123 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AFK Fade Demo</title>
-  <style>
-    body {
-      background: #18181b;
-      color: #eee;
-      font-family: 'Montserrat', Arial, sans-serif;
-      min-height: 100vh;
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
-    .main-box {
-      transition: opacity 1s;
-      opacity: 1;
-      background: rgba(36,36,40,0.92);
-      border-radius: 18px;
-      padding: 42px 24px;
-      box-shadow: 0 0 58px #2222;
-      max-width: 450px;
-      width: 90vw;
-      text-align: center;
-    }
-    .nickname {
-      font-size: 2.9em;
-      font-weight: 700;
-      letter-spacing: 2px;
-      margin-bottom: 22px;
-    }
-    .desc {
-      font-size: 1.15em;
-      margin-bottom: 18px;
-      opacity: 0.8;
-    }
-    .links {
-      margin-top: 24px;
-      display: flex;
-      gap: 18px;
-      justify-content: center;
-    }
-    .links a {
-      color: #e3477b;
-      text-decoration: none;
-      font-weight: 500;
-      font-size: 1.1em;
-    }
-    /* Скрытие баннера */
-    .hidden-afk {
-      opacity: 0;
-      pointer-events: none;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="OwO.png">
+    <title>Iris</title>
+    <style>
+        @font-face {
+            font-family: 'OMORI';
+            src: url('OMORI_GAME2.ttf') format('truetype');
+        }
+        
+        body {
+            font-family: 'OMORI', Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #000000;
+            color: #F5F5F5;
+            font-size: 1.25em;
+            word-break: keep-all;
+        }
+        header {
+            text-align: center;
+            padding: 60px 40px;
+            background: #000000;
+            color: #F5F5F5;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border: 2px solid #8B0000;
+            box-shadow: 0 0 20px rgba(220, 0, 0, 0.8),
+                        0 0 40px rgba(220, 0, 0, 0.5),
+                        inset 0 0 20px rgba(220, 0, 0, 0.2);
+            box-sizing: border-box;
+            max-width: 100%;
+            transition: opacity 1s;
+            opacity: 1;
+        }
+        .afk-hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            letter-spacing: 2px;
+            color: #F5F5F5;
+        }
+        h2 {
+            color: #F5F5F5;
+            font-size: 2.1em;
+        }
+        .subtitle {
+            margin-top: 15px;
+            font-size: 1.7em;
+            font-weight: 300;
+            opacity: 0.95;
+            letter-spacing: 1px;
+        }
+        p {
+            color: #F5F5F5;
+            line-height: 1.7;
+            font-size: 1.15em;
+            word-break: keep-all;
+        }
+
+        /* Адаптивность для мобильных */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+                font-size: 1em;
+            }
+            header {
+                padding: 30px 10px;
+                margin-bottom: 16px;
+            }
+            h1 {
+                font-size: 2em;
+            }
+            h2 {
+                font-size: 1.2em;
+            }
+            .subtitle {
+                font-size: 1em;
+            }
+            p {
+                font-size: 1em;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div id="mainBox" class="main-box">
-    <div class="nickname">Iris</div>
-    <div class="desc">Just a guy who loves furries and games.<br>Living, learning, creating.</div>
-    <div class="links">
-      <a href="#">VK</a>
-      <a href="#">Discord</a>
-      <a href="#">GitHub</a>
-    </div>
-  </div>
-  <script>
-    let afkTimer;
-    function setAfkTimer() {
-      clearTimeout(afkTimer);
-      document.getElementById("mainBox").classList.remove('hidden-afk');
-      afkTimer = setTimeout(() => {
-        document.getElementById("mainBox").classList.add('hidden-afk');
-      }, 8500); // 8.5 секунд AFK для исчезновения
-    }
+    <header id="afk-banner">
+        <h1>Yo! It's Iris!</h1>
+        <h2>About me</h2>
+        <p>Just a silly guy, who likes furries. Also I can adapt literally to everything! 
+            Bisexual and yep, taken :3</p>
+        <p>Name: Iris</p>
+        <p>Age: 15</p>
+        <p>What I do: Well.. I'm just playing computer games, studying at school and learning english</p>
+        <p>Links: There's nothing now.. But in the future I will add something like discord, roblox profile and etc.</p>
+    </header>
+    <script>
+        let afkTimer;
+        function setAfkTimer() {
+            clearTimeout(afkTimer);
+            document.getElementById("afk-banner").classList.remove('afk-hidden');
+            afkTimer = setTimeout(() => {
+                document.getElementById("afk-banner").classList.add('afk-hidden');
+            }, 8000); // 8 секунд AFK для исчезновения
+        }
 
-    // Любое действие пользователя сбрасывает таймер
-    window.addEventListener('mousemove', setAfkTimer);
-    window.addEventListener('keydown', setAfkTimer);
-    window.addEventListener('touchstart', setAfkTimer);
+        window.addEventListener('mousemove', setAfkTimer);
+        window.addEventListener('keydown', setAfkTimer);
+        window.addEventListener('touchstart', setAfkTimer);
 
-    setAfkTimer(); // стартуем таймер при загрузке
-  </script>
+        setAfkTimer(); // стартуем таймер при загрузке
+    </script>
 </body>
 </html>

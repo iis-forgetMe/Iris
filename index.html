@@ -37,9 +37,9 @@
             box-shadow: 0 0 20px rgba(220, 0, 0, 0.8),
                         0 0 40px rgba(220, 0, 0, 0.5),
                         inset 0 0 20px rgba(220, 0, 0, 0.2);
-            box-sizing: border-box;
             max-width: 800px;
             width: 100%;
+            box-sizing: border-box;
             transition: opacity 1s;
             opacity: 1;
         }
@@ -47,31 +47,27 @@
             opacity: 0;
             pointer-events: none;
         }
-        h1 {
-            margin: 0;
-            font-size: 2.5em;
-            font-weight: 700;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-            letter-spacing: 2px;
-            color: #F5F5F5;
+        .afk-gif {
+            display: none;
+            position: fixed;
+            left: 16px;
+            bottom: 16px;
+            width: 160px;
+            max-width: 38vw;
+            max-height: 38vw;
+            z-index: 10;
+            border-radius: 8px;
+            box-shadow: 0 0 18px #8B000080;
+            animation: fadeIn 1s;
         }
-        h2 {
-            color: #F5F5F5;
-            font-size: 2.1em;
+        .afk-gif.afk-active {
+            display: block;
         }
-        .subtitle {
-            margin-top: 15px;
-            font-size: 1.7em;
-            font-weight: 300;
-            opacity: 0.95;
-            letter-spacing: 1px;
+        @keyframes fadeIn {
+            from {opacity:0;}
+            to {opacity:1;}
         }
-        p {
-            color: #F5F5F5;
-            line-height: 1.7;
-            font-size: 1.15em;
-            word-break: keep-all;
-        }
+        /* На мобильных устройствах */
         @media (max-width: 600px) {
             header {
                 max-width: 97vw;
@@ -82,6 +78,7 @@
             h2 { font-size: 1.2em; }
             .subtitle { font-size: 1em; }
             p { font-size: 1em; }
+            .afk-gif { display: none !important; }
         }
     </style>
 </head>
@@ -89,20 +86,29 @@
     <header id="afk-banner">
         <h1>Yo! It's Iris!</h1>
         <h2>About me</h2>
-        <p>Just a silly guy, who likes furries. Also I can adapt literally to everything! 
+        <p>Just a silly guy, who likes furries. Also I can adapt literally to everything!
             Bisexual and yep, taken :3</p>
         <p>Name: Iris</p>
         <p>Age: 15</p>
         <p>What I do: Well.. I'm just playing computer games, studying at school and learning english</p>
         <p>Links: There's nothing now.. But in the future I will add something like discord, roblox profile and etc.</p>
     </header>
+    <img src="zetsy-lemonss-kuiper.gif" alt="AFK GIF" class="afk-gif" id="afk-gif">
     <script>
         let afkTimer;
+        function isMobile() {
+            return window.matchMedia("(max-width: 600px)").matches;
+        }
         function setAfkTimer() {
             clearTimeout(afkTimer);
+            document.getElementById("afk-gif").classList.remove('afk-active');
             document.getElementById("afk-banner").classList.remove('afk-hidden');
             afkTimer = setTimeout(() => {
-                document.getElementById("afk-banner").classList.add('afk-hidden');
+                if(isMobile()){
+                    document.getElementById("afk-banner").classList.add('afk-hidden');
+                } else {
+                    document.getElementById("afk-gif").classList.add('afk-active');
+                }
             }, 8000);
         }
         window.addEventListener('mousemove', setAfkTimer);

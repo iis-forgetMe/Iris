@@ -79,6 +79,10 @@
             pointer-events: none;
             transition: opacity 1.1s;
         }
+        .afk-gif.afk-active {
+            opacity: 1;
+            pointer-events: auto;
+        }
         @media (max-width: 1200px) {
             .afk-gif {
                 width: 200px;
@@ -123,6 +127,7 @@
         <p>What I do: Well.. I'm just playing computer games, studying at school and learning english</p>
         <p>Links: There's nothing now.. But in the future I will add something like discord, roblox profile and etc.</p>
     </header>
+    <!-- Для теста: <img src="zetsy-lemonss-kuiper.gif" alt="AFK GIF" class="afk-gif afk-active" id="afk-gif"> -->
     <img src="zetsy-lemonss-kuiper.gif" alt="AFK GIF" class="afk-gif" id="afk-gif">
     <script>
         function checkRussianFont() {
@@ -142,6 +147,7 @@
         document.addEventListener('cut', e => e.preventDefault());
         document.addEventListener('contextmenu', e => e.preventDefault());
 
+        // AFK-логика
         let afkTimer = null;
         let afkState = false;
         function isMobile() {

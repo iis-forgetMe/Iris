@@ -26,6 +26,9 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            user-select: none;          /* Запретить выделение */
+            -webkit-user-select: none;  /* Для Safari/Chrome */
+            -ms-user-select: none;      /* Для IE/Edge */
         }
         body.comic-sans {
             font-family: "Comic Sans MS", "Comic Sans", cursive !important;
@@ -92,7 +95,11 @@
         }
     </style>
 </head>
-<body>
+<body 
+    oncopy="return false" 
+    oncut="return false" 
+    onpaste="return false" 
+    oncontextmenu="return false">
     <header id="afk-banner">
         <h1>Yo! It's Iris!</h1>
         <h2>About me</h2>
@@ -115,6 +122,12 @@
         }
         document.addEventListener('DOMContentLoaded', checkRussianFont);
         setInterval(checkRussianFont, 1500);
+
+        // JS-блокировка мышиных и клавиатурных выделений/копирований (дополнительно к CSS)
+        document.addEventListener('selectstart', e => e.preventDefault());
+        document.addEventListener('copy', e => e.preventDefault());
+        document.addEventListener('cut', e => e.preventDefault());
+        document.addEventListener('contextmenu', e => e.preventDefault());
 
         let afkTimer = null;
         let afkState = false;

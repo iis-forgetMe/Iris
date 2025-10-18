@@ -27,6 +27,9 @@
             justify-content: center;
             align-items: center;
         }
+        body.comic-sans {
+            font-family: "Comic Sans MS", "Comic Sans", cursive !important;
+        }
         header {
             text-align: center;
             padding: 60px 40px 36px 40px;
@@ -34,7 +37,7 @@
             color: #F5F5F5;
             border-radius: 10px;
             border: 2px solid rgb(255, 8, 0);
-            box-shadow: 0 0 36px 4px rgba(255,8,0,0.75); /* Яркое красное свечение по всему боксу */
+            box-shadow: 0 0 36px 4px rgba(255,8,0,0.75);
             max-width: 800px;
             width: 100%;
             box-sizing: border-box;
@@ -89,6 +92,17 @@
     </header>
     <img src="zetsy-lemonss-kuiper.gif" alt="AFK GIF" class="afk-gif" id="afk-gif">
     <script>
+        function checkRussianFont() {
+            const bodyText = document.body.innerText || document.body.textContent;
+            if (/[А-Яа-яЁё]/.test(bodyText)) {
+                document.body.classList.add('comic-sans');
+            } else {
+                document.body.classList.remove('comic-sans');
+            }
+        }
+        document.addEventListener('DOMContentLoaded', checkRussianFont);
+        setInterval(checkRussianFont, 1500);
+
         let afkTimer = null;
         let afkState = false;
         function isMobile() {

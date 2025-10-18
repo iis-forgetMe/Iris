@@ -29,7 +29,7 @@
         }
         header {
             text-align: center;
-            padding: 60px 40px;
+            padding: 60px 40px 36px 40px;
             background: #000000;
             color: #F5F5F5;
             border-radius: 10px;
@@ -47,6 +47,33 @@
             opacity: 0;
             pointer-events: none;
         }
+
+        .socials {
+            display: flex;
+            gap: 32px;
+            justify-content: center;
+            margin-top: 24px;
+            margin-bottom: 0;
+        }
+        .social-link {
+            display: inline-block;
+            width: 48px;
+            height: 48px;
+            transition: filter 0.25s, box-shadow 0.25s;
+        }
+        .social-link svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+            fill: #e03238;
+            filter: drop-shadow(0 0 16px #e03238cc);
+            transition: filter 0.25s;
+        }
+        .social-link:hover svg,
+        .social-link:focus svg {
+            filter: drop-shadow(0 0 24px #ff3046) brightness(1.5);
+        }
+
         .afk-gif {
             position: fixed;
             left: 32px;
@@ -68,8 +95,7 @@
         @media (max-width: 600px) {
             header {
                 max-width: 97vw;
-                padding: 28px 4vw;
-                box-sizing: border-box;
+                padding: 30px 4vw 18px 4vw;
             }
             h1 { font-size: 2em; }
             h2 { font-size: 1.2em; }
@@ -85,13 +111,29 @@
     <header id="afk-banner">
         <h1>Yo! It's Iris!</h1>
         <h2>About me</h2>
-        <p>Just a silly guy, who likes furries. Also I can adapt literally to everything!
+        <p>Just a silly guy, who likes furries. Also I can adapt literally to everything! 
             Bisexual and yep, taken :3</p>
         <p>Name: Iris</p>
         <p>Age: 15</p>
         <p>What I do: Well.. I'm just playing computer games, studying at school and learning english</p>
         <p>Links: There's nothing now.. But in the future I will add something like discord, roblox profile and etc.</p>
     </header>
+    <div class="socials">
+        <a class="social-link" href="https://t.me/iis_forgetMe" target="_blank" title="Telegram">
+            <!-- Telegram SVG -->
+            <svg viewBox="0 0 48 48">
+                <circle cx="24" cy="24" r="24" fill="none"/>
+                <path d="M35.922 13.26l-3.493 16.488c-.264 1.131-.958 1.41-1.94.882l-5.356-3.947-2.584 2.47c-.285.285-.525.526-1.075.526l.383-5.425 9.872-8.91c.429-.382-.093-.594-.664-.212l-12.22 7.703-5.226-1.63c-1.135-.354-1.154-1.14.236-1.693l20.416-7.876c.953-.347 1.782.213 1.475 1.563z"/>
+            </svg>
+        </a>
+        <a class="social-link" href="https://discord.com/users/1236359938721185902" target="_blank" title="Discord">
+            <!-- Discord SVG -->
+            <svg viewBox="0 0 48 48">
+                <circle cx="24" cy="24" r="24" fill="none"/>
+                <path d="M36.232 17.547c-1.404-.702-2.896-1.226-4.448-1.535-.212.348-.448.828-.616 1.195-1.768-.275-3.502-.275-5.248 0-.168-.367-.404-.847-.616-1.195-1.552.309-3.044.833-4.448 1.535-2.824 4.228-3.592 8.377-3.196 12.489 1.88 1.399 3.703 2.286 5.508 2.74.432-.588.817-1.205 1.164-1.859-.672-.205-1.31-.456-1.917-.755.16-.118.317-.244.468-.372 3.007 1.015 6.246 1.015 9.253 0 .151.128.308.254.468.372-.607.299-1.245.55-1.917.755.347.654.732 1.271 1.164 1.859 1.805-.454 3.628-1.341 5.508-2.74.397-4.112-.372-8.261-3.196-12.489zM20.371 24.76c-.902 0-1.634-.825-1.634-1.84 0-1.015.728-1.84 1.634-1.84.914 0 1.651.833 1.634 1.84 0 1.015-.72 1.84-1.634 1.84zm7.248 0c-.902 0-1.634-.825-1.634-1.84 0-1.015.728-1.84 1.634-1.84.914 0 1.651.833 1.634 1.84 0 1.015-.72 1.84-1.634 1.84z"/>
+            </svg>
+        </a>
+    </div>
     <img src="zetsy-lemonss-kuiper.gif" alt="AFK GIF" class="afk-gif" id="afk-gif">
     <script>
         let afkTimer;

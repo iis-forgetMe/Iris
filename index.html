@@ -18,8 +18,8 @@
             padding: 20px;
             background-color: #000000;
             color: #F5F5F5;
-            font-size: 1.25em; /* увеличенный базовый размер */
-            word-break: keep-all; /* предотвращает разрывы слов */
+            font-size: 1.25em;
+            word-break: keep-all;
         }
         header {
             text-align: center;
@@ -32,10 +32,12 @@
             box-shadow: 0 0 20px rgba(220, 0, 0, 0.8),
                         0 0 40px rgba(220, 0, 0, 0.5),
                         inset 0 0 20px rgba(220, 0, 0, 0.2);
+            box-sizing: border-box;
+            max-width: 100%;
         }
         h1 {
             margin: 0;
-            font-size: 3em; /* увеличено */
+            font-size: 3em;
             font-weight: 700;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
             letter-spacing: 2px;
@@ -43,11 +45,11 @@
         }
         h2 {
             color: #F5F5F5;
-            font-size: 2em; /* увеличено */
+            font-size: 2em;
         }
         .subtitle {
             margin-top: 15px;
-            font-size: 1.7em; /* увеличено */
+            font-size: 1.7em;
             font-weight: 300;
             opacity: 0.95;
             letter-spacing: 1px;
@@ -55,8 +57,32 @@
         p {
             color: #F5F5F5;
             line-height: 1.7;
-            font-size: 1.15em; /* увеличено */
-            word-break: keep-all; /* предотвращает переносы внутри слов */
+            font-size: 1.15em;
+            word-break: keep-all;
+        }
+
+        /* Адаптивность для мобильных */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+                font-size: 1em;
+            }
+            header {
+                padding: 30px 10px;
+                margin-bottom: 16px;
+            }
+            h1 {
+                font-size: 2em;
+            }
+            h2 {
+                font-size: 1.2em;
+            }
+            .subtitle {
+                font-size: 1em;
+            }
+            p {
+                font-size: 1em;
+            }
         }
     </style>
 </head>

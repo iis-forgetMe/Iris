@@ -1,334 +1,340 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Iris</title>
-  <link rel="icon" type="image/png" href="OwO.png">
-  <style>
-    @font-face {
-      font-family: 'OMORI';
-      src: url('OMORI_GAME2.ttf') format('truetype');
-    }
-    html, body {
-      height: 100%;
-      margin: 0;
-      padding: 0;
-    }
-    body {
-      font-family: 'OMORI', Arial, sans-serif;
-      background-color: #000;
-      color: #F5F5F5;
-      font-size: 20px !important;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      user-select: none;
-      -webkit-user-select: none;
-      -ms-user-select: none;
-    }
-    body.comic-sans {
-      font-family: "Comic Sans MS", "Comic Sans", cursive !important;
-    }
-    #video-bg {
-      position: fixed;
-      right: 0;
-      bottom: 0;
-      min-width: 100vw;
-      min-height: 100vh;
-      width: 100vw;
-      height: 100vh;
-      object-fit: cover;
-      object-position: center center;
-      z-index: -1;
-      background: #000;
-      pointer-events: none;
-      filter: brightness(0.5);
-      left: 0;
-      top: 0;
-    }
-    .volume-controller {
-      position: fixed;
-      top: 24px;
-      left: 24px;
-      z-index: 20;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(40, 40, 40, 0.74);
-      border-radius: 999px;
-      padding: 7px 16px 7px 7px;
-      transition: background 0.3s, width 0.4s;
-      box-shadow: 0 3px 18px 0 #0007;
-      width: 58px;
-      overflow: visible;
-    }
-    .volume-controller:hover,
-    .volume-controller:focus-within {
-      width: 180px;
-      background: rgba(30,30,35,0.85);
-    }
-    .volume-slider {
-      width: 90px;
-      max-width: 36vw;
-      margin-left: 8px;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.44s;
-    }
-    .volume-percent {
-      color: #fff;
-      min-width: 32px;
-      text-align: right;
-      font-family: inherit;
-      font-size: 15px;
-      margin-left: 8px;
-      opacity: 0;
-      transition: opacity 0.44s;
-      pointer-events: none;
-      user-select: none;
-    }
-    .volume-controller:hover .volume-slider,
-    .volume-controller:focus-within .volume-slider,
-    .volume-controller:hover .volume-percent,
-    .volume-controller:focus-within .volume-percent {
-      opacity: 1;
-      pointer-events: auto;
-    }
-    .volume-icon {
-      cursor: pointer;
-      outline: none;
-      user-select: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    /* --- Новый бокс при наведении на верх --- */
-    .top-hover-box {
-      position: fixed;
-      left: 24px;
-      right: 24px;
-      top: 0;
-      height: 0;
-      pointer-events: none;
-      z-index: 21;
-      opacity: 0;
-      transform: translateY(-40px); /* ← добавлено для плавного выезда сверху */
-      transition:
-        height 0.44s cubic-bezier(0.4,0,0.2,1),
-        opacity 0.3s cubic-bezier(0.4,0,0.2,1),
-        transform 0.5s cubic-bezier(0.4,0,0.2,1); /* ← плавный выезд */
-    }
-    .top-hover-inner {
-      background: rgba(40, 40, 40, 0.74);
-      border-radius: 999px;
-      margin-top: 14px;
-      padding: 13px 36px;
-      box-shadow: 0 3px 18px 0 #0007;
-      font-size: 20px;
-      color: #fff;
-      width: 100%;
-      min-height: 32px;
-      display: flex;
-      align-items: center;
-    }
-    .top-hover-box.visible {
-      height: 56px;
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateY(0); /* ← плавно появляется */
-    }
-    @media (max-width: 900px) {
-      .volume-controller {
-        top: 10px;
-        left: 10px;
-        width: 54px;
-      }
-      .volume-slider {
-        width: 70px;
-        max-width: 60vw;
-      }
-      .volume-percent {
-        min-width: 29px;
-        font-size: 13px;
-      }
-      .top-hover-box, .top-hover-inner {
-        font-size: 15px;
-        padding: 8px 10px;
-      }
-      .top-hover-box.visible {
-        height: 32px;
-      }
-    }
-    @media (max-width: 600px) {
-      header {
-        max-width: 97vw;
-        padding: 30px 4vw 18px 4vw;
-      }
-      h1 { font-size: 30px !important; }
-      h2 { font-size: 22px !important; }
-      .subtitle { font-size: 17px !important; }
-      p { font-size: 15px !important; }
-      .afk-gif { display: none !important; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="OwO.png">
+    <title>Iris</title>
+    <style>
+        @font-face {
+            font-family: 'OMORI';
+            src: url('OMORI_GAME2.ttf') format('truetype');
+        }
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'OMORI', Arial, sans-serif;
+            background-color: #000;
+            color: #F5F5F5;
+            font-size: 20px !important;
+            word-break: keep-all;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+        }
+        body.comic-sans {
+            font-family: "Comic Sans MS", "Comic Sans", cursive !important;
+            font-size: 20px !important;
+        }
+        #video-bg {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100vw;
+            min-height: 100vh;
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+            object-position: center center;
+            z-index: -1;
+            background: #000;
+            pointer-events: none;
+            filter: brightness(0.5);
+            left: 0;
+            top: 0;
+        }
+        .volume-controller {
+            position: fixed;
+            top: 24px;
+            left: 24px;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(40, 40, 40, 0.74);
+            border-radius: 999px;
+            padding: 7px 16px 7px 7px;
+            transition: background 0.3s, width 0.4s;
+            box-shadow: 0 3px 18px 0 #0007;
+            width: 58px;
+            overflow: visible;
+        }
+        .volume-slider {
+            width: 90px;
+            max-width: 36vw;
+            margin-left: 8px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.44s;
+        }
+        .volume-percent {
+            color: #fff;
+            min-width: 32px;
+            text-align: right;
+            font-family: inherit;
+            font-size: 15px;
+            margin-left: 8px;
+            opacity: 0;
+            transition: opacity 0.44s;
+            pointer-events: none;
+            user-select: none;
+        }
+        .volume-controller:hover,
+        .volume-controller:focus-within {
+            width: 180px;
+            background: rgba(30,30,35,0.85);
+        }
+        .volume-controller:hover .volume-slider,
+        .volume-controller:focus-within .volume-slider,
+        .volume-controller:hover .volume-percent,
+        .volume-controller:focus-within .volume-percent {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .volume-icon {
+            cursor: pointer;
+            outline: none;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        header {
+            text-align: center;
+            padding: 60px 40px 36px 40px;
+            background: rgba(0, 0, 0, 0.80);
+            color: #F5F5F5;
+            border-radius: 10px;
+            border: 2px solid rgb(255, 8, 0);
+            box-shadow: 0 0 36px 4px rgba(255,8,0,0.75);
+            max-width: 800px;
+            width: 100%;
+            box-sizing: border-box;
+            transition: opacity 1s;
+            opacity: 1;
+        }
+        h1 {
+            font-size: 38px !important;
+        }
+        h2 {
+            font-size: 26px !important;
+        }
+        p {
+            font-size: 18px !important;
+        }
+        .subtitle {
+            font-size: 20px !important;
+        }
+        .afk-hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .afk-gif {
+            position: fixed;
+            left: 32px;
+            bottom: 32px;
+            width: 300px;
+            max-width: 24vw;
+            max-height: 24vh;
+            height: auto;
+            z-index: 10;
+            border-radius: 16px;
+            box-shadow: 0 0 36px #8B000080;
+            opacity: 0;
+            pointer-events: none;
+            transition:
+                opacity 1.1s,
+                width 0.7s,
+                max-width 0.7s,
+                max-height 0.7s,
+                left 0.7s,
+                bottom 0.7s;
+        }
+        .afk-gif.afk-active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        @media (max-width: 900px) {
+            .afk-gif {
+                left: 10px;
+                bottom: 10px;
+                width: 90px;
+                max-width: 20vw;
+                max-height: 13vh;
+            }
+            .volume-controller {
+                top: 10px;
+                left: 10px;
+                width: 54px;
+            }
+            .volume-slider {
+                width: 70px;
+                max-width: 60vw;
+            }
+            .volume-percent {
+                min-width: 29px;
+                font-size: 13px;
+            }
+        }
+        @media (max-width: 600px) {
+            header {
+                max-width: 97vw;
+                padding: 30px 4vw 18px 4vw;
+            }
+            h1 { font-size: 30px !important; }
+            h2 { font-size: 22px !important; }
+            .subtitle { font-size: 17px !important; }
+            p { font-size: 15px !important; }
+            .afk-gif { display: none !important; }
+        }
+    </style>
 </head>
 <body 
-  oncopy="return false" 
-  oncut="return false"
-  onpaste="return false"
-  oncontextmenu="return false"
->
-  <!-- Volume контроллер -->
-  <div class="volume-controller">
-    <div class="volume-icon" tabindex="0">
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M4 9v6h4l5 5V4L8 9H4z" fill="#fff"/><path d="M16 7.82A6 6 0 0 1 16 16.18" stroke="#fff" stroke-width="2" fill="none"/></svg>
+    oncopy="return false" 
+    oncut="return false"
+    onpaste="return false"
+    oncontextmenu="return false">
+    <!-- Кастомный контроллер громкости с процентом -->
+    <div class="volume-controller">
+        <div class="volume-icon" tabindex="0">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M4 9v6h4l5 5V4L8 9H4z" fill="#fff"/><path d="M16 7.82A6 6 0 0 1 16 16.18" stroke="#fff" stroke-width="2" fill="none"/></svg>
+        </div>
+        <input type="range" min="0" max="100" value="50" class="volume-slider">
+        <span class="volume-percent" id="volume-percent">50%</span>
     </div>
-    <input type="range" min="0" max="100" value="50" class="volume-slider">
-    <span class="volume-percent" id="volume-percent">50%</span>
-  </div>
+    <!-- Видео на бекграунде с автозапуском -->
+    <video loop playsinline id="video-bg" preload="auto">
+        <source src="007n7.mp4" />
+    </video>
 
-  <!-- Новый ховер-бокс для верха -->
-  <div class="top-hover-box" id="top-hover-box">
-    <div class="top-hover-inner">
-      Любой текст или действия — по всей ширине хедера!
-    </div>
-  </div>
+    <header id="afk-banner">
+        <h1>Yo! It's Iris!</h1>
+        <h2>About me</h2>
+        <p>Just a silly guy who likes furries. Also I can adapt literally to everything!
+            Bisexual and yep, taken :3</p>
+        <p>Name: Iris</p>
+        <p>Age: 15</p>
+        <p>What I do: Well.. I'm just playing computer games, studying at school and learning english</p>
+        <p>Links: There's nothing now.. But in the future I will add something like discord, roblox profile and etc.</p>
+    </header>
+    <img src="zetsy-lemonss-kuiper.gif" alt="AFK GIF" class="afk-gif" id="afk-gif">
 
-  <!-- Видео на бекграунде с автозапуском -->
-  <video loop playsinline id="video-bg" preload="auto">
-    <source src="007n7.mp4" />
-  </video>
-
-  <header id="afk-banner">
-    <h1>Yo! It's Iris!</h1>
-    <h2>About me</h2>
-    <p>Just a silly guy who likes furries. Also I can adapt literally to everything! Bisexual and yep, taken :3</p>
-    <p>Name: Iris</p>
-    <p>Age: 15</p>
-    <p>What I do: Well.. I'm just playing computer games, studying at school and learning english</p>
-    <p>Links: There's nothing now.. But in the future I will add something like discord, roblox profile and etc.</p>
-  </header>
-  <img src="zetsy-lemonss-kuiper.gif" alt="AFK GIF" class="afk-gif" id="afk-gif">
-
-  <script>
-    // Comic Sans автосмена (оставь как есть)
-    function checkRussianFont() {
-      const bodyText = document.body.innerText || document.body.textContent;
-      if (/[А-Яа-яЁё]/.test(bodyText)) {
-        document.body.classList.add('comic-sans');
-      } else {
-        document.body.classList.remove('comic-sans');
-      }
-    }
-    document.addEventListener('DOMContentLoaded', checkRussianFont);
-    setInterval(checkRussianFont, 1500);
-
-    // Блокировка выделения и копирования
-    document.addEventListener('selectstart', e => e.preventDefault());
-    document.addEventListener('copy', e => e.preventDefault());
-    document.addEventListener('cut', e => e.preventDefault());
-    document.addEventListener('contextmenu', e => e.preventDefault());
-
-    // AFK-логика
-    let afkTimer = null;
-    let afkState = false;
-    function isMobile() {
-      return window.matchMedia("(max-width: 600px)").matches;
-    }
-    function setAfkTimer() {
-      clearTimeout(afkTimer);
-      removeAfk();
-      afkTimer = setTimeout(showAfk, 8000);
-    }
-    function showAfk() {
-      afkState = true;
-      if (isMobile()) {
-        document.getElementById("afk-banner").classList.add('afk-hidden');
-        document.getElementById("afk-gif").classList.remove('afk-active');
-      } else {
-        document.getElementById("afk-gif").classList.add('afk-active');
-      }
-    }
-    function removeAfk() {
-      afkState = false;
-      document.getElementById("afk-gif").classList.remove('afk-active');
-      document.getElementById("afk-banner").classList.remove('afk-hidden');
-    }
-    window.addEventListener('mousemove', setAfkTimer);
-    window.addEventListener('keydown', setAfkTimer);
-    window.addEventListener('touchstart', setAfkTimer);
-    window.addEventListener('mousedown', setAfkTimer);
-    document.addEventListener('visibilitychange', function() {
-      if (document.hidden) {
-        if (afkTimer) {
-          setTimeout(() => {
-            if (afkTimer) {
-              showAfk();
+    <script>
+        function checkRussianFont() {
+            const bodyText = document.body.innerText || document.body.textContent;
+            if (/[А-Яа-яЁё]/.test(bodyText)) {
+                document.body.classList.add('comic-sans');
+            } else {
+                document.body.classList.remove('comic-sans');
             }
-          }, 8000);
         }
-      } else {
-        removeAfk();
+        document.addEventListener('DOMContentLoaded', checkRussianFont);
+        setInterval(checkRussianFont, 1500);
+
+        // Блокировка выделения и копирования
+        document.addEventListener('selectstart', e => e.preventDefault());
+        document.addEventListener('copy', e => e.preventDefault());
+        document.addEventListener('cut', e => e.preventDefault());
+        document.addEventListener('contextmenu', e => e.preventDefault());
+
+        // AFK-логика
+        let afkTimer = null;
+        let afkState = false;
+        function isMobile() {
+            return window.matchMedia("(max-width: 600px)").matches;
+        }
+        function setAfkTimer() {
+            clearTimeout(afkTimer);
+            removeAfk();
+            afkTimer = setTimeout(showAfk, 8000);
+        }
+        function showAfk() {
+            afkState = true;
+            if (isMobile()) {
+                document.getElementById("afk-banner").classList.add('afk-hidden');
+                document.getElementById("afk-gif").classList.remove('afk-active');
+            } else {
+                document.getElementById("afk-gif").classList.add('afk-active');
+            }
+        }
+        function removeAfk() {
+            afkState = false;
+            document.getElementById("afk-gif").classList.remove('afk-active');
+            document.getElementById("afk-banner").classList.remove('afk-hidden');
+        }
+        window.addEventListener('mousemove', setAfkTimer);
+        window.addEventListener('keydown', setAfkTimer);
+        window.addEventListener('touchstart', setAfkTimer);
+        window.addEventListener('mousedown', setAfkTimer);
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                if (afkTimer) {
+                    setTimeout(() => {
+                        if (afkTimer) {
+                            showAfk();
+                        }
+                    }, 8000);
+                }
+            } else {
+                removeAfk();
+                setAfkTimer();
+            }
+        });
         setAfkTimer();
-      }
-    });
-    setAfkTimer();
 
-    // --- Контроллер громкости и запуск видео ---
-    const volumeSlider = document.querySelector('.volume-slider');
-    const videoBg = document.getElementById('video-bg');
-    const volumePercent = document.getElementById('volume-percent');
-    function updateVolumePercent() {
-      let show = Math.round(videoBg.muted ? 0 : videoBg.volume * 100);
-      volumePercent.textContent = show + "%";
-      if(videoBg.muted && volumeSlider.value != "0") volumeSlider.value = 0;
-      if(!videoBg.muted && +volumeSlider.value == 0) volumeSlider.value = Math.round(videoBg.volume * 100);
-    }
-    videoBg.volume = 0.5;
-    updateVolumePercent();
-    volumeSlider.addEventListener('input', function () {
-      videoBg.volume = +this.value / 100;
-      videoBg.muted = (+this.value === 0);
-      updateVolumePercent();
-    });
-    document.querySelector('.volume-icon').addEventListener('click', function () {
-      videoBg.muted = !videoBg.muted;
-      updateVolumePercent();
-    });
-    videoBg.addEventListener('volumechange', updateVolumePercent);
+        // --- Контроллер громкости и запуск видео ---
+        const volumeSlider = document.querySelector('.volume-slider');
+        const videoBg = document.getElementById('video-bg');
+        const volumePercent = document.getElementById('volume-percent');
 
-    // Автозапуск видео со звуком после первого взаимодействия пользователя
-    let videoTriedToPlay = false;
-    function tryPlayVideoWithSound() {
-      if (!videoTriedToPlay) {
-        videoTriedToPlay = true;
-        videoBg.play().catch(()=>{});
-      }
-    }
-    if (videoBg.paused) {
-      document.addEventListener('click', tryPlayVideoWithSound, { once: true });
-      document.addEventListener('keydown', tryPlayVideoWithSound, { once: true });
-      document.addEventListener('touchstart', tryPlayVideoWithSound, { once: true });
-    }
+        function updateVolumePercent() {
+            let show = Math.round(videoBg.muted ? 0 : videoBg.volume * 100);
+            volumePercent.textContent = show + "%";
+            // Синхронизировать ползунок, если звук выключен
+            if(videoBg.muted && volumeSlider.value != "0") volumeSlider.value = 0;
+            if(!videoBg.muted && +volumeSlider.value == 0) volumeSlider.value = Math.round(videoBg.volume * 100);
+        }
 
-    // --- Появление/скрытие верхнего бокса по наведению ---
-    const topBox = document.getElementById('top-hover-box');
-    let hoverTimer = null;
-    document.addEventListener('mousemove', function(e){
-      if (e.clientY <= 40) {
-        clearTimeout(hoverTimer);
-        topBox.classList.add('visible');
-      } else {
-        clearTimeout(hoverTimer);
-        hoverTimer = setTimeout(() => {
-          topBox.classList.remove('visible');
-        }, 180); // задержка плавного скрытия (можешь менять)
-      }
-    });
-  </script>
+        videoBg.volume = 0.5;
+        updateVolumePercent();
+
+        // Изменение громкости по слайдеру
+        volumeSlider.addEventListener('input', function () {
+            videoBg.volume = +this.value / 100;
+            videoBg.muted = (+this.value === 0);
+            updateVolumePercent();
+        });
+
+        // Мьют/размьют по клику на иконке
+        document.querySelector('.volume-icon').addEventListener('click', function () {
+            videoBg.muted = !videoBg.muted;
+            updateVolumePercent();
+        });
+
+        // Слушаем изменение mute/volume (если меняется снаружи)
+        videoBg.addEventListener('volumechange', updateVolumePercent);
+
+        // Автозапуск видео со звуком после первого взаимодействия пользователя
+        let videoTriedToPlay = false;
+        function tryPlayVideoWithSound() {
+            if (!videoTriedToPlay) {
+                videoTriedToPlay = true;
+                videoBg.play().catch(()=>{});
+            }
+        }
+        if (videoBg.paused) {
+            document.addEventListener('click', tryPlayVideoWithSound, { once: true });
+            document.addEventListener('keydown', tryPlayVideoWithSound, { once: true });
+            document.addEventListener('touchstart', tryPlayVideoWithSound, { once: true });
+        }
+    </script>
 </body>
 </html>

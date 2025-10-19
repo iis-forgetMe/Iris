@@ -164,15 +164,14 @@
             opacity: 1;
             pointer-events: auto;
         }
-        /* Глитч пазл (для AFK) */
-        .glitch-piece {
-            position: relative;
-            display: inline-block;
-            transition: transform 0.23s cubic-bezier(.12,2.22,.31,-1.27);
+        /* --- Puzzle pieces for glitch --- */
+        .puzzle-piece {
+            transition: transform 0.42s cubic-bezier(.19,1.8,.25,-0.67);
             will-change: transform;
-        }
-        .banner-glitch .glitch-piece {
-            /* случайные смещения, но обновляются скриптом */
+            pointer-events: none;
+            background: none;
+            opacity: 0.94;
+            z-index: 2;
         }
         @media (max-width: 900px) {
             .afk-gif {
@@ -247,18 +246,14 @@
         document.addEventListener('DOMContentLoaded', checkRussianFont);
         setInterval(checkRussianFont, 1500);
 
-        // Блокировка выделения и копирования
         document.addEventListener('selectstart', e => e.preventDefault());
         document.addEventListener('copy', e => e.preventDefault());
         document.addEventListener('cut', e => e.preventDefault());
         document.addEventListener('contextmenu', e => e.preventDefault());
 
-        // AFK-логика + глитч пазл
         let afkTimer = null;
         let afkState = false;
-        let glitchActive = false;
         let glitchTimer = null;
-        let glitchInterval = null;
         function isMobile() {
             return window.matchMedia("(max-width: 600px)").matches;
         }
@@ -266,9 +261,9 @@
             clearTimeout(afkTimer);
             clearTimeout(glitchTimer);
             removeAfk();
-            disableBannerGlitch();
-            afkTimer = setTimeout(showAfk, 8000);
-            glitchTimer = setTimeout(enableBannerGlitch, 15000);
+            disablePuzzleGlitch();
+            afkTimer = setTimeout(showAfk, 8000); // Через 8 сек afk
+            glitchTimer = setTimeout(enablePuzzleGlitch, 15000); // Через 15 сек развал баннера
         }
         function showAfk() {
             afkState = true;
@@ -283,7 +278,7 @@
             afkState = false;
             document.getElementById("afk-gif").classList.remove('afk-active');
             document.getElementById("afk-banner").classList.remove('afk-hidden');
-            disableBannerGlitch();
+            disablePuzzleGlitch();
         }
         window.addEventListener('mousemove', setAfkTimer);
         window.addEventListener('keydown', setAfkTimer);
@@ -341,28 +336,68 @@
             document.addEventListener('touchstart', tryPlayVideoWithSound, { once: true });
         }
 
-        // --- Глитч пазл для баннера ---
-        function enableBannerGlitch() {
-            if (glitchActive) return;
-            glitchActive = true;
-            document.getElementById('afk-banner').classList.add('banner-glitch');
-            glitchInterval = setInterval(() => {
-                document.querySelectorAll('#afk-banner .glitch-piece').forEach(el => {
-                    // Случайные смещения
-                    const dx = Math.round((Math.random() - 0.5) * 40);
-                    const dy = Math.round((Math.random() - 0.5) * 22);
-                    el.style.transform = `translate(${dx}px, ${dy}px) rotate(${dx / 4}deg)`;
-                });
-            }, 240);
+        // --- Puzzle Glitch Banner ---
+        // Баннер делится на куски, которые двигаются в разные стороны
+        function createPuzzle(container, rows = 3, cols = 6) {
+            container.style.position = "relative";
+            const origHTML = container.innerHTML;
+            const width = container.offsetWidth;
+            const height = container.offsetHeight;
+            container.innerHTML = "";
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    const piece = document.createElement("div");
+                    piece.classList.add("puzzle-piece");
+                    piece.style.position = "absolute";
+                    piece.style.display = "flex";
+                    piece.style.alignItems = "center";
+                    piece.style.justifyContent = "center";
+                    piece.style.overflow = "hidden";
+                    piece.style.width = (width / cols) + "px";
+                    piece.style.height = (height / rows) + "px";
+                    piece.style.left = (c * width / cols) + "px";
+                    piece.style.top = (r * height / rows) + "px";
+                    piece.style.background = "none";
+                    // Можно оптимизировать: показывать только часть HTML
+                    piece.innerHTML = `<div style="padding:8px;color:inherit;width:100%;height:100%;font:inherit;">${origHTML}</div>`;
+                    container.appendChild(piece);
+                }
+            }
         }
-        function disableBannerGlitch() {
-            glitchActive = false;
-            clearInterval(glitchInterval);
-            document.getElementById('afk-banner').classList.remove('banner-glitch');
-            document.querySelectorAll('#afk-banner .glitch-piece').forEach(el => {
-                el.style.transform = "";
+        function puzzleGlitchAnim() {
+            document.querySelectorAll('#afk-banner.puzzle-glitch .puzzle-piece').forEach(piece => {
+                if (Math.random() > 0.7) {
+                    const dx = Math.round((Math.random() - 0.5) * 120);
+                    const dy = Math.round((Math.random() - 0.5) * 70);
+                    piece.style.transform = `translate(${dx}px, ${dy}px) rotate(${dx / 6}deg)`;
+                } else {
+                    piece.style.transform = "";
+                }
             });
         }
+        function enablePuzzleGlitch() {
+            const banner = document.getElementById('afk-banner');
+            if (!banner.classList.contains("puzzle-glitch")) {
+                createPuzzle(banner);
+                banner.classList.add("puzzle-glitch");
+            }
+            window.puzzleInterval = setInterval(puzzleGlitchAnim, 320);
+        }
+        function disablePuzzleGlitch() {
+            const banner = document.getElementById('afk-banner');
+            banner.classList.remove("puzzle-glitch");
+            clearInterval(window.puzzleInterval);
+            // Восстановить содержимое баннера
+            banner.innerHTML = `<h1><span class="glitch-piece">Yo! It's Iris!</span></h1>
+            <h2><span class="glitch-piece">About me</span></h2>
+            <p><span class="glitch-piece">Just a silly guy, who likes furries. Also I can adapt literally to everything! Bisexual and yep, taken :3</span></p>
+            <p><span class="glitch-piece">Name: Iris</span></p>
+            <p><span class="glitch-piece">Age: 15</span></p>
+            <p><span class="glitch-piece">What I do: Well.. I'm just playing computer games, studying at school and learning english</span></p>
+            <p><span class="glitch-piece">Links: There's nothing now.. But in the future I will add something like discord, roblox profile and etc.</span></p>`;
+        }
+        // Переопределить enableBannerGlitch на enablePuzzleGlitch
+        function enableBannerGlitch() { enablePuzzleGlitch(); }
     </script>
 </body>
 </html>

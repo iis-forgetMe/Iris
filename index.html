@@ -286,8 +286,7 @@
             opacity: 0;
             transition: opacity 0.5s;
         }
-        body.content-loaded .loading-title,
-        body.content-loaded #enter-msg { display: none; }
+        body.content-loaded .loading-title { display: none; }
     </style>
 </head>
 <body 
@@ -295,10 +294,9 @@
     oncut="return false"
     onpaste="return false"
     oncontextmenu="return false">
-    <!-- Лоадер с прогрессом и enter-msg -->
+    <!-- Лоадер с прогрессом -->
     <div id="loading-overlay">
         <div class="loading-title">Loading: <span id="loading-percent">0%</span></div>
-        <div id="enter-msg" style="display:none;font-size:28px;color:#ffb400;font-weight:bold;user-select:none;">Click to enter...</div>
     </div>
     <!-- Верхний бокс -->
     <div class="top-box">
@@ -432,9 +430,9 @@
         videoBg.addEventListener('volumechange', updateVolumePercent);
 
         // ---- ЛОАДЕР: прогресс, click/tap по overlay ----
-        const loadingPercent = document.getElementById('loading-percent');
         const loadingOverlay = document.getElementById('loading-overlay');
-        const enterMsg = document.getElementById('enter-msg');
+        const loadingTitle = document.querySelector('.loading-title');
+        const loadingPercent = document.getElementById('loading-percent');
         let videoLoaded = false;
 
         function updateLoadingProgress() {
@@ -445,24 +443,13 @@
             loadingPercent.textContent = percent + '%';
         }
 
-        function canShowEnter() {
-            if (videoLoaded) {
-                enterMsg.style.display = 'block';
-                loadingPercent.style.display = 'none';
-                loadingOverlay.style.cursor = 'pointer';
-            } else {
-                enterMsg.style.display = 'none';
-                loadingOverlay.style.cursor = 'default';
-                loadingPercent.style.display = '';
-            }
-        }
-
         videoBg.addEventListener('progress', updateLoadingProgress);
         videoBg.addEventListener('loadeddata', updateLoadingProgress);
+
         videoBg.addEventListener('canplaythrough', () => {
-            loadingPercent.textContent = '100%';
             videoLoaded = true;
-            canShowEnter();
+            loadingTitle.textContent = 'Click to enter...';
+            loadingOverlay.style.cursor = 'pointer';
         });
 
         loadingOverlay.addEventListener('mousedown', function(e) {
@@ -487,8 +474,11 @@
         window.addEventListener('DOMContentLoaded', () => {
             loadingOverlay.style.display = '';
             document.body.classList.remove('content-loaded');
-            enterMsg.style.display = 'none';
-            loadingPercent.style.display = '';
+            loadingTitle.textContent = 'Loading: ';
+            if (loadingPercent) {
+                loadingTitle.appendChild(loadingPercent);
+                loadingPercent.textContent = '0%';
+            }
             updateLoadingProgress();
         });
 

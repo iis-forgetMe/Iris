@@ -259,7 +259,6 @@
             p { font-size: 15px !important; }
             .afk-gif { display: none !important; }
         }
-        /* ===== Доп стили для загрузки === */
         #loading-overlay {
             position: fixed;
             left: 0; top: 0; right: 0; bottom: 0;
@@ -271,6 +270,7 @@
             align-items: center;
             justify-content: center;
             transition: opacity 0.6s;
+            cursor: default;
         }
         .loading-title {
             font-size: 37px;
@@ -279,27 +279,7 @@
             font-weight: bold;
             letter-spacing: 2px;
             margin-bottom: 24px;
-        }
-        .enter-btn {
-            font-size: 24px;
-            color: #ffb400;
-            background: rgba(8,8,8,0.15);
-            padding: 15px 32px;
-            border-radius: 16px;
-            margin-top: 25px;
-            cursor: pointer;
-            box-shadow: 0 2px 12px #ffb40055;
-            font-family: inherit;
-            font-weight: bold;
-            transition: background 0.2s, opacity 0.2s;
-        }
-        .enter-btn.disabled {
-            opacity: 0.6;
-            pointer-events: none;
-        }
-        .enter-btn:hover {
-            background: rgba(120,50,0,0.18);
-            color: #ffd800;
+            user-select: none;
         }
         body.content-loaded #loading-overlay {
             pointer-events: none;
@@ -307,7 +287,7 @@
             transition: opacity 0.5s;
         }
         body.content-loaded .loading-title,
-        body.content-loaded .enter-btn { display: none; }
+        body.content-loaded #enter-msg { display: none; }
     </style>
 </head>
 <body 
@@ -315,10 +295,10 @@
     oncut="return false"
     onpaste="return false"
     oncontextmenu="return false">
-    <!-- Лоадер с прогрессом -->
+    <!-- Лоадер с прогрессом и enter-msg -->
     <div id="loading-overlay">
         <div class="loading-title">Loading: <span id="loading-percent">0%</span></div>
-        <div id="enter-btn" class="enter-btn disabled" style="display: none;">Click to enter...</div>
+        <div id="enter-msg" style="display:none;font-size:28px;color:#ffb400;font-weight:bold;user-select:none;">Click to enter...</div>
     </div>
     <!-- Верхний бокс -->
     <div class="top-box">
@@ -451,10 +431,10 @@
 
         videoBg.addEventListener('volumechange', updateVolumePercent);
 
-        // ---- ЛОАДЕР: прогресс, поведение click/tap, без бокса ----
+        // ---- ЛОАДЕР: прогресс, click/tap по overlay ----
         const loadingPercent = document.getElementById('loading-percent');
         const loadingOverlay = document.getElementById('loading-overlay');
-        const enterBtn = document.getElementById('enter-btn');
+        const enterMsg = document.getElementById('enter-msg');
         let videoLoaded = false;
 
         function updateLoadingProgress() {
@@ -467,11 +447,13 @@
 
         function canShowEnter() {
             if (videoLoaded) {
-                enterBtn.style.display = 'block';
-                enterBtn.classList.remove('disabled');
+                enterMsg.style.display = 'block';
+                loadingPercent.style.display = 'none';
+                loadingOverlay.style.cursor = 'pointer';
             } else {
-                enterBtn.style.display = 'none';
-                enterBtn.classList.add('disabled');
+                enterMsg.style.display = 'none';
+                loadingOverlay.style.cursor = 'default';
+                loadingPercent.style.display = '';
             }
         }
 
@@ -483,8 +465,8 @@
             canShowEnter();
         });
 
-        enterBtn.addEventListener('mousedown', function(e) {
-            if (enterBtn.classList.contains('disabled')) return;
+        loadingOverlay.addEventListener('mousedown', function(e) {
+            if (!videoLoaded) return;
             if (e.button !== 0) return;
             document.body.classList.add('content-loaded');
             setTimeout(() => {
@@ -493,8 +475,8 @@
             }, 500);
         });
 
-        enterBtn.addEventListener('touchend', function(e) {
-            if (enterBtn.classList.contains('disabled')) return;
+        loadingOverlay.addEventListener('touchend', function(e) {
+            if (!videoLoaded) return;
             document.body.classList.add('content-loaded');
             setTimeout(() => {
                 loadingOverlay.style.display = 'none';
@@ -505,12 +487,12 @@
         window.addEventListener('DOMContentLoaded', () => {
             loadingOverlay.style.display = '';
             document.body.classList.remove('content-loaded');
-            enterBtn.style.display = 'none';
-            enterBtn.classList.add('disabled');
+            enterMsg.style.display = 'none';
+            loadingPercent.style.display = '';
             updateLoadingProgress();
         });
 
-        // Запуск видео только по enter-btn
+        // Запуск видео только по overlay
         let videoTriedToPlay = false;
         function tryPlayVideoWithSound() {
             if (!videoTriedToPlay) {

@@ -51,6 +51,19 @@
             left: 0;
             top: 0;
         }
+        /* Верхний широкий бокс без иконки */
+        .top-box {
+            position: fixed;
+            left: 0;
+            right: 0;
+            top: 20px;
+            z-index: 22;
+            height: 44px;
+            background: rgba(40, 40, 40, 0.74);
+            border-radius: 999px;
+            box-shadow: 0 3px 18px 0 #0007;
+            margin: 0 28px;
+        }
         .volume-controller {
             position: fixed;
             left: 24px;
@@ -68,6 +81,11 @@
             overflow: visible;
         }
         @media (max-width: 900px) {
+            .top-box {
+                top: 10px;
+                height: 38px;
+                margin: 0 6px;
+            }
             .volume-controller {
                 left: 10px;
                 bottom: 10px;
@@ -107,30 +125,6 @@
             pointer-events: auto;
         }
         .volume-icon {
-            cursor: pointer;
-            outline: none;
-            user-select: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        /* Декоративный верхний бокс */
-        .top-box {
-            position: fixed;
-            left: 50%;
-            top: 20px;
-            transform: translateX(-50%);
-            z-index: 22;
-            display: flex;
-            align-items: center;
-            background: rgba(40, 40, 40, 0.74);
-            border-radius: 999px;
-            padding: 7px 16px 7px 7px;
-            box-shadow: 0 3px 18px 0 #0007;
-            width: 58px;
-            height: 40px;
-        }
-        .box-icon {
             cursor: pointer;
             outline: none;
             user-select: none;
@@ -194,22 +188,12 @@
             pointer-events: auto;
         }
         @media (max-width: 900px) {
-            .top-box {
-                top: 10px;
-                width: 54px;
-                height: 38px;
-            }
             .afk-gif {
                 left: 10px;
                 bottom: 10px;
                 width: 90px;
                 max-width: 20vw;
                 max-height: 13vh;
-            }
-            .volume-controller {
-                left: 10px;
-                bottom: 10px;
-                width: 54px;
             }
             .volume-slider {
                 width: 70px;
@@ -238,12 +222,8 @@
     oncut="return false"
     onpaste="return false"
     oncontextmenu="return false">
-    <!-- Декоративный верхний бокс -->
-    <div class="top-box">
-        <div class="box-icon" tabindex="0">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M4 9v6h4l5 5V4L8 9H4z" fill="#fff"/><path d="M16 7.82A6 6 0 0 1 16 16.18" stroke="#fff" stroke-width="2" fill="none"/></svg>
-        </div>
-    </div>
+    <!-- Верхний широкий декоративный бокс -->
+    <div class="top-box"></div>
     <!-- Нижний контроллер громкости -->
     <div class="volume-controller">
         <div class="volume-icon" tabindex="0">

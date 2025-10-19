@@ -107,7 +107,7 @@
             z-index: 20;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 0;
             background: rgba(40, 40, 40, 0.74);
             border-radius: 999px;
             box-shadow: 0 3px 18px 0 #0007;
@@ -117,10 +117,22 @@
             transition: width 0.4s;
             overflow: visible;
         }
+        .volume-icon {
+            cursor: pointer;
+            outline: none;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            margin-left: 8px;
+        }
         .volume-slider, .volume-percent {
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.44s;
+            transition-delay: 0s;
         }
         .volume-controller:hover, .volume-controller:focus-within {
             width: 180px;
@@ -131,6 +143,7 @@
         .volume-controller:focus-within .volume-percent {
             opacity: 1;
             pointer-events: auto;
+            transition-delay: 0.38s;
         }
         .volume-slider {
             width: 90px;
@@ -145,24 +158,6 @@
             font-family: inherit;
             font-size: 15px;
             margin-left: 8px;
-            opacity: 0;
-            transition: opacity 0.44s;
-            pointer-events: none;
-        }
-        .volume-controller:hover .volume-percent,
-        .volume-controller:focus-within .volume-percent {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        .volume-icon {
-            cursor: pointer;
-            outline: none;
-            user-select: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 32px;
-            height: 32px;
         }
         header {
             text-align: center;

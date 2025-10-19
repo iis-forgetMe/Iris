@@ -53,8 +53,8 @@
         }
         .volume-controller {
             position: fixed;
-            top: 24px;
             left: 24px;
+            bottom: 24px;
             z-index: 20;
             display: flex;
             align-items: center;
@@ -66,6 +66,13 @@
             box-shadow: 0 3px 18px 0 #0007;
             width: 58px;
             overflow: visible;
+        }
+        @media (max-width: 900px) {
+            .volume-controller {
+                left: 10px;
+                bottom: 10px;
+                width: 54px;
+            }
         }
         .volume-slider {
             width: 90px;
@@ -100,6 +107,30 @@
             pointer-events: auto;
         }
         .volume-icon {
+            cursor: pointer;
+            outline: none;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        /* Декоративный верхний бокс */
+        .top-box {
+            position: fixed;
+            left: 50%;
+            top: 20px;
+            transform: translateX(-50%);
+            z-index: 22;
+            display: flex;
+            align-items: center;
+            background: rgba(40, 40, 40, 0.74);
+            border-radius: 999px;
+            padding: 7px 16px 7px 7px;
+            box-shadow: 0 3px 18px 0 #0007;
+            width: 58px;
+            height: 40px;
+        }
+        .box-icon {
             cursor: pointer;
             outline: none;
             user-select: none;
@@ -163,6 +194,11 @@
             pointer-events: auto;
         }
         @media (max-width: 900px) {
+            .top-box {
+                top: 10px;
+                width: 54px;
+                height: 38px;
+            }
             .afk-gif {
                 left: 10px;
                 bottom: 10px;
@@ -171,8 +207,8 @@
                 max-height: 13vh;
             }
             .volume-controller {
-                top: 10px;
                 left: 10px;
+                bottom: 10px;
                 width: 54px;
             }
             .volume-slider {
@@ -202,7 +238,13 @@
     oncut="return false"
     onpaste="return false"
     oncontextmenu="return false">
-    <!-- Кастомный контроллер громкости с процентом -->
+    <!-- Декоративный верхний бокс -->
+    <div class="top-box">
+        <div class="box-icon" tabindex="0">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M4 9v6h4l5 5V4L8 9H4z" fill="#fff"/><path d="M16 7.82A6 6 0 0 1 16 16.18" stroke="#fff" stroke-width="2" fill="none"/></svg>
+        </div>
+    </div>
+    <!-- Нижний контроллер громкости -->
     <div class="volume-controller">
         <div class="volume-icon" tabindex="0">
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M4 9v6h4l5 5V4L8 9H4z" fill="#fff"/><path d="M16 7.82A6 6 0 0 1 16 16.18" stroke="#fff" stroke-width="2" fill="none"/></svg>
@@ -214,7 +256,6 @@
     <video loop playsinline id="video-bg" preload="auto">
         <source src="007n7.mp4" />
     </video>
-
     <header id="afk-banner">
         <h1>Yo! It's Iris!</h1>
         <h2>About me</h2>
@@ -290,36 +331,31 @@
         });
         setAfkTimer();
 
-        // --- Контроллер громкости и запуск видео ---
-        const volumeSlider = document.querySelector('.volume-slider');
+        // --- Контроллер громкости и запуск видео --- //
+        const volumeSlider = document.querySelector('.volume-controller .volume-slider');
         const videoBg = document.getElementById('video-bg');
         const volumePercent = document.getElementById('volume-percent');
 
         function updateVolumePercent() {
             let show = Math.round(videoBg.muted ? 0 : videoBg.volume * 100);
             volumePercent.textContent = show + "%";
-            // Синхронизировать ползунок, если звук выключен
             if(videoBg.muted && volumeSlider.value != "0") volumeSlider.value = 0;
             if(!videoBg.muted && +volumeSlider.value == 0) volumeSlider.value = Math.round(videoBg.volume * 100);
         }
-
         videoBg.volume = 0.5;
         updateVolumePercent();
 
-        // Изменение громкости по слайдеру
         volumeSlider.addEventListener('input', function () {
             videoBg.volume = +this.value / 100;
             videoBg.muted = (+this.value === 0);
             updateVolumePercent();
         });
 
-        // Мьют/размьют по клику на иконке
-        document.querySelector('.volume-icon').addEventListener('click', function () {
+        document.querySelector('.volume-controller .volume-icon').addEventListener('click', function () {
             videoBg.muted = !videoBg.muted;
             updateVolumePercent();
         });
 
-        // Слушаем изменение mute/volume (если меняется снаружи)
         videoBg.addEventListener('volumechange', updateVolumePercent);
 
         // Автозапуск видео со звуком после первого взаимодействия пользователя

@@ -108,16 +108,13 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            background: #1a1a1a;
-            border-radius: 50%;
-            padding: 9px;
+            background: rgba(40, 40, 40, 0.74);
+            border-radius: 999px;
             box-shadow: 0 3px 18px 0 #0007;
+            padding: 6px;
             width: 44px;
             height: 44px;
-            transition:
-                width 0.4s,
-                background 0.3s,
-                border-radius 0.4s;
+            transition: width 0.4s;
             overflow: visible;
         }
         .volume-slider, .volume-percent {
@@ -127,8 +124,6 @@
         }
         .volume-controller:hover, .volume-controller:focus-within {
             width: 180px;
-            background: rgb(255,8,0);
-            border-radius: 999px;
         }
         .volume-controller:hover .volume-slider,
         .volume-controller:focus-within .volume-slider,
@@ -138,16 +133,26 @@
             pointer-events: auto;
         }
         .volume-slider {
-            margin-left: 12px;
             width: 90px;
             max-width: 36vw;
+            margin-left: 12px;
+            accent-color: rgb(255,8,0); /* красный регулятор */
         }
         .volume-percent {
+            color: #fff;
             min-width: 32px;
             text-align: right;
+            font-family: inherit;
             font-size: 15px;
-            color: #fff;
             margin-left: 8px;
+            opacity: 0;
+            transition: opacity 0.44s;
+            pointer-events: none;
+        }
+        .volume-controller:hover .volume-percent,
+        .volume-controller:focus-within .volume-percent {
+            opacity: 1;
+            pointer-events: auto;
         }
         .volume-icon {
             cursor: pointer;
@@ -156,6 +161,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            width: 32px;
+            height: 32px;
         }
         header {
             text-align: center;
@@ -231,18 +238,13 @@
                 bottom: 10px;
                 width: 38px;
                 height: 38px;
-                padding: 6px;
+                padding: 4px;
             }
             .volume-controller:hover, .volume-controller:focus-within {
                 width: 134px;
             }
-            .volume-slider {
-                width: 65px;
-            }
-            .volume-percent {
-                min-width: 22px;
-                font-size: 13px;
-            }
+            .volume-slider { width: 65px; }
+            .volume-percent { font-size: 13px; min-width: 22px; }
         }
         @media (max-width: 600px) {
             header {

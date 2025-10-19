@@ -229,6 +229,7 @@
             if(!videoBg.muted && +volumeSlider.value == 0) volumeSlider.value = Math.round(videoBg.volume * 100);
         }
         videoBg.volume = 0.1;
+        volumeSlider.value = 10
         updateVolumePercent();
 
         volumeSlider.addEventListener('input', function () {

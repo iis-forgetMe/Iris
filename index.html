@@ -259,6 +259,56 @@
             p { font-size: 15px !important; }
             .afk-gif { display: none !important; }
         }
+        /* ===== Доп стили для загрузки === */
+        #loading-overlay {
+            position: fixed;
+            left: 0; top: 0; right: 0; bottom: 0;
+            z-index: 1000;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(18px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.6s;
+        }
+        .loading-content {
+            text-align: center;
+            padding: 48px;
+            border-radius: 32px;
+            background: rgba(30,30,35,0.55);
+            box-shadow: 0 8px 42px #000a;
+        }
+        .loading-title {
+            font-size: 37px;
+            color: #fff;
+            font-family: inherit;
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin-bottom: 38px;
+        }
+        .enter-btn {
+            font-size: 24px;
+            color: #ffb400;
+            background: rgba(8,8,8,0.15);
+            padding: 15px 32px;
+            border-radius: 16px;
+            margin-top: 25px;
+            cursor: pointer;
+            box-shadow: 0 2px 12px #ffb40055;
+            font-family: inherit;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        .enter-btn:hover {
+            background: rgba(120,50,0,0.18);
+            color: #ffd800;
+        }
+        body.content-loaded #loading-overlay {
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        body.content-loaded .loading-content { display: none; }
     </style>
 </head>
 <body 
@@ -266,21 +316,28 @@
     oncut="return false"
     onpaste="return false"
     oncontextmenu="return false">
+    <!-- Лоадер с прогрессом -->
+    <div id="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-title">Loading: <span id="loading-percent">0%</span></div>
+            <div id="enter-btn" class="enter-btn" style="display: none;">Click to enter...</div>
+        </div>
+    </div>
     <!-- Верхний бокс -->
     <div class="top-box">
         <span class="top-box-left">Links</span>
         <span class="top-box-right">
-            <a href="https://discord.com/users/1236359938721185902" target="_blank" class="icon-link" title="Discord">
-        <img src="https://cdn-icons-png.flaticon.com/512/5968/5968756.png" alt="Discord" class="social-icon" />
-    </a>
-    <a href="https://t.me/iis_forgetMe" target="_blank" class="icon-link" title="Telegram">
-        <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png" alt="Telegram" class="social-icon" />
-    </a>
-    <a href="https://open.spotify.com/user/312jjwkfbshd5mjnzmyyc363k5ni" target="_blank" class="icon-link" title="Spotify">
-        <img src="https://cdn-icons-png.flaticon.com/512/174/174872.png" alt="Spotify" class="social-icon" />
-    </a>
-    <a href="https://www.roblox.com/users/703442568/profile" target="_blank" class="icon-link" title="Roblox">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Roblox_Logo.svg/512px-Roblox_Logo.svg.png" alt="Roblox" class="social-icon" />
+            <a href="#" target="_blank" class="icon-link" title="Discord">
+                <img src="https://cdn-icons-png.flaticon.com/512/5968/5968756.png" alt="Discord" class="social-icon" />
+            </a>
+            <a href="#" target="_blank" class="icon-link" title="Telegram">
+                <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png" alt="Telegram" class="social-icon" />
+            </a>
+            <a href="#" target="_blank" class="icon-link" title="Spotify">
+                <img src="https://cdn-icons-png.flaticon.com/512/174/174872.png" alt="Spotify" class="social-icon" />
+            </a>
+            <a href="#" target="_blank" class="icon-link" title="Roblox">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Roblox_Logo_2025.png" alt="Roblox" class="social-icon" />
             </a>
         </span>
     </div>
@@ -397,6 +454,42 @@
 
         videoBg.addEventListener('volumechange', updateVolumePercent);
 
+        // ---- ЛОАДЕР с прогрессом и блюром ----
+        const loadingPercent = document.getElementById('loading-percent');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const enterBtn = document.getElementById('enter-btn');
+        let videoLoaded = false;
+
+        function updateLoadingProgress() {
+            let percent = 0;
+            if (videoBg.buffered.length) {
+                percent = Math.round((videoBg.buffered.end(0) / Math.max(videoBg.duration, 1)) * 95);
+            }
+            loadingPercent.textContent = percent + '%';
+        }
+        videoBg.addEventListener('progress', updateLoadingProgress);
+        videoBg.addEventListener('loadeddata', updateLoadingProgress);
+        videoBg.addEventListener('canplaythrough', () => {
+            loadingPercent.textContent = '100%';
+            enterBtn.style.display = 'block';
+            videoLoaded = true;
+        });
+
+        enterBtn.addEventListener('click', () => {
+            document.body.classList.add('content-loaded');
+            setTimeout(() => {
+                loadingOverlay.style.display = 'none';
+                tryPlayVideoWithSound();
+            }, 500);
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadingOverlay.style.display = '';
+            document.body.classList.remove('content-loaded');
+            enterBtn.style.display = 'none';
+            updateLoadingProgress();
+        });
+
         // Автозапуск видео со звуком после первого взаимодействия пользователя
         let videoTriedToPlay = false;
         function tryPlayVideoWithSound() {
@@ -410,6 +503,7 @@
             document.addEventListener('keydown', tryPlayVideoWithSound, { once: true });
             document.addEventListener('touchstart', tryPlayVideoWithSound, { once: true });
         }
+
     </script>
 </body>
 </html>

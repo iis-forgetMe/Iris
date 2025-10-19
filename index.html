@@ -267,16 +267,10 @@
             background: rgba(0,0,0,0.75);
             backdrop-filter: blur(18px);
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             transition: opacity 0.6s;
-        }
-        .loading-content {
-            text-align: center;
-            padding: 48px;
-            border-radius: 32px;
-            background: rgba(30,30,35,0.55);
-            box-shadow: 0 8px 42px #000a;
         }
         .loading-title {
             font-size: 37px;
@@ -284,7 +278,7 @@
             font-family: inherit;
             font-weight: bold;
             letter-spacing: 2px;
-            margin-bottom: 38px;
+            margin-bottom: 24px;
         }
         .enter-btn {
             font-size: 24px;
@@ -297,7 +291,11 @@
             box-shadow: 0 2px 12px #ffb40055;
             font-family: inherit;
             font-weight: bold;
-            transition: background 0.2s;
+            transition: background 0.2s, opacity 0.2s;
+        }
+        .enter-btn.disabled {
+            opacity: 0.6;
+            pointer-events: none;
         }
         .enter-btn:hover {
             background: rgba(120,50,0,0.18);
@@ -308,7 +306,8 @@
             opacity: 0;
             transition: opacity 0.5s;
         }
-        body.content-loaded .loading-content { display: none; }
+        body.content-loaded .loading-title,
+        body.content-loaded .enter-btn { display: none; }
     </style>
 </head>
 <body 
@@ -318,10 +317,8 @@
     oncontextmenu="return false">
     <!-- Лоадер с прогрессом -->
     <div id="loading-overlay">
-        <div class="loading-content">
-            <div class="loading-title">Loading: <span id="loading-percent">0%</span></div>
-            <div id="enter-btn" class="enter-btn" style="display: none;">Click to enter...</div>
-        </div>
+        <div class="loading-title">Loading: <span id="loading-percent">0%</span></div>
+        <div id="enter-btn" class="enter-btn disabled" style="display: none;">Click to enter...</div>
     </div>
     <!-- Верхний бокс -->
     <div class="top-box">
@@ -341,6 +338,8 @@
             </a>
         </span>
     </div>
+    <!-- Остальной контент без изменений... -->
+
     <!-- Нижний контроллер громкости -->
     <div class="volume-controller">
         <div class="volume-icon" tabindex="0">
@@ -454,7 +453,7 @@
 
         videoBg.addEventListener('volumechange', updateVolumePercent);
 
-        // ---- ЛОАДЕР с прогрессом и блюром ----
+        // ---- ЛОАДЕР: прогресс, поведение click/tap, без бокса ----
         const loadingPercent = document.getElementById('loading-percent');
         const loadingOverlay = document.getElementById('loading-overlay');
         const enterBtn = document.getElementById('enter-btn');
@@ -467,15 +466,37 @@
             }
             loadingPercent.textContent = percent + '%';
         }
+
+        function canShowEnter() {
+            if (videoLoaded) {
+                enterBtn.style.display = 'block';
+                enterBtn.classList.remove('disabled');
+            } else {
+                enterBtn.style.display = 'none';
+                enterBtn.classList.add('disabled');
+            }
+        }
+
         videoBg.addEventListener('progress', updateLoadingProgress);
         videoBg.addEventListener('loadeddata', updateLoadingProgress);
         videoBg.addEventListener('canplaythrough', () => {
             loadingPercent.textContent = '100%';
-            enterBtn.style.display = 'block';
             videoLoaded = true;
+            canShowEnter();
         });
 
-        enterBtn.addEventListener('click', () => {
+        enterBtn.addEventListener('mousedown', function(e) {
+            if (enterBtn.classList.contains('disabled')) return;
+            if (e.button !== 0) return;
+            document.body.classList.add('content-loaded');
+            setTimeout(() => {
+                loadingOverlay.style.display = 'none';
+                tryPlayVideoWithSound();
+            }, 500);
+        });
+
+        enterBtn.addEventListener('touchend', function(e) {
+            if (enterBtn.classList.contains('disabled')) return;
             document.body.classList.add('content-loaded');
             setTimeout(() => {
                 loadingOverlay.style.display = 'none';
@@ -487,6 +508,7 @@
             loadingOverlay.style.display = '';
             document.body.classList.remove('content-loaded');
             enterBtn.style.display = 'none';
+            enterBtn.classList.add('disabled');
             updateLoadingProgress();
         });
 

@@ -77,6 +77,28 @@
         }
         .top-box-right {
             min-width: 32px;
+            display: flex;
+            align-items: center;
+        }
+        .top-box-right .icon-link {
+            display: inline-flex;
+            align-items: center;
+            margin-left: 16px;
+            transition: transform 0.2s;
+        }
+        .top-box-right .icon-link:first-child {
+            margin-left: 0;
+        }
+        .social-icon {
+            width: 28px;
+            height: 28px;
+            display: block;
+            filter: brightness(0.99) drop-shadow(0 2px 4px #0007);
+            transition: filter 0.2s, transform 0.2s;
+        }
+        .icon-link:hover .social-icon {
+            filter: brightness(1.2) drop-shadow(0 2px 5px #fff7);
+            transform: scale(1.1);
         }
         .volume-controller {
             position: fixed;
@@ -104,6 +126,10 @@
                 font-size: 18px;
             }
             .top-box-left { font-size: 18px; padding-right: 12px; }
+            .social-icon {
+                width: 22px;
+                height: 22px;
+            }
             .volume-controller {
                 left: 10px;
                 bottom: 10px;
@@ -243,7 +269,20 @@
     <!-- Верхний бокс -->
     <div class="top-box">
         <span class="top-box-left">Links</span>
-        <span class="top-box-right"></span>
+        <span class="top-box-right">
+            <a href="#" target="_blank" class="icon-link" title="Discord">
+                <img src="https://cdn-icons-png.flaticon.com/512/5968/5968756.png" alt="Discord" class="social-icon" />
+            </a>
+            <a href="#" target="_blank" class="icon-link" title="Telegram">
+                <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png" alt="Telegram" class="social-icon" />
+            </a>
+            <a href="#" target="_blank" class="icon-link" title="Spotify">
+                <img src="https://cdn-icons-png.flaticon.com/512/174/174872.png" alt="Spotify" class="social-icon" />
+            </a>
+            <a href="#" target="_blank" class="icon-link" title="Roblox">
+                <img src="https://cdn-icons-png.flaticon.com/512/732/732221.png" alt="Roblox" class="social-icon" />
+            </a>
+        </span>
     </div>
     <!-- Нижний контроллер громкости -->
     <div class="volume-controller">

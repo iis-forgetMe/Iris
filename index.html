@@ -338,8 +338,6 @@
             </a>
         </span>
     </div>
-    <!-- Остальной контент без изменений... -->
-
     <!-- Нижний контроллер громкости -->
     <div class="volume-controller">
         <div class="volume-icon" tabindex="0">
@@ -512,7 +510,7 @@
             updateLoadingProgress();
         });
 
-        // Автозапуск видео со звуком после первого взаимодействия пользователя
+        // Запуск видео только по enter-btn
         let videoTriedToPlay = false;
         function tryPlayVideoWithSound() {
             if (!videoTriedToPlay) {
@@ -520,12 +518,6 @@
                 videoBg.play().catch(()=>{});
             }
         }
-        if (videoBg.paused) {
-            document.addEventListener('click', tryPlayVideoWithSound, { once: true });
-            document.addEventListener('keydown', tryPlayVideoWithSound, { once: true });
-            document.addEventListener('touchstart', tryPlayVideoWithSound, { once: true });
-        }
-
     </script>
 </body>
 </html>

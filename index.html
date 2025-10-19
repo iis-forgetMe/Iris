@@ -311,5 +311,61 @@
     <div style="position: fixed; right: 22px; bottom: 16px; z-index: 40; color: #f5f5f5; opacity: 0.38; font-size: 17px; font-family: inherit; pointer-events: none; background: none; text-shadow: 0 3px 16px #000a; white-space: nowrap; user-select: none;">
       This person inspired me: diram1x
     </div>
+
+    <!-- BINARY TRAIL START -->
+    <style>
+    .binary-trail {
+        position: fixed;
+        pointer-events: none;
+        font-family: 'Consolas', 'Courier New', monospace;
+        font-size: 20px;
+        color: rgb(255, 20, 20);
+        background: none;
+        opacity: 0.88;
+        user-select: none;
+        transition: opacity 0.8s linear;
+        will-change: opacity;
+        z-index: 9999;
+        white-space: nowrap;
+        text-shadow: 0 0 8px #f008, 0 0 22px #400a, 0 0 2px #f008;
+    }
+    </style>
+
+    <script>
+    document.addEventListener('mousemove', function(e) {
+        createBinaryTrail(e.clientX, e.clientY);
+    });
+
+    function createBinaryTrail(x, y) {
+        const span = document.createElement('span');
+        span.className = 'binary-trail';
+        span.textContent = randomBinary(6);
+        span.style.left = (x - 8 + Math.random()*5) + 'px';
+        span.style.top = (y - 8 + Math.random()*5) + 'px';
+        document.body.appendChild(span);
+
+        let life = 0;
+        const changeInterval = setInterval(() => {
+            span.textContent = randomBinary(6);
+            life += 1;
+            if (life > 8) clearInterval(changeInterval);
+        }, 70);
+
+        setTimeout(() => {
+            span.style.opacity = '0';
+            setTimeout(() => {
+                if (span && span.parentNode) span.parentNode.removeChild(span);
+            }, 800);
+        }, 500);
+    }
+
+    function randomBinary(len) {
+        let str = '';
+        for (let i = 0; i < len; ++i)
+            str += Math.random() > 0.5 ? '1' : '0';
+        return str;
+    }
+    </script>
+    <!-- BINARY TRAIL END -->
 </body>
 </html>

@@ -357,18 +357,22 @@
         document.addEventListener('cut', e => e.preventDefault());
         document.addEventListener('contextmenu', e => e.preventDefault());
 
-        // AFK-логика
+        // ---- AFK-логика ----
         let afkTimer = null;
         let afkState = false;
+        let afkEnabled = false;
+
         function isMobile() {
             return window.matchMedia("(max-width: 600px)").matches;
         }
         function setAfkTimer() {
+            if (!afkEnabled) return;
             clearTimeout(afkTimer);
             removeAfk();
             afkTimer = setTimeout(showAfk, 8000);
         }
         function showAfk() {
+            if (!afkEnabled) return;
             afkState = true;
             if (isMobile()) {
                 document.getElementById("afk-banner").classList.add('afk-hidden');
@@ -378,30 +382,35 @@
             }
         }
         function removeAfk() {
+            if (!afkEnabled) return;
             afkState = false;
             document.getElementById("afk-gif").classList.remove('afk-active');
             document.getElementById("afk-banner").classList.remove('afk-hidden');
         }
-        window.addEventListener('mousemove', setAfkTimer);
-        window.addEventListener('keydown', setAfkTimer);
-        window.addEventListener('touchstart', setAfkTimer);
-        window.addEventListener('mousedown', setAfkTimer);
-        document.addEventListener('visibilitychange', function() {
-            if (document.hidden) {
-                if (afkTimer) {
-                    setTimeout(() => {
-                        if (afkTimer) {
-                            showAfk();
-                        }
-                    }, 8000);
+        function enableAfkFeature() {
+            if (afkEnabled) return;
+            afkEnabled = true;
+            window.addEventListener('mousemove', setAfkTimer);
+            window.addEventListener('keydown', setAfkTimer);
+            window.addEventListener('touchstart', setAfkTimer);
+            window.addEventListener('mousedown', setAfkTimer);
+            document.addEventListener('visibilitychange', function() {
+                if (!afkEnabled) return;
+                if (document.hidden) {
+                    if (afkTimer) {
+                        setTimeout(() => {
+                            if (afkTimer) {
+                                showAfk();
+                            }
+                        }, 8000);
+                    }
+                } else {
+                    removeAfk();
+                    setAfkTimer();
                 }
-            } else {
-                removeAfk();
-                setAfkTimer();
-            }
-        });
-        setAfkTimer();
-
+            });
+            setAfkTimer();
+        }
         // --- Контроллер громкости и запуск видео --- //
         const volumeSlider = document.querySelector('.volume-controller .volume-slider');
         const videoBg = document.getElementById('video-bg');
@@ -459,6 +468,7 @@
             setTimeout(() => {
                 loadingOverlay.style.display = 'none';
                 tryPlayVideoWithSound();
+                enableAfkFeature();
             }, 500);
         });
 
@@ -468,6 +478,7 @@
             setTimeout(() => {
                 loadingOverlay.style.display = 'none';
                 tryPlayVideoWithSound();
+                enableAfkFeature();
             }, 500);
         });
 

@@ -312,53 +312,52 @@
       This person inspired me: diram1x
     </div>
 
-    <!-- BINARY TRAIL START -->
+    <!-- BINARY FLYING TRAIL START -->
     <style>
     .binary-trail {
         position: fixed;
         pointer-events: none;
         font-family: 'Consolas', 'Courier New', monospace;
-        font-size: 20px;
-        color: rgb(255, 20, 20);
-        background: none;
-        opacity: 0.88;
+        font-size: 22px;
+        color: rgb(255,20,20);
+        opacity: 0.92;
         user-select: none;
-        transition: opacity 0.8s linear;
-        will-change: opacity;
+        transition: opacity 0.7s, transform 1s cubic-bezier(.33,1.13,.83,-0.13);
         z-index: 9999;
         white-space: nowrap;
-        text-shadow: 0 0 8px #f008, 0 0 22px #400a, 0 0 2px #f008;
+        text-shadow: 0 0 8px #f008, 0 0 18px #400a;
+        will-change: opacity, transform;
     }
     </style>
-
     <script>
     document.addEventListener('mousemove', function(e) {
         createBinaryTrail(e.clientX, e.clientY);
     });
-
     function createBinaryTrail(x, y) {
         const span = document.createElement('span');
         span.className = 'binary-trail';
-        span.textContent = randomBinary(6);
-        span.style.left = (x - 8 + Math.random()*5) + 'px';
-        span.style.top = (y - 8 + Math.random()*5) + 'px';
+        span.textContent = randomBinary(1);
+        span.style.left = (x - 4 + Math.random()*3) + 'px';
+        span.style.top = (y - 8 + Math.random()*3) + 'px';
+        span.style.transform = 'translate(0px,0px)';
         document.body.appendChild(span);
-
         let life = 0;
         const changeInterval = setInterval(() => {
-            span.textContent = randomBinary(6);
+            span.textContent = randomBinary(1);
             life += 1;
-            if (life > 8) clearInterval(changeInterval);
-        }, 70);
-
+            if (life > 10) clearInterval(changeInterval);
+        }, 50);
         setTimeout(() => {
+            const dx = (Math.random()-0.5)*120;
+            const dy = -40 - Math.random()*40;
+            span.style.transform = `translate(${dx}px, ${dy}px)`;
             span.style.opacity = '0';
-            setTimeout(() => {
-                if (span && span.parentNode) span.parentNode.removeChild(span);
-            }, 800);
-        }, 500);
+        }, 50);
+        setTimeout(() => {
+            if (span && span.parentNode)
+                span.parentNode.removeChild(span);
+        }, 900);
     }
-
     function randomBinary(len) {
         let str = '';
         for (let i = 0; i < len; ++i)
@@ -366,6 +365,6 @@
         return str;
     }
     </script>
-    <!-- BINARY TRAIL END -->
+    <!-- BINARY FLYING TRAIL END -->
 </body>
 </html>

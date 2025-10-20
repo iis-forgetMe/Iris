@@ -116,6 +116,26 @@
             h2 { font-size: 17px !important; }
             .subtitle, p { font-size: 12px !important; }
         }
+        /* ----- Новые стили для scroll и скейла баннера ----- */
+        @media (max-width: 600px) and (orientation: portrait) {
+            html, body {
+                position: fixed !important;
+                overflow: hidden !important;
+                width: 100vw !important;
+                max-width: 100vw !important;
+            }
+        }
+        @media (max-width: 600px) and (orientation: landscape) {
+            html, body {
+                position: static !important;
+                overflow: auto !important;
+            }
+        }
+        header#afk-banner.afk-scaled {
+            transform: scale(0.75);
+            transition: transform 0.4s;
+            transform-origin: top center;
+        }
         #loading-overlay {
             position:fixed;left:0;top:0;right:0;bottom:0;z-index:1000;background:rgba(0,0,0,0.75);
             backdrop-filter:blur(18px);display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -204,7 +224,6 @@
         function isMobile() {
             return window.matchMedia("(max-width: 600px)").matches;
         }
-        // ДОБАВЬ: Универсальная мобильная проверка
         function isMobileDevice() {
             return /Android|webOS|iPhone|iPad|iPod|BlackBerry|Opera Mini|IEMobile|Mobile/i.test(navigator.userAgent);
         }
@@ -215,7 +234,6 @@
             removeAfk();
             afkTimer = setTimeout(showAfk, 8000);
         }
-        // МОДИФИЦИРОЙ showAfk с новой логикой:
         function showAfk() {
             if (!afkEnabled) return;
             afkState = true;
@@ -347,6 +365,24 @@
                 videoBg.play().catch(()=>{});
             }
         }
+
+        // ---- Новая логика для масштаба баннера и скролла ----
+        function checkBannerOverlap() {
+            const banner = document.getElementById('afk-banner');
+            const topBox = document.querySelector('.top-box');
+            if (!banner || !topBox) return;
+            const bannerRect = banner.getBoundingClientRect();
+            const topBoxRect = topBox.getBoundingClientRect();
+            if (bannerRect.bottom > topBoxRect.top) {
+                banner.classList.add('afk-scaled');
+            } else {
+                banner.classList.remove('afk-scaled');
+            }
+        }
+        window.addEventListener('resize', checkBannerOverlap);
+        window.addEventListener('scroll', checkBannerOverlap);
+        document.addEventListener('DOMContentLoaded', checkBannerOverlap);
+        setInterval(checkBannerOverlap, 400);
     </script>
     <div style="position: fixed; right: 22px; bottom: 16px; z-index: 40; color: #f5f5f5; opacity: 0.38; font-size: 17px; font-family: inherit; pointer-events: none; background: none; text-shadow: 0 3px 16px #000a; white-space: nowrap; user-select: none;">
       This person inspired me: diram1x

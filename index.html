@@ -90,59 +90,36 @@
             transition:opacity 1.1s,width 0.7s,max-width 0.7s,max-height 0.7s,left 0.7s,bottom 0.7s;
         }
         .afk-gif.afk-active{opacity:1;pointer-events:auto;}
-        @media (max-width:900px) {
-            .top-box{left:6px;right:6px;top:10px;min-height:38px;padding:0 12px;font-size:18px;}
-            .top-box-left{font-size:18px;padding-right:12px;}
-            .social-icon{width:22px;height:22px;}
-            .volume-controller{left:10px;bottom:10px;width:38px;height:38px;padding:4px;}
-            .volume-controller:hover,.volume-controller:focus-within{width:134px;}
-            .volume-slider{width:65px;}
-            .volume-percent{font-size:13px;min-width:22px;}
-        }
-        @media (max-width:600px) {
-            header{max-width:97vw;padding:30px 4vw 18px 4vw;}
-            h1{font-size:30px!important;}h2{font-size:22px!important;}.subtitle{font-size:17px!important;}p{font-size:15px!important;}
-            .afk-gif{display:none!important;}
-        }
-        /* Адаптив для мобильных landscape */
-        @media (max-width:800px) and (orientation: landscape) {
-            header#afk-banner {
-                max-width: 98vw;
-                padding: 18px 2vw 12px 2vw;
-                font-size: 15px !important;
-                box-sizing: border-box;
-            }
-            h1 { font-size: 23px !important; }
-            h2 { font-size: 17px !important; }
-            .subtitle, p { font-size: 12px !important; }
-        }
-        /* ----- Новые стили для scroll и скейла баннера ----- */
+        @media (max-width:900px) { /* ... */ }
+        @media (max-width:600px) { /* ... */ }
+        @media (max-width:800px) and (orientation: landscape) { /* ... */ }
         @media (max-width: 600px) and (orientation: portrait) {
-            html, body {
-                position: fixed !important;
-                overflow: hidden !important;
-                width: 100vw !important;
-                max-width: 100vw !important;
-            }
+            html, body { position: fixed !important; overflow: hidden !important; width: 100vw !important; max-width: 100vw !important;}
         }
         @media (max-width: 600px) and (orientation: landscape) {
-            html, body {
-                position: static !important;
-                overflow: auto !important;
-            }
+            html, body { position: static !important; overflow: auto !important;}
         }
-        header#afk-banner.afk-scaled {
-            transform: scale(0.75);
-            transition: transform 0.4s;
-            transform-origin: top center;
+        header#afk-banner.afk-scaled { transform: scale(0.75); transition: transform 0.4s; transform-origin: top center;}
+        #loading-overlay { /* ... */ }
+        .loading-title{ /* ... */ }
+        body.content-loaded #loading-overlay{ /* ... */ }
+        body.content-loaded .loading-title{ /* ... */ }
+
+        /* --- Анимация для бинарных цифр --- */
+        .binary-anim {
+            position: fixed;
+            pointer-events: none;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 25px;
+            color: rgb(255,20,20);
+            opacity: 0.92;
+            user-select: none;
+            transition: opacity 1.6s, transform 1.7s cubic-bezier(.33,1.13,.83,-0.13);
+            z-index: 9999;
+            white-space: nowrap;
+            text-shadow: 0 0 8px #f008, 0 0 18px #400a;
+            will-change: opacity, transform;
         }
-        #loading-overlay {
-            position:fixed;left:0;top:0;right:0;bottom:0;z-index:1000;background:rgba(0,0,0,0.75);
-            backdrop-filter:blur(18px);display:flex;flex-direction:column;align-items:center;justify-content:center;
-            transition:opacity 0.6s;cursor:default;}
-        .loading-title{font-size:37px;color:#fff;font-family:inherit;font-weight:bold;letter-spacing:2px;margin-bottom:24px;user-select:none;}
-        body.content-loaded #loading-overlay{pointer-events:none;opacity:0;transition:opacity 0.5s;}
-        body.content-loaded .loading-title{display:none;}
     </style>
 </head>
 <body 
@@ -234,11 +211,66 @@
             removeAfk();
             afkTimer = setTimeout(showAfk, 8000);
         }
+
+        // Медленная анимация исчезновения/возвращения баннера
+        function explodeBannerToBinary(direction = 'out') {
+            const banner = document.getElementById('afk-banner');
+            if (!banner) return;
+            function getTextNodesUnder(node){
+                var all = [];
+                for (node=node.firstChild; node; node=node.nextSibling){
+                    if (node.nodeType==3) all.push(node);
+                    else all = all.concat(getTextNodesUnder(node));
+                }
+                return all;
+            }
+            let nodes = getTextNodesUnder(banner);
+            nodes.forEach(node => {
+                const text = node.textContent;
+                for(let i=0; i<text.length; i++){
+                    let char = text[i];
+                    if(!char.trim()) continue;
+                    let span = document.createElement('span');
+                    span.textContent = Math.random() > 0.5 ? '1' : '0';
+                    span.className = 'binary-anim';
+                    let range = document.createRange();
+                    range.setStart(node, i);
+                    range.setEnd(node, i+1);
+                    try{
+                        let rectC = range.getBoundingClientRect();
+                        span.style.left = (rectC.left + window.scrollX) + 'px';
+                        span.style.top = (rectC.top + window.scrollY) + 'px';
+                    }catch(e){}
+                    document.body.appendChild(span);
+                    let dx = (Math.random()-0.5)*240;
+                    let dy = (Math.random()-0.5)*180;
+                    if (direction === 'in') { dx = 0; dy = 0; }
+                    setTimeout(()=>{
+                        span.textContent = Math.random() > 0.5 ? '1' : '0';
+                        span.style.transform = direction === 'out'
+                            ? `translate(${dx}px,${dy}px)`
+                            : `translate(0,0)`;
+                        span.style.opacity = direction === 'out' ? '0' : '1';
+                    }, 28 + Math.random()*240);
+                    let changeInt = setInterval(()=>{
+                        span.textContent = Math.random() > 0.5 ? '1' : '0';
+                    }, 72);
+                    setTimeout(()=>{
+                        clearInterval(changeInt);
+                        span.remove();
+                    }, direction === 'out' ? 1700 : 1500);
+                }
+            });
+        }
+
         function showAfk() {
             if (!afkEnabled) return;
             afkState = true;
             if (isMobileDevice()) {
-                document.getElementById("afk-banner").classList.add('afk-hidden');
+                explodeBannerToBinary('out');
+                setTimeout(()=>{
+                    document.getElementById("afk-banner").classList.add('afk-hidden');
+                }, 700); // задержка, для плавного исчезновения
                 document.getElementById("afk-gif").classList.remove('afk-active');
             } else {
                 document.getElementById("afk-gif").classList.add('afk-active');
@@ -247,8 +279,15 @@
         function removeAfk() {
             if (!afkEnabled) return;
             afkState = false;
-            document.getElementById("afk-gif").classList.remove('afk-active');
-            document.getElementById("afk-banner").classList.remove('afk-hidden');
+            if (isMobileDevice()) {
+                explodeBannerToBinary('in');
+                setTimeout(()=>{
+                    document.getElementById("afk-banner").classList.remove('afk-hidden');
+                }, 800);
+            } else {
+                document.getElementById("afk-gif").classList.remove('afk-active');
+                document.getElementById("afk-banner").classList.remove('afk-hidden');
+            }
         }
         function enableAfkFeature() {
             if (afkEnabled) return;
@@ -274,6 +313,7 @@
             });
             setAfkTimer();
         }
+
         // --- Контроллер громкости и запуск видео --- //
         const volumeSlider = document.querySelector('.volume-controller .volume-slider');
         const videoBg = document.getElementById('video-bg');
@@ -366,7 +406,7 @@
             }
         }
 
-        // ---- Новая логика для масштаба баннера и скролла ----
+        // ---- scale and overlap баннера ----
         function checkBannerOverlap() {
             const banner = document.getElementById('afk-banner');
             const topBox = document.querySelector('.top-box');

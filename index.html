@@ -6,7 +6,16 @@
     <link rel="icon" type="image/png" href="OwO.png">
     <title>Iris</title>
     
-    <!-- EMBED / OG / Twitter Card и остальные метатеги ... -->
+    <!-- EMBED / OG / Twitter Card -->
+    <meta property="og:title" content="Iris" />
+    <meta property="og:description" content="I don't know" />
+    <meta property="og:image" content="https://raw.githubusercontent.com/iis-forgetMe/Iris/main/Willowails.jpg" />
+    <meta property="og:url" content="https://iis-forgetMe.github.io/Iris/" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Iris" />
+    <meta name="twitter:description" content="I don't know" />
+    <meta name="twitter:image" content="https://raw.githubusercontent.com/iis-forgetMe/Iris/main/Willowails.jpg" />
     
     <style>
         html, body {
@@ -37,24 +46,37 @@
             user-select: none; -webkit-user-select: none; -ms-user-select: none;
         }
         body.comic-sans { font-family: "Comic Sans MS", "Comic Sans", cursive !important; font-size: 20px !important;}
-        #video-bg { /* ... */ }
-        .top-box { /* ... */ }
-        .top-box-left { /* ... */ }
-        .top-box-right { /* ... */ }
-        .top-box-right .icon-link { /* ... */ }
-        .top-box-right .icon-link:first-child { /* ... */ }
-        .social-icon { /* ... */ }
-        .icon-link:hover .social-icon { /* ... */ }
-        .volume-controller { /* ... */ }
-        .volume-icon { /* ... */ }
-        .volume-slider, .volume-percent { /* ... */ }
-        .volume-controller:hover, .volume-controller:focus-within { /* ... */ }
+        #video-bg {
+            position: fixed; right: 0; bottom: 0; min-width: 100vw; min-height: 100vh; width: 100vw; height: 100vh;
+            object-fit: cover; object-position: center center; z-index: -1; background: #000; pointer-events: none; filter: brightness(0.5); left: 0; top: 0;
+        }
+        .top-box {
+            position: fixed; left: 28px; right: 28px; top: 20px; z-index: 22; min-height: 44px; display: flex; align-items: center;
+            justify-content: space-between; background: rgba(40, 40, 40, 0.74); border-radius: 999px; box-shadow: 0 3px 18px 0 #0007;
+            padding: 0 32px; font-size: 22px; font-family: inherit; color: #F5F5F5; width: auto;
+        }
+        .top-box-left { font-weight: bold; font-size: 22px; padding-right: 28px; }
+        .top-box-right { min-width: 32px; display: flex; align-items: center; }
+        .top-box-right .icon-link { display: inline-flex; align-items: center; margin-left: 16px; transition: transform 0.2s;}
+        .top-box-right .icon-link:first-child {margin-left: 0;}
+        .social-icon { width: 28px; height: 28px; display: block; filter: brightness(0.99) drop-shadow(0 2px 4px #0007); transition: filter 0.2s, transform 0.2s;}
+        .icon-link:hover .social-icon { filter: brightness(1.2) drop-shadow(0 2px 5px #fff7); transform: scale(1.1);}
+        .volume-controller {
+            position: fixed; left: 24px; bottom: 24px; z-index: 20; display: flex; align-items: center; gap: 0;
+            background: rgba(40, 40, 40, 0.74); border-radius: 999px; box-shadow: 0 3px 18px 0 #0007; padding: 6px;
+            width: 44px; height: 44px; transition: width 0.4s; overflow: visible;
+        }
+        .volume-icon { cursor: pointer; outline: none; user-select: none; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; margin-left: 8px; }
+        .volume-slider, .volume-percent { opacity: 0; pointer-events: none; transition: opacity 0.44s; transition-delay: 0s; }
+        .volume-controller:hover, .volume-controller:focus-within { width: 180px;}
         .volume-controller:hover .volume-slider,
         .volume-controller:focus-within .volume-slider,
         .volume-controller:hover .volume-percent,
-        .volume-controller:focus-within .volume-percent { /* ... */}
-        .volume-slider { /* ... */ }
-        .volume-percent { /* ... */ }
+        .volume-controller:focus-within .volume-percent {
+            opacity: 1; pointer-events: auto; transition-delay: 0.38s;
+        }
+        .volume-slider { width: 90px; max-width: 36vw; margin-left: 12px; accent-color: rgb(255,8,0);}
+        .volume-percent { color: #fff; min-width: 32px; text-align: right; font-family: inherit; font-size: 15px; margin-left: 8px;}
         header {
             text-align: center; padding: 60px 40px 36px 40px; background: rgba(0, 0, 0, 0.80); color: #F5F5F5;
             border-radius: 10px; border: 2px solid rgb(255, 8, 0); box-shadow: 0 0 36px 4px rgba(255,8,0,0.75);
@@ -68,9 +90,33 @@
             transition:opacity 1.1s,width 0.7s,max-width 0.7s,max-height 0.7s,left 0.7s,bottom 0.7s;
         }
         .afk-gif.afk-active{opacity:1;pointer-events:auto;}
-        @media (max-width:900px) { /* ... */ }
-        @media (max-width:600px) { /* ... */ }
-        @media (max-width:800px) and (orientation: landscape) { /* ... */ }
+        @media (max-width:900px) {
+            .top-box{left:6px;right:6px;top:10px;min-height:38px;padding:0 12px;font-size:18px;}
+            .top-box-left{font-size:18px;padding-right:12px;}
+            .social-icon{width:22px;height:22px;}
+            .volume-controller{left:10px;bottom:10px;width:38px;height:38px;padding:4px;}
+            .volume-controller:hover,.volume-controller:focus-within{width:134px;}
+            .volume-slider{width:65px;}
+            .volume-percent{font-size:13px;min-width:22px;}
+        }
+        @media (max-width:600px) {
+            header{max-width:97vw;padding:30px 4vw 18px 4vw;}
+            h1{font-size:30px!important;}h2{font-size:22px!important;}.subtitle{font-size:17px!important;}p{font-size:15px!important;}
+            .afk-gif{display:none!important;}
+        }
+        /* Адаптив для мобильных landscape */
+        @media (max-width:800px) and (orientation: landscape) {
+            header#afk-banner {
+                max-width: 98vw;
+                padding: 18px 2vw 12px 2vw;
+                font-size: 15px !important;
+                box-sizing: border-box;
+            }
+            h1 { font-size: 23px !important; }
+            h2 { font-size: 17px !important; }
+            .subtitle, p { font-size: 12px !important; }
+        }
+        /* ----- Новые стили для scroll и скейла баннера ----- */
         @media (max-width: 600px) and (orientation: portrait) {
             html, body {
                 position: fixed !important;
@@ -90,26 +136,13 @@
             transition: transform 0.4s;
             transform-origin: top center;
         }
-        #loading-overlay { /* ... */ }
-        .loading-title{ /* ... */ }
-        body.content-loaded #loading-overlay{ /* ... */ }
-        body.content-loaded .loading-title{ /* ... */ }
-
-        /* --- Для анимационных нулей и единиц --- */
-        .binary-anim {
-            position: fixed;
-            pointer-events: none;
-            font-family: 'Consolas', 'Courier New', monospace;
-            font-size: 25px;
-            color: rgb(255,20,20);
-            opacity: 0.92;
-            user-select: none;
-            transition: opacity 0.9s, transform 0.9s cubic-bezier(.33,1.13,.83,-0.13);
-            z-index: 9999;
-            white-space: nowrap;
-            text-shadow: 0 0 8px #f008, 0 0 18px #400a;
-            will-change: opacity, transform;
-        }
+        #loading-overlay {
+            position:fixed;left:0;top:0;right:0;bottom:0;z-index:1000;background:rgba(0,0,0,0.75);
+            backdrop-filter:blur(18px);display:flex;flex-direction:column;align-items:center;justify-content:center;
+            transition:opacity 0.6s;cursor:default;}
+        .loading-title{font-size:37px;color:#fff;font-family:inherit;font-weight:bold;letter-spacing:2px;margin-bottom:24px;user-select:none;}
+        body.content-loaded #loading-overlay{pointer-events:none;opacity:0;transition:opacity 0.5s;}
+        body.content-loaded .loading-title{display:none;}
     </style>
 </head>
 <body 
@@ -201,67 +234,10 @@
             removeAfk();
             afkTimer = setTimeout(showAfk, 8000);
         }
-
-        // Эффект рассыпания баннера на нули и единицы
-        function explodeBannerToBinary(direction = 'out') {
-            const banner = document.getElementById('afk-banner');
-            if (!banner) return;
-            const rect = banner.getBoundingClientRect();
-
-            function getTextNodesUnder(node){
-                var all = [];
-                for (node=node.firstChild; node; node=node.nextSibling){
-                    if (node.nodeType==3) all.push(node);
-                    else all = all.concat(getTextNodesUnder(node));
-                }
-                return all;
-            }
-
-            let nodes = getTextNodesUnder(banner);
-            nodes.forEach(node => {
-                const text = node.textContent;
-                for(let i=0; i<text.length; i++){
-                    let char = text[i];
-                    if(!char.trim()) continue;
-                    let span = document.createElement('span');
-                    span.textContent = Math.random() > 0.5 ? '1' : '0';
-                    span.className = 'binary-anim';
-                    let range = document.createRange();
-                    range.setStart(node, i);
-                    range.setEnd(node, i+1);
-                    try{
-                        let rectC = range.getBoundingClientRect();
-                        span.style.left = (rectC.left + window.scrollX) + 'px';
-                        span.style.top = (rectC.top + window.scrollY) + 'px';
-                    }catch(e){}
-                    document.body.appendChild(span);
-                    let dx = (Math.random()-0.5)*180;
-                    let dy = (Math.random()-0.5)*140;
-                    if (direction === 'in') { dx = 0; dy = 0; }
-                    setTimeout(()=>{
-                        span.textContent = Math.random() > 0.5 ? '1' : '0';
-                        span.style.transform = direction === 'out'
-                            ? `translate(${dx}px,${dy}px)`
-                            : `translate(0,0)`;
-                        span.style.opacity = direction === 'out' ? '0' : '1';
-                    }, 20 + Math.random()*100);
-                    let changeInt = setInterval(()=>{
-                        span.textContent = Math.random() > 0.5 ? '1' : '0';
-                    }, 60);
-                    setTimeout(()=>{
-                        clearInterval(changeInt);
-                        span.remove();
-                    }, direction === 'out' ? 1000 : 900);
-                }
-            });
-        }
-
-        // Изменения AFK для мобильных
         function showAfk() {
             if (!afkEnabled) return;
             afkState = true;
             if (isMobileDevice()) {
-                explodeBannerToBinary('out');
                 document.getElementById("afk-banner").classList.add('afk-hidden');
                 document.getElementById("afk-gif").classList.remove('afk-active');
             } else {
@@ -271,15 +247,8 @@
         function removeAfk() {
             if (!afkEnabled) return;
             afkState = false;
-            if (isMobileDevice()) {
-                explodeBannerToBinary('in');
-                setTimeout(()=>{
-                    document.getElementById("afk-banner").classList.remove('afk-hidden');
-                }, 420);
-            } else {
-                document.getElementById("afk-gif").classList.remove('afk-active');
-                document.getElementById("afk-banner").classList.remove('afk-hidden');
-            }
+            document.getElementById("afk-gif").classList.remove('afk-active');
+            document.getElementById("afk-banner").classList.remove('afk-hidden');
         }
         function enableAfkFeature() {
             if (afkEnabled) return;
@@ -305,7 +274,6 @@
             });
             setAfkTimer();
         }
-
         // --- Контроллер громкости и запуск видео --- //
         const volumeSlider = document.querySelector('.volume-controller .volume-slider');
         const videoBg = document.getElementById('video-bg');
@@ -398,7 +366,7 @@
             }
         }
 
-        // ---- scale and overlap баннера ----
+        // ---- Новая логика для масштаба баннера и скролла ----
         function checkBannerOverlap() {
             const banner = document.getElementById('afk-banner');
             const topBox = document.querySelector('.top-box');
@@ -416,10 +384,10 @@
         document.addEventListener('DOMContentLoaded', checkBannerOverlap);
         setInterval(checkBannerOverlap, 400);
     </script>
-
     <div style="position: fixed; right: 22px; bottom: 16px; z-index: 40; color: #f5f5f5; opacity: 0.38; font-size: 17px; font-family: inherit; pointer-events: none; background: none; text-shadow: 0 3px 16px #000a; white-space: nowrap; user-select: none;">
       This person inspired me: diram1x
     </div>
+
     <!-- BINARY FLYING TRAIL START -->
     <style>
     .binary-trail {

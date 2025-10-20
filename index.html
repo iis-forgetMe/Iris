@@ -200,7 +200,7 @@
 <script>
 async function updateCounter() {
   // Используй свою ссылку - она актуальна!
-  const url = "https://api.counterapi.dev/v2/iris/iris/hit";
+  const url = "https://api.counterapi.dev/v2/iris/iris/stats";
   try {
     const response = await fetch(url, { method: "POST" });
     const data = await response.json();

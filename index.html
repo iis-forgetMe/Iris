@@ -200,13 +200,13 @@
 <script>
 async function updateCounter() {
   // Используй свою ссылку - она актуальна!
-  const url = "https://api.counterapi.dev/v2/iris/iris/stats";
+  const url = "https://api.counterapi.dev/v2/iris/iris/up";
   try {
     const response = await fetch(url, { method: "POST" });
     const data = await response.json();
     document.getElementById("views-value").textContent = data.value;
   } catch (e) {
-    document.getElementById("views-value").textContent = "ошибка";
+    document.getElementById("views-value").textContent = "error";
   }
 }
 window.addEventListener("DOMContentLoaded", updateCounter);
@@ -481,7 +481,7 @@ function getFingerprint() {
   let randomSeed = Math.random().toString(36).slice(2, 10)
   let fp = btoa(ua + "_" + lang + "_" + scr + "_" + randomSeed);
   localStorage.fingerprint = fp;
-  return fp;
+  return fp;ММ
 }
 function getViews() {
   return localStorage.pageViews ? JSON.parse(localStorage.pageViews) : [];

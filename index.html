@@ -204,16 +204,22 @@
         function isMobile() {
             return window.matchMedia("(max-width: 600px)").matches;
         }
+        // ДОБАВЬ: Универсальная мобильная проверка
+        function isMobileDevice() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|Opera Mini|IEMobile|Mobile/i.test(navigator.userAgent);
+        }
+
         function setAfkTimer() {
             if (!afkEnabled) return;
             clearTimeout(afkTimer);
             removeAfk();
             afkTimer = setTimeout(showAfk, 8000);
         }
+        // МОДИФИЦИРОЙ showAfk с новой логикой:
         function showAfk() {
             if (!afkEnabled) return;
             afkState = true;
-            if (isMobile()) {
+            if (isMobileDevice()) {
                 document.getElementById("afk-banner").classList.add('afk-hidden');
                 document.getElementById("afk-gif").classList.remove('afk-active');
             } else {

@@ -464,15 +464,26 @@ function incrementViewOnce() {
 window.addEventListener("DOMContentLoaded", incrementViewOnce);
 </script>
     <script>
-        const phrases = ["iis_forgetMe", "furry", "silly :3", "Iris", ">:3c", "Meosssy is my bestie <3", "Mr Kinako <3" ];
+const phrases = [
+  "iis_forgetMe",
+  "furry",
+  "silly :3",
+  "Iris",
+  ">:3c",
+  "Meosssy is my bestie <3",
+  "Mr Kinako <3"
+];
+
 let lastIndex = -1;
 let phrase = "";
-let index = 1;
+let index = 0;
 let direction = 1;
-let blinkState = true;
-const typeSpeed = 500;  // скорость «печати» (медленнее = больше число)
-const pauseSpeed = 700; // пауза на конце строки
-const blinkSpeed = 500; // скорость мигания "_"
+let displayText = "";
+let cursorVisible = true;
+
+const typeSpeed = 500;   // скорость "печати" букв
+const pauseSpeed = 700;  // пауза после написания/стирания
+const blinkSpeed = 500;  // задержка мигания курсора "_"
 
 function pickRandomPhrase() {
   let newIndex;
@@ -483,40 +494,43 @@ function pickRandomPhrase() {
   return phrases[newIndex];
 }
 
-function animateTitle() {
-  let titleText = phrase.slice(0, index);
-  if (blinkState) titleText += "_";
-  document.title = titleText;
-  blinkState = !blinkState;
+// Бликующий курсор
+function blinkCursor() {
+  document.title = displayText + (cursorVisible ? "_" : "");
+  cursorVisible = !cursorVisible;
+  setTimeout(blinkCursor, blinkSpeed);
+}
 
+// Анимация "печати"
+function animateTitle() {
   if (direction === 1 && index <= phrase.length) {
-    setTimeout(() => {
-      if (blinkState) index += 1;
-      animateTitle();
-    }, typeSpeed);
+    displayText = phrase.slice(0, index);
+    index++;
+    setTimeout(animateTitle, typeSpeed);
   } else if (direction === -1 && index >= 0) {
-    setTimeout(() => {
-      if (blinkState) index -= 1;
-      animateTitle();
-    }, typeSpeed);
+    displayText = phrase.slice(0, index);
+    index--;
+    setTimeout(animateTitle, typeSpeed);
   } else {
-    // Пауза на конце строки или после удаления
     setTimeout(() => {
       if (direction === 1) {
         direction = -1;
+        index = phrase.length - 1;
       } else {
         direction = 1;
         phrase = pickRandomPhrase();
-        index = 0; // обязательно пустота между сменами фраз
+        index = 0;
       }
       animateTitle();
     }, pauseSpeed);
   }
 }
 
-// Запуск с первой случайной фразы
+// Запуск анимации
 phrase = pickRandomPhrase();
-index = 0; // начинается с пустоты
+index = 0;
+displayText = "";
+blinkCursor();
 animateTitle();
     </script>
 </body>

@@ -46,7 +46,7 @@
             user-select: none; -webkit-user-select: none; -ms-user-select: none;
         }
         body.comic-sans { font-family: "Comic Sans MS", "Comic Sans", cursive !important; font-size: 20px !important;}
-        #video-bg {
+        # {
             position: fixed; right: 0; bottom: 0; min-width: 100vw; min-height: 100vh; width: 100vw; height: 100vh;
             object-fit: cover; object-position: center center; z-index: -1; background: #000; pointer-events: none; filter: brightness(0.5); left: 0; top: 0;
         }
@@ -165,17 +165,35 @@
     </div>
     <!-- Видео на бекграунде с автозапуском -->
    <body>
-  <video id="video-bg" autoplay loop muted playsinline></video>
+ <!-- Твой video-блок -->
+<video 
+  id="video-bg"
+  type="video/mp4"
+  preload="none"
+  playsinline
+  muted
+  loop
+></video>
 
-  <script>
-    // Список файлов
-    var videos = ["007n7.mp4", "A soul for a SOUL.mp4"];
-    // Случайный выбор с вероятностью 50%
-    var randomIndex = Math.random() < 0.5 ? 0 : 1;
-    // Установка src для тега video
-    document.getElementById("video-bg").src = videos[randomIndex];
-  </script>
-</body>
+<script>
+  // Рандом между двумя видео
+  var videos = ["007n7.mp4", "A soul for a SOUL.mp4"];
+  var chosenVideo = Math.random() < 0.5 ? videos[0] : videos[1];
+  var video = document.getElementById("video-bg");
+
+  // Когда пользователь нажимает "Click to enter"
+  // Замени 'enter-btn' на ID твоей кнопки или элемента запуска
+  document.getElementById("enter-btn").addEventListener("click", function() {
+    // Задаём источник выбранного видео
+    video.src = chosenVideo;
+    // Запускаем видео
+    video.play();
+
+    // Если у тебя при входе скрывается лоадер или меняются элементы — можешь сделать это тут же
+    // Например:
+    // document.getElementById("overlay").style.display = "none";
+  });
+</script>
     <header id="afk-banner" style="position: relative;">
     <h1>Yo! It's Iris!</h1>
     <h2>About me</h2>

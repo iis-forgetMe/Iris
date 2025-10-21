@@ -464,6 +464,7 @@ function incrementViewOnce() {
 window.addEventListener("DOMContentLoaded", incrementViewOnce);
 </script>
     <script>
+<script>
 const phrases = [
   "iis_forgetMe",
   "furry",
@@ -473,18 +474,16 @@ const phrases = [
   "Meosssy is my bestie <3",
   "Mr Kinako <3"
 ];
-
 let lastIndex = -1;
 let phrase = "";
 let index = 0;
 let direction = 1;
-let displayText = "";
-let cursorVisible = true;
+let blinkState = true;
 
-const typeSpeed = 400;   // скорость "печати" букв
+const typeSpeed = 400;   // скорость "печати"
 const pauseSpeed = 900;  // пауза после написания/стирания
-const blankPause = 600
-const blinkSpeed = 500;  // задержка мигания курсора "_"
+const blankPause = 600;  // пауза с пустым заголовком
+const blinkSpeed = 500;  // скорость мигания курсора "_"
 
 function pickRandomPhrase() {
   let newIndex;
@@ -495,44 +494,47 @@ function pickRandomPhrase() {
   return phrases[newIndex];
 }
 
-// Бликующий курсор
-function blinkCursor() {
-  document.title = displayText + (cursorVisible ? "_" : "");
-  cursorVisible = !cursorVisible;
-  setTimeout(blinkCursor, blinkSpeed);
-}
-
-// Анимация "печати"
 function animateTitle() {
+  // Показываем строку с мигающим курсором только когда не пусто
+  let titleText = phrase.slice(0, index) + (blinkState && index !== 0 ? "_" : "");
+  document.title = titleText;
+
+  // Меняем состояние мигания каждое действие
+  blinkState = !blinkState;
+
   if (direction === 1 && index <= phrase.length) {
-    displayText = phrase.slice(0, index);
-    index++;
+    // Вперёд по буквам
+    if (blinkState) index++;
     setTimeout(animateTitle, typeSpeed);
   } else if (direction === -1 && index >= 0) {
-    displayText = phrase.slice(0, index);
-    index--;
+    // Назад по буквам
+    if (blinkState) index--;
     setTimeout(animateTitle, typeSpeed);
   } else {
+    // Пауза после анимации появления/стирания
     setTimeout(() => {
       if (direction === 1) {
         direction = -1;
         index = phrase.length - 1;
       } else {
-        direction = 1;
-        phrase = pickRandomPhrase();
-        index = 0;
+        // Пауза с пустым заголовком
+        document.title = "";
+        setTimeout(() => {
+          direction = 1;
+          phrase = pickRandomPhrase();
+          index = 0;
+          animateTitle();
+        }, blankPause);
+        return;
       }
       animateTitle();
     }, pauseSpeed);
   }
 }
 
-// Запуск анимации
 phrase = pickRandomPhrase();
 index = 0;
-displayText = "";
-blinkCursor();
 animateTitle();
-    </script>
+</script>
 </body>
 </html>

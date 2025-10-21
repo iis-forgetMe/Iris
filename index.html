@@ -164,9 +164,18 @@
         <span class="volume-percent" id="volume-percent">50%</span>
     </div>
     <!-- Видео на бекграунде с автозапуском -->
-    <video loop playsinline id="video-bg" preload="auto">
-        <source src="007n7.mp4" />
-    </video>
+   <body>
+  <video id="video-bg" autoplay loop muted playsinline></video>
+
+  <script>
+    // Список файлов
+    var videos = ["007n7.mp4", "SAVE BADWARE BRO.mp4"];
+    // Случайный выбор с вероятностью 50%
+    var randomIndex = Math.random() < 0.5 ? 0 : 1;
+    // Установка src для тега video
+    document.getElementById("video-bg").src = videos[randomIndex];
+  </script>
+</body>
     <header id="afk-banner" style="position: relative;">
     <h1>Yo! It's Iris!</h1>
     <h2>About me</h2>

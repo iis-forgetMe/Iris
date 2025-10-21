@@ -173,6 +173,7 @@
   playsinline
   muted
   loop
+    
 ></video>
 
 <script>
@@ -186,6 +187,8 @@
   document.getElementById("enter-btn").addEventListener("click", function() {
     // Задаём источник выбранного видео
     video.src = chosenVideo;
+    video.muted = false;
+    video.volume = 0.1
     // Запускаем видео
     video.play();
 

@@ -463,5 +463,44 @@ function incrementViewOnce() {
 }
 window.addEventListener("DOMContentLoaded", incrementViewOnce);
 </script>
+    <script>
+        const phrases = ["iis_forgetMe", "furry", "silly :3", "Iris", ">:3c", "Meosssy is my bestie <3", "Mr Kinako <3 ];
+let lastIndex = -1;
+let phrase = "";
+let index = 1;
+let direction = 1;
+
+function pickRandomPhrase() {
+  let newIndex;
+  do {
+    newIndex = Math.floor(Math.random() * phrases.length);
+  } while (newIndex === lastIndex && phrases.length > 1);
+  lastIndex = newIndex;
+  return phrases[newIndex];
+}
+
+function animateTitle() {
+  document.title = phrase.slice(0, index) + "_";
+  index += direction;
+
+  if (index > phrase.length) {
+    direction = -1;
+    index = phrase.length;
+    setTimeout(animateTitle, 500);
+    return;
+  }
+  if (index < 1) {
+    direction = 1;
+    phrase = pickRandomPhrase(); // выбираем новое слово
+    index = 1;
+    setTimeout(animateTitle, 500);
+    return;
+  }
+  setTimeout(animateTitle, 250);
+}
+
+phrase = pickRandomPhrase();
+animateTitle();
+    </script>
 </body>
 </html>

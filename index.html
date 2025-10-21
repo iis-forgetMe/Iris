@@ -469,6 +469,10 @@ let lastIndex = -1;
 let phrase = "";
 let index = 1;
 let direction = 1;
+let blinkState = true;
+const typeSpeed = 500;  // скорость «печати» (медленнее = больше число)
+const pauseSpeed = 700; // пауза на конце строки
+const blinkSpeed = 500; // скорость мигания "_"
 
 function pickRandomPhrase() {
   let newIndex;
@@ -480,26 +484,39 @@ function pickRandomPhrase() {
 }
 
 function animateTitle() {
-  document.title = phrase.slice(0, index) + "_";
-  index += direction;
+  let titleText = phrase.slice(0, index);
+  if (blinkState) titleText += "_";
+  document.title = titleText;
+  blinkState = !blinkState;
 
-  if (index > phrase.length) {
-    direction = -1;
-    index = phrase.length;
-    setTimeout(animateTitle, 500);
-    return;
+  if (direction === 1 && index <= phrase.length) {
+    setTimeout(() => {
+      if (blinkState) index += 1;
+      animateTitle();
+    }, typeSpeed);
+  } else if (direction === -1 && index >= 0) {
+    setTimeout(() => {
+      if (blinkState) index -= 1;
+      animateTitle();
+    }, typeSpeed);
+  } else {
+    // Пауза на конце строки или после удаления
+    setTimeout(() => {
+      if (direction === 1) {
+        direction = -1;
+      } else {
+        direction = 1;
+        phrase = pickRandomPhrase();
+        index = 0; // обязательно пустота между сменами фраз
+      }
+      animateTitle();
+    }, pauseSpeed);
   }
-  if (index < 1) {
-    direction = 1;
-    phrase = pickRandomPhrase(); // выбираем новое слово
-    index = 1;
-    setTimeout(animateTitle, 500);
-    return;
-  }
-  setTimeout(animateTitle, 250);
 }
 
+// Запуск с первой случайной фразы
 phrase = pickRandomPhrase();
+index = 0; // начинается с пустоты
 animateTitle();
     </script>
 </body>

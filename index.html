@@ -463,7 +463,7 @@ function incrementViewOnce() {
 }
 window.addEventListener("DOMContentLoaded", incrementViewOnce);
 </script>
-    <script>
+<script>
 const phrases = [
   "iis_forgetMe",
   "furry",
@@ -476,17 +476,16 @@ const phrases = [
 let lastIndex = -1;
 let phrase = "";
 let index = 0;
-let picking = true;     // выбираем новую фразу
-let typing = true;      // набираем букву? (true) или стираем (false)
-let showCursor = true;  // мигает курсор
-let isBlank = false;    // пауза на пустоте
+let direction = 1;
+let displayText = "";
+let cursorVisible = true;
 
-const typeSpeed = 450;   // скорость набора/стирания (мс)
-const pauseFilled = 950; // пауза после печати/стирания (мс)
-const pauseBlank = 600;  // пауза с пустым заголовком (мс)
-const cursorSpeed = 500; // частота мигания "_"
+const typeSpeed = 500;   // скорость "печати" букв
+const pauseSpeed = 800;  // пауза после написания/стирания
+const blankPause = 600;  // пауза с полностью пустым заголовком
+const blinkSpeed = 500;  // скорость мигания "_"
 
-function pickPhrase() {
+function pickRandomPhrase() {
   let newIndex;
   do {
     newIndex = Math.floor(Math.random() * phrases.length);
@@ -495,71 +494,52 @@ function pickPhrase() {
   return phrases[newIndex];
 }
 
-function updateTitle() {
-  if (isBlank) {
-    document.title = "";
-  } else {
-    let txt = phrase.slice(0, index);
-    if (showCursor && index > 0) txt += "_";
-    document.title = txt;
-  }
-}
-
-// Бликовка курсора "_"
+// Функция мигания курсора
 function blinkCursor() {
-  showCursor = !showCursor;
-  updateTitle();
+  document.title = displayText + (cursorVisible ? "_" : "");
+  cursorVisible = !cursorVisible;
+  setTimeout(blinkCursor, blinkSpeed);
 }
 
-function mainLoop() {
-  if (picking) {
-    phrase = pickPhrase();
-    picking = false;
-    typing = true;
-    index = 0;
-    isBlank = false;
-    updateTitle();
-    setTimeout(mainLoop, typeSpeed);
-    return;
-  }
-
-  if (isBlank) {
-    updateTitle();
-    setTimeout(() => {
-      picking = true;
-      isBlank = false;
-      mainLoop();
-    }, pauseBlank);
-    return;
-  }
-
-  if (typing) {
-    updateTitle();
-    if (index < phrase.length) {
-      index++;
-      setTimeout(mainLoop, typeSpeed);
-    } else {
-      setTimeout(() => {
-        typing = false;
-        mainLoop();
-      }, pauseFilled);
-    }
+// Функция анимации появления/исчезновения текста
+function animateTitle() {
+  if (direction === 1 && index <= phrase.length) {
+    displayText = phrase.slice(0, index);
+    index++;
+    setTimeout(animateTitle, typeSpeed);
+  } else if (direction === -1 && index >= 0) {
+    displayText = phrase.slice(0, index);
+    index--;
+    setTimeout(animateTitle, typeSpeed);
   } else {
-    updateTitle();
-    if (index > 0) {
-      index--;
-      setTimeout(mainLoop, typeSpeed);
-    } else {
-      isBlank = true;
-      setTimeout(mainLoop, pauseBlank);
-    }
+    // Пауза после окончания появления/стирания
+    setTimeout(() => {
+      if (direction === 1) {
+        direction = -1;
+        index = phrase.length - 1;
+      } else {
+        // Пауза с пустой вкладкой перед сменой фразы
+        displayText = "";
+        document.title = "";
+        setTimeout(() => {
+          direction = 1;
+          phrase = pickRandomPhrase();
+          index = 0;
+          animateTitle();
+        }, blankPause);
+        return;
+      }
+      animateTitle();
+    }, pauseSpeed);
   }
 }
 
-// Запуск мигания подчёркивания
-setInterval(blinkCursor, cursorSpeed);
-// Запуск основного алгоритма
-mainLoop();
+// Запуск анимации
+phrase = pickRandomPhrase();
+index = 0;
+displayText = "";
+blinkCursor();
+animateTitle();
 </script>
 </body>
 </html>

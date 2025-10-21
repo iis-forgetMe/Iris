@@ -27,9 +27,7 @@
             width: 100vw;
             max-width: 100vw;
             touch-action: none;
-            
-}
-
+        }
         @font-face {
             font-family: 'OMORI';
             src: url('OMORI_GAME2.ttf') format('truetype');
@@ -318,20 +316,6 @@
   
     // Устанавливаем выбранное видео
     videoBg.src = chosen;
-if (chosen === "A soul for a SOUL.mp4") {
-  // через 8 секунд начать плавное исчезновение баннера
-  setTimeout(() => {
-    const banner = document.getElementById("afk-banner");
-    banner.classList.add("fade-out");
-  }, 8000);
-
-  // и отключить гифку полностью
-  const gif = document.getElementById("afk-gif");
-  if (gif) gif.style.display = "none";
-}
-
-
-
 
     // Меняем фон/постер на нужный
     const blurBg = document.getElementById("blur-bg"); // или твой элемент с блюром
@@ -503,7 +487,7 @@ const phrases = [
   "silly :3",
   "Iris",
   ">:3c",
-  "Meosssy <3",
+  "Meosssy is my bestie <3",
   "Mr Kinako <3"
 ];
 let lastIndex = -1;
@@ -574,65 +558,5 @@ displayText = "";
 blinkCursor();
 animateTitle();
 </script>
-    <script src="main.js"></script>
-<script>
-  window.addEventListener('DOMContentLoaded', enableAfkFeature);
-</script>
-<style>
-#afk-banner {
-  opacity: 1;
-  transition: opacity 1.5s ease-out;
-}
-
-#afk-banner.fade-out {
-  opacity: 0;
-  pointer-events: none;
-}
-</style>
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  const banner = document.getElementById('afk-banner');
-  const gif = document.getElementById('afk-gif');
-  const video = document.getElementById('video-bg'); // фон видео
-  const idleDelay = 8000; // 8 секунд
-  let afkTimer;
-  let isSoulVideo = false;
-
-  // проверяем, выбранное видео — soul или нет
-  const src = video && video.src ? video.src.toLowerCase() : '';
-  if (src.includes('a%20soul%20for%20a%20soul.mp4') || src.includes('a soul for a soul.mp4'))
-    isSoulVideo = true;
-
-  // запуск отслеживания активности
-  function startAfkTimer() {
-    clearTimeout(afkTimer);
-    afkTimer = setTimeout(setAfkState, idleDelay);
-  }
-
-  // переход в AFK
-  function setAfkState() {
-    if (banner) banner.classList.add('fade-out');
-    if (!isSoulVideo && gif) gif.style.display = 'block';
-  }
-
-  // выход из AFK
-  function resetAfkState() {
-    clearTimeout(afkTimer);
-    if (banner) banner.classList.remove('fade-out');
-    if (!isSoulVideo && gif) gif.style.display = 'none';
-    startAfkTimer();
-  }
-
-  // события активности
-  ['mousemove', 'keydown', 'touchstart', 'scroll', 'click'].forEach(event => {
-    window.addEventListener(event, resetAfkState);
-  });
-
-  // стартуем только если баннер есть
-  if (banner) startAfkTimer();
-});
-</script>
-    
 </body>
 </html>

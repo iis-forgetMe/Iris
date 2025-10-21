@@ -344,6 +344,10 @@ function enableAfkFeature() {
     videoBg.play();
 
     document.body.classList.add('content-loaded');
+                 setTimeout(() => {
+  enableAfkFeature();
+}, 500);
+
 
     // ДОБАВЬ ЭТО — чтобы включить AFK при клике!
     setTimeout(() => {

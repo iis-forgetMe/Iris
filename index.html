@@ -306,27 +306,32 @@
             loadingOverlay.style.cursor = 'pointer';
         });
 
-              loadingOverlay.addEventListener('mousedown', function(e) {
-            if (!videoLoaded) return;
-            if (e.button !== 0) return;
+             loadingOverlay.addEventListener('mousedown', function(e) {
+    if (!videoLoaded) return;
+    if (e.button !== 0) return;
 
-            // Выбираем случайное видео
-            const videos = ["007n7.mp4", "A soul for a SOUL.mp4"];
-            const chosen = Math.random() < 0.5 ? videos[0] : videos[1];
+    // Случайный выбор видео
+    const videos = ["007n7.mp4", "A soul for a SOUL.mp4"];
+    const chosen = Math.random() < 0.5 ? videos[0] : videos[1];
+  
+    // Устанавливаем выбранное видео
+    videoBg.src = chosen;
 
-            // Устанавливаем выбранное видео
-            videoBg.src = chosen;
+    // Меняем фон/постер на нужный
+    const blurBg = document.getElementById("blur-bg"); // или твой элемент с блюром
+    if (blurBg) {
+        blurBg.style.backgroundImage = `url(${chosen})`;
+    }
 
-            // Включаем звук и громкость, как у оригинала
-            videoBg.muted = false;
-            videoBg.volume = 0.1;
+    // Звук и громкость
+    videoBg.muted = false;
+    videoBg.volume = 0.1;
 
-            // Запуск воспроизведения
-            videoBg.play();
+    // Запуск видео
+    videoBg.play();
 
-            // Добавляем класс, чтобы показать контент
-            document.body.classList.add('content-loaded');
-        });
+    document.body.classList.add('content-loaded');
+});
 
 
         loadingOverlay.addEventListener('touchend', function(e) {

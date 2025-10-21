@@ -578,6 +578,61 @@ animateTitle();
 <script>
   window.addEventListener('DOMContentLoaded', enableAfkFeature);
 </script>
+<style>
+#afk-banner {
+  opacity: 1;
+  transition: opacity 1.5s ease-out;
+}
 
+#afk-banner.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const banner = document.getElementById('afk-banner');
+  const gif = document.getElementById('afk-gif');
+  const video = document.getElementById('video-bg'); // фон видео
+  const idleDelay = 8000; // 8 секунд
+  let afkTimer;
+  let isSoulVideo = false;
+
+  // проверяем, выбранное видео — soul или нет
+  const src = video && video.src ? video.src.toLowerCase() : '';
+  if (src.includes('a%20soul%20for%20a%20soul.mp4') || src.includes('a soul for a soul.mp4'))
+    isSoulVideo = true;
+
+  // запуск отслеживания активности
+  function startAfkTimer() {
+    clearTimeout(afkTimer);
+    afkTimer = setTimeout(setAfkState, idleDelay);
+  }
+
+  // переход в AFK
+  function setAfkState() {
+    if (banner) banner.classList.add('fade-out');
+    if (!isSoulVideo && gif) gif.style.display = 'block';
+  }
+
+  // выход из AFK
+  function resetAfkState() {
+    clearTimeout(afkTimer);
+    if (banner) banner.classList.remove('fade-out');
+    if (!isSoulVideo && gif) gif.style.display = 'none';
+    startAfkTimer();
+  }
+
+  // события активности
+  ['mousemove', 'keydown', 'touchstart', 'scroll', 'click'].forEach(event => {
+    window.addEventListener(event, resetAfkState);
+  });
+
+  // стартуем только если баннер есть
+  if (banner) startAfkTimer();
+});
+</script>
+    
 </body>
 </html>

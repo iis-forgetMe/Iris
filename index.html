@@ -316,6 +316,15 @@
   
     // Устанавливаем выбранное видео
     videoBg.src = chosen;
+                 // Если выбрано видео A soul for a SOUL.mp4
+if (chosen === "A soul for a SOUL.mp4") {
+  document.getElementById("afk-banner").style.display = "none"; // скрыть баннер
+  document.getElementById("afk-gif").style.display = "none"; // скрыть гифку
+} else {
+  document.getElementById("afk-banner").style.display = ""; // вернуть баннер
+  document.getElementById("afk-gif").style.display = ""; // вернуть гифку
+}
+
 
     // Меняем фон/постер на нужный
     const blurBg = document.getElementById("blur-bg"); // или твой элемент с блюром

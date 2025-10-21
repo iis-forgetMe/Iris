@@ -318,7 +318,7 @@
     videoBg.src = chosen;
 
     // Меняем фон/постер на нужный
-    const blurBg = document.getElementById("blur-bg"); // или твой элемент с блюром
+    const blurBg = document.getElementById("blur-bg");
     if (blurBg) {
         blurBg.style.backgroundImage = `url(${chosen})`;
     }
@@ -331,7 +331,13 @@
     videoBg.play();
 
     document.body.classList.add('content-loaded');
+
+    // ДОБАВЬ ЭТО — чтобы включить AFK при клике!
+    setTimeout(() => {
+        enableAfkFeature();
+    }, 800);
 });
+
 
 
         loadingOverlay.addEventListener('touchend', function(e) {

@@ -196,65 +196,78 @@
         document.addEventListener('contextmenu', e => e.preventDefault());
 
         // ---- AFK-логика ----
-        let afkTimer = null;
-        let afkState = false;
-        let afkEnabled = false;
+       // ---- AFK-логика ----
+let afkTimer = null;
+let afkState = false;
+let afkEnabled = false;
 
-        function isMobile() {
-            return window.matchMedia("(max-width: 600px)").matches;
-        }
-        // ДОБАВЬ: Универсальная мобильная проверка
-        function isMobileDevice() {
-            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|Opera Mini|IEMobile|Mobile/i.test(navigator.userAgent);
-        }
+// Проверка мобильного устройства
+function isMobileDevice() {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|Opera Mini|IEMobile|Mobile/i.test(navigator.userAgent);
+}
 
-        function setAfkTimer() {
-            if (!afkEnabled) return;
-            clearTimeout(afkTimer);
-            removeAfk();
-            afkTimer = setTimeout(showAfk, 8000);
-        }
-        // МОДИФИЦИРОЙ showAfk с новой логикой:
-        function showAfk() {
-            if (!afkEnabled) return;
-            afkState = true;
-            if (isMobileDevice()) {
-                document.getElementById("afk-banner").classList.add('afk-hidden');
-                document.getElementById("afk-gif").classList.remove('afk-active');
-            } else {
-                document.getElementById("afk-gif").classList.add('afk-active');
-            }
-        }
-        function removeAfk() {
-            if (!afkEnabled) return;
-            afkState = false;
-            document.getElementById("afk-gif").classList.remove('afk-active');
-            document.getElementById("afk-banner").classList.remove('afk-hidden');
-        }
-        function enableAfkFeature() {
-            if (afkEnabled) return;
-            afkEnabled = true;
-            window.addEventListener('mousemove', setAfkTimer);
-            window.addEventListener('keydown', setAfkTimer);
-            window.addEventListener('touchstart', setAfkTimer);
-            window.addEventListener('mousedown', setAfkTimer);
-            document.addEventListener('visibilitychange', function() {
-                if (!afkEnabled) return;
-                if (document.hidden) {
-                    if (afkTimer) {
-                        setTimeout(() => {
-                            if (afkTimer) {
-                                showAfk();
-                            }
-                        }, 8000);
-                    }
-                } else {
-                    removeAfk();
-                    setAfkTimer();
-                }
-            });
-            setAfkTimer();
-        }
+// Установка таймера AFK
+function setAfkTimer() {
+  if (!afkEnabled) return;
+  clearTimeout(afkTimer);
+  removeAfk();
+  afkTimer = setTimeout(showAfk, 8000); // 8 секунд до перехода в AFK
+}
+
+// Включить AFK (при бездействии)
+function showAfk() {
+  if (!afkEnabled) return;
+  afkState = true;
+
+  const banner = document.getElementById("afk-banner");
+  const gif = document.getElementById("afk-gif");
+
+  if (isMobileDevice()) {
+    banner.classList.add("afk-hidden");
+    gif.classList.remove("afk-active");
+  } else {
+    banner.classList.add("afk-hidden");
+    gif.classList.add("afk-active");
+  }
+}
+
+// Выключить AFK (при активности)
+function removeAfk() {
+  if (!afkEnabled) return;
+  afkState = false;
+  const banner = document.getElementById("afk-banner");
+  const gif = document.getElementById("afk-gif");
+  gif.classList.remove("afk-active");
+  banner.classList.remove("afk-hidden");
+}
+
+// Запуск системы AFK
+function enableAfkFeature() {
+  if (afkEnabled) return;
+  afkEnabled = true;
+
+  window.addEventListener("mousemove", setAfkTimer);
+  window.addEventListener("keydown", setAfkTimer);
+  window.addEventListener("touchstart", setAfkTimer);
+  window.addEventListener("mousedown", setAfkTimer);
+
+  document.addEventListener("visibilitychange", function () {
+    if (!afkEnabled) return;
+    if (document.hidden) {
+      if (afkTimer) {
+        setTimeout(() => {
+          if (afkTimer) showAfk();
+        }, 8000);
+      }
+    } else {
+      removeAfk();
+      setAfkTimer();
+    }
+  });
+
+  setAfkTimer();
+}
+
         // --- Контроллер громкости и запуск видео --- //
         const volumeSlider = document.querySelector('.volume-controller .volume-slider');
         const videoBg = document.getElementById('video-bg');

@@ -27,7 +27,16 @@
             width: 100vw;
             max-width: 100vw;
             touch-action: none;
-        }
+            #afk-banner {
+  opacity: 1;
+  transition: opacity 1.5s ease-out;
+}
+
+#afk-banner.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
         @font-face {
             font-family: 'OMORI';
             src: url('OMORI_GAME2.ttf') format('truetype');
@@ -316,13 +325,18 @@
   
     // Устанавливаем выбранное видео
     videoBg.src = chosen;
-                 // Если выбрано видео A soul for a SOUL.mp4
 if (chosen === "A soul for a SOUL.mp4") {
-  // запускаем таймер скрытия баннера
+  // через 8 секунд начать плавное исчезновение баннера
   setTimeout(() => {
-    document.getElementById("afk-banner").style.display = "none";
-  }, 8000); // 10000 миллисекунд = 10 секунд
+    const banner = document.getElementById("afk-banner");
+    banner.classList.add("fade-out");
+  }, 8000);
+
+  // и отключить гифку полностью
+  const gif = document.getElementById("afk-gif");
+  if (gif) gif.style.display = "none";
 }
+
 
 
 

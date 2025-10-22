@@ -517,7 +517,7 @@ const phrases = [
   "silly :3",
   "Iris",
   ">:3c",
-  "Meosssy is my bestie <3",
+  "Meosssy <3",
   "Mr Kinako <3"
 ];
 let lastIndex = -1;
@@ -590,10 +590,17 @@ animateTitle();
 </script>
     <script>
 document.addEventListener('keydown', e => {
-  if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
+  if (
+    e.key === 'F12' ||
+    (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'i') ||
+    (e.ctrlKey && e.key.toLowerCase() === 'u')
+  ) {
     e.preventDefault();
+    e.stopPropagation();
+    return false;
   }
 });
+
 document.addEventListener('contextmenu', e => e.preventDefault());
 </script>
 </body>

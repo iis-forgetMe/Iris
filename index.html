@@ -319,53 +319,60 @@ function enableAfkFeature() {
             loadingOverlay.style.cursor = 'pointer';
         });
 
-             loadingOverlay.addEventListener('mousedown', function(e) {
+   function getNextVideo() {
+  const videos = ["007n7.mp4", "A soul for a SOUL.mp4"];
+  let lastVideo = localStorage.getItem('lastVideo');
+  let chosen;
+  if (!lastVideo || !videos.includes(lastVideo)) {
+    chosen = videos[Math.floor(Math.random() * videos.length)];
+  } else {
+    chosen = videos.find(v => v !== lastVideo);
+  }
+  localStorage.setItem('lastVideo', chosen);
+  return chosen;
+}
+
+loadingOverlay.addEventListener('mousedown', function(e) {
     if (!videoLoaded) return;
     if (e.button !== 0) return;
 
-    // Случайный выбор видео
-    const videos = ["007n7.mp4", "A soul for a SOUL.mp4"];
-    const chosen = Math.random() < 0.5 ? videos[0] : videos[1];
-  
-    // Устанавливаем выбранное видео
+    const chosen = getNextVideo();
     videoBg.src = chosen;
 
-    // Меняем фон/постер на нужный
     const blurBg = document.getElementById("blur-bg");
-    if (blurBg) {
-        blurBg.style.backgroundImage = `url(${chosen})`;
-    }
+    if (blurBg) blurBg.style.backgroundImage = `url(${chosen})`;
 
-    // Звук и громкость
     videoBg.muted = false;
     videoBg.volume = 0.1;
-
-    // Запуск видео
     videoBg.play();
 
     document.body.classList.add('content-loaded');
-                 setTimeout(() => {
-  enableAfkFeature();
-}, 500);
-
-
-    // ДОБАВЬ ЭТО — чтобы включить AFK при клике!
     setTimeout(() => {
         enableAfkFeature();
-    }, 800);
+    }, 500);
 });
 
+loadingOverlay.addEventListener('touchend', function(e) {
+    if (!videoLoaded) return;
 
+    const chosen = getNextVideo();
+    videoBg.src = chosen;
 
-        loadingOverlay.addEventListener('touchend', function(e) {
-            if (!videoLoaded) return;
-            document.body.classList.add('content-loaded');
-            setTimeout(() => {
-                loadingOverlay.style.display = 'none';
-                tryPlayVideoWithSound();
-                enableAfkFeature();
-            }, 500);
-        });
+    const blurBg = document.getElementById("blur-bg");
+    if (blurBg) blurBg.style.backgroundImage = `url(${chosen})`;
+
+    videoBg.muted = false;
+    videoBg.volume = 0.1;
+    videoBg.play();
+
+    document.body.classList.add('content-loaded');
+    setTimeout(() => {
+        loadingOverlay.style.display = 'none';
+        tryPlayVideoWithSound();
+        enableAfkFeature();
+    }, 500);
+});
+
 
         window.addEventListener('DOMContentLoaded', () => {
             loadingOverlay.style.display = '';

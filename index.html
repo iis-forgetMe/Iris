@@ -319,18 +319,20 @@ function enableAfkFeature() {
             loadingOverlay.style.cursor = 'pointer';
         });
 
-   function getNextVideo() {
+  function getNextVideo() {
   const videos = ["007n7.mp4", "A soul for a SOUL.mp4", "ULTRASONIC FAITH.mp4"];
   let lastVideo = localStorage.getItem('lastVideo');
   let chosen;
   if (!lastVideo || !videos.includes(lastVideo)) {
     chosen = videos[Math.floor(Math.random() * videos.length)];
   } else {
-    chosen = videos.find(v => v !== lastVideo);
+    let candidates = videos.filter(v => v !== lastVideo);
+    chosen = candidates[Math.floor(Math.random() * candidates.length)];
   }
   localStorage.setItem('lastVideo', chosen);
   return chosen;
 }
+
 
 loadingOverlay.addEventListener('mousedown', function(e) {
     if (!videoLoaded) return;
@@ -359,7 +361,8 @@ loadingOverlay.addEventListener('touchend', function(e) {
     videoBg.src = chosen;
 
     const blurBg = document.getElementById("blur-bg");
-    if (blurBg) blurBg.style.backgroundImage = `url(${chosen})`;
+    if (blurBg) blurBg.style.backgroundImage = "none";
+
 
     videoBg.muted = false;
     videoBg.volume = 0.1;

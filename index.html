@@ -9,7 +9,7 @@
     <!-- EMBED / OG / Twitter Card -->
     <meta property="og:title" content="Iris" />
     <meta property="og:description" content="Your love to me is fake </3" />
-    <meta property="og:image" content="https://github.com/iis-forgetMe/Iris/blob/main/Artful.jpg" />
+    <meta property="og:image" content="https://raw.githubusercontent.com/iis-forgetMe/Iris/main/Artful.jpg" />
     <meta property="og:url" content="https://iis-forgetMe.github.io/Iris/" />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
@@ -123,62 +123,6 @@
         .loading-title{font-size:37px;color:#fff;font-family:inherit;font-weight:bold;letter-spacing:2px;margin-bottom:24px;user-select:none;}
         body.content-loaded #loading-overlay{pointer-events:none;opacity:0;transition:opacity 0.5s;}
         body.content-loaded .loading-title{display:none;}
-        #overlay-bg {
-    position: fixed; left: 0; top: 0; width: 100vw; height: 100vh;
-    background: #000; z-index: 1000;
-    opacity: 0; pointer-events: none; transition: opacity .6s;
-}
-#overlay-bg.shown { opacity: 1; pointer-events: all; }
-#video-select {
-    position: fixed; left: 0; top: 0; width: 100vw; height: 100vh;
-    display: flex; flex-direction: row; gap: 32px;
-    justify-content: center; align-items: center; flex-wrap: wrap;
-    z-index: 1001; opacity: 0; transition: opacity .7s;
-}
-#video-select.shown { display: flex; opacity: 1; }
-.video-card {
-    cursor: pointer;
-    background: rgba(40,40,40,0.97);
-    border-radius: 24px;
-    box-shadow: 0 0 42px 4px #888bea, 0 6px 30px #000c;
-    display: flex; flex-direction: column; align-items: center;
-    width: 200px; height: 200px;
-    justify-content: center;
-    border: 3px solid #888bea;
-    transition: transform .22s, box-shadow .26s;
-    opacity: 0; transform: scale(0.9);
-    animation: fadeinCard .7s cubic-bezier(.33,1.13,.83,-0.13) forwards;
-}
-.video-card:nth-child(1) { animation-delay: .13s; }
-.video-card:nth-child(2) { animation-delay: .33s; }
-.video-card:nth-child(3) { animation-delay: .53s; }
-@keyframes fadeinCard {
-    to { opacity: 1; transform: scale(1); }
-}
-.video-card img {
-    width: 108px; height: 108px; object-fit: cover;
-    border-radius: 16px; margin-bottom: 16px;
-    border: 2px solid #bbb;
-    box-shadow: 0 0 14px #888bea99;
-}
-.video-card span { font-size: 20px; font-weight: bold; color: #cfcffd; text-align: center; }
-.video-card:hover {
-    transform: scale(1.07);
-    box-shadow: 0 0 60px 8px #bcbcff, 0 0 32px #ff0040cc;
-}
-.back-circle {
-    position: fixed; top: 68px; left: 38px; z-index: 1100;
-    width: 44px; height: 44px; background: none; border-radius: 999px;
-    display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 18px #0007;
-    cursor: pointer; transition: box-shadow .2s, transform .23s;
-}
-.back-circle:hover { box-shadow: 0 0 32px #ff0040a0; transform: scale(1.07);}
-@media (max-width:800px) {
-    .back-circle { top: 102px; left: 10px; width: 38px; height: 38px; }
-    #video-select { flex-direction: column; gap: 24px; }
-    .video-card { width: 80vw; height: 80vw; max-width: 310px; max-height: 310px; }
-    .video-card img { width: 60vw; height: 60vw; max-width: 90px; max-height: 90px;}
-}
     </style>
 </head>
 <body 
@@ -208,12 +152,6 @@
             </a>
         </span>
     </div>
-    <div class="back-circle" id="back-btn" title="Вернуться к выбору видео" style="display:none;">
-  <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
-    <circle cx="16" cy="16" r="15" fill="rgba(40,40,40,0.74)" stroke="#fff" stroke-width="2"/>
-    <path d="M19 10l-6 6 6 6" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-  </svg>
-</div>
     <!-- Контроллер громкости -->
     <div class="volume-controller">
         <div class="volume-icon" tabindex="0">
@@ -668,130 +606,5 @@ document.addEventListener('keydown', e => {
 
 document.addEventListener('contextmenu', e => e.preventDefault());
 </script>
-    <script>
-function showVideoCards() {
-    document.getElementById('overlay-bg').classList.add('shown');
-    setTimeout(() => document.getElementById('video-select').classList.add('shown'), 400);
-}
-function hideVideoCards() {
-    document.getElementById('video-select').classList.remove('shown');
-    setTimeout(() => document.getElementById('overlay-bg').classList.remove('shown'), 350);
-}
-function showBackBtn() { document.getElementById('back-btn').style.display = 'flex'; }
-function hideBackBtn() { document.getElementById('back-btn').style.display = 'none'; }
-
-// В Click to Enter — showVideoCards:
-loadingOverlay.addEventListener('mousedown', function(e) {
-    if (!videoLoaded) return;
-    if (e.button !== 0) return;
-    document.body.classList.add('content-loaded');
-    setTimeout(showVideoCards, 500);
-});
-loadingOverlay.addEventListener('touchend', function(e) {
-    if (!videoLoaded) return;
-    document.body.classList.add('content-loaded');
-    setTimeout(showVideoCards, 500);
-});
-
-// Выбор карточки
-[...document.querySelectorAll('.video-card')].forEach(card => {
-    card.addEventListener('click', ()=> {
-        hideVideoCards();
-        let video = document.getElementById('video-bg');
-        video.src = card.getAttribute('data-video');
-        video.style.display = 'block';
-        setTimeout(()=> video.play(), 120);
-    });
-});
-document.getElementById('video-bg').addEventListener('play', showBackBtn);
-document.getElementById('video-bg').addEventListener('ended', ()=> {
-    document.getElementById('video-bg').style.display = 'none';
-    hideBackBtn();
-    showVideoCards();
-});
-document.getElementById('back-btn').onclick = function() {
-    let video = document.getElementById('video-bg');
-    video.pause(); video.style.display = 'none'; hideBackBtn();
-    showVideoCards();
-}
-</script>
-    <script>function showVideoCards() {
-    document.getElementById('overlay-bg').classList.add('shown');
-    setTimeout(() => document.getElementById('video-select').classList.add('shown'), 400);
-}
-function hideVideoCards() {
-    document.getElementById('video-select').classList.remove('shown');
-    setTimeout(() => document.getElementById('overlay-bg').classList.remove('shown'), 350);
-}
-function showBackBtn() { document.getElementById('back-btn').style.display = 'flex'; }
-function hideBackBtn() { document.getElementById('back-btn').style.display = 'none'; }
-
-// только по клику — показать карточки:
-const loadingOverlay = document.getElementById('loading-overlay');
-let videoLoaded = false;
-
-loadingOverlay.addEventListener('mousedown', function(e) {
-    if (!videoLoaded) return;
-    if (e.button !== 0) return;
-    document.body.classList.add('content-loaded');
-    setTimeout(function() {
-        loadingOverlay.style.display = 'none'; // скрыть loader!
-        showVideoCards();
-    }, 400);
-});
-loadingOverlay.addEventListener('touchend', function(e) {
-    if (!videoLoaded) return;
-    document.body.classList.add('content-loaded');
-    setTimeout(function() {
-        loadingOverlay.style.display = 'none';
-        showVideoCards();
-    }, 400);
-});
-
-// выбрать видео = скрыть карточки, показать видео, back
-[...document.querySelectorAll('.video-card')].forEach(card => {
-    card.addEventListener('click', ()=> {
-        hideVideoCards();
-        let video = document.getElementById('video-bg');
-        video.src = card.getAttribute('data-video');
-        video.style.display = 'block';
-        setTimeout(()=> {
-            video.play();
-            showBackBtn(); // show back только когда реально началось проигрывать!
-        }, 200);
-    });
-});
-
-// конец видео — hide back, докрутить карточки
-document.getElementById('video-bg').addEventListener('ended', ()=> {
-    document.getElementById('video-bg').style.display = 'none';
-    hideBackBtn();
-    showVideoCards();
-});
-
-// вернуться назад с видео — hide video, show карточки
-document.getElementById('back-btn').onclick = function() {
-    let video = document.getElementById('video-bg');
-    video.pause();
-    video.style.display = 'none';
-    hideBackBtn();
-    showVideoCards();
-}
-    </script>
-    <div id="overlay-bg"></div>
-<div id="video-select" style="display:none;">
-    <div class="video-card" data-video="DWELLING.mp4">
-        <img src="dwelling-card.jpg" alt="Terenry card">
-        <span>Terenry card</span>
-    </div>
-    <div class="video-card" data-video="007n7.mp4">
-        <img src="007n7-card.jpg" alt="007n7 card">
-        <span>007n7 card</span>
-    </div>
-    <div class="video-card" data-video="ULTRASONIC FAITH.mp4">
-        <img src="grace-card.jpg" alt="Grace card">
-        <span>grace card</span>
-    </div>
-</div>
 </body>
 </html>

@@ -715,6 +715,69 @@ document.getElementById('back-btn').onclick = function() {
     showVideoCards();
 }
 </script>
+    <script>function showVideoCards() {
+    document.getElementById('overlay-bg').classList.add('shown');
+    setTimeout(() => document.getElementById('video-select').classList.add('shown'), 400);
+}
+function hideVideoCards() {
+    document.getElementById('video-select').classList.remove('shown');
+    setTimeout(() => document.getElementById('overlay-bg').classList.remove('shown'), 350);
+}
+function showBackBtn() { document.getElementById('back-btn').style.display = 'flex'; }
+function hideBackBtn() { document.getElementById('back-btn').style.display = 'none'; }
+
+// только по клику — показать карточки:
+const loadingOverlay = document.getElementById('loading-overlay');
+let videoLoaded = false;
+
+loadingOverlay.addEventListener('mousedown', function(e) {
+    if (!videoLoaded) return;
+    if (e.button !== 0) return;
+    document.body.classList.add('content-loaded');
+    setTimeout(function() {
+        loadingOverlay.style.display = 'none'; // скрыть loader!
+        showVideoCards();
+    }, 400);
+});
+loadingOverlay.addEventListener('touchend', function(e) {
+    if (!videoLoaded) return;
+    document.body.classList.add('content-loaded');
+    setTimeout(function() {
+        loadingOverlay.style.display = 'none';
+        showVideoCards();
+    }, 400);
+});
+
+// выбрать видео = скрыть карточки, показать видео, back
+[...document.querySelectorAll('.video-card')].forEach(card => {
+    card.addEventListener('click', ()=> {
+        hideVideoCards();
+        let video = document.getElementById('video-bg');
+        video.src = card.getAttribute('data-video');
+        video.style.display = 'block';
+        setTimeout(()=> {
+            video.play();
+            showBackBtn(); // show back только когда реально началось проигрывать!
+        }, 200);
+    });
+});
+
+// конец видео — hide back, докрутить карточки
+document.getElementById('video-bg').addEventListener('ended', ()=> {
+    document.getElementById('video-bg').style.display = 'none';
+    hideBackBtn();
+    showVideoCards();
+});
+
+// вернуться назад с видео — hide video, show карточки
+document.getElementById('back-btn').onclick = function() {
+    let video = document.getElementById('video-bg');
+    video.pause();
+    video.style.display = 'none';
+    hideBackBtn();
+    showVideoCards();
+}
+    </script>
     <div id="overlay-bg"></div>
 <div id="video-select" style="display:none;">
     <div class="video-card" data-video="DWELLING.mp4">

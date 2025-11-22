@@ -105,18 +105,19 @@
             position: fixed; 
             left: 24px; 
             top: 76px;
-            z-index: 20; 
+            z-index: 22; 
             display: none;
             align-items: center; 
+            justify-content: center;
             
             background: rgba(40, 40, 40, 0.74); 
             border-radius: 999px; 
             box-shadow: 0 3px 18px 0 #0007; 
-            padding: 6px;
-            width: 44px;
-            height: 44px; 
+            padding: 4px; 
+            width: 32px;
+            height: 32px; 
             cursor: pointer;
-            transition: opacity 0.4s, transform 0.2s;
+            transition: opacity 0.4s ease, transform 0.2s ease;
             opacity: 0;
         }
 
@@ -126,16 +127,16 @@
         }
 
         .back-button-controller:hover {
-            transform: scale(1.05);
+            transform: scale(1.1);
         }
 
         .back-icon {
-            width: 32px; 
-            height: 32px; 
+            width: 24px; 
+            height: 24px; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            transform: translateX(-2px); 
+            transform: translateX(1px); 
         }
 
         .top-box {
@@ -193,9 +194,13 @@
             .back-button-controller {
                 left: 10px;
                 top: 60px;
-                width: 38px;
-                height: 38px;
+                width: 32px;
+                height: 32px;
                 padding: 4px;
+            }
+            .back-icon {
+                width: 24px;
+                height: 24px;
             }
         }
         @media (max-width:600px) {
@@ -221,6 +226,18 @@
         .loading-title{font-size:37px;color:#fff;font-family:inherit;font-weight:bold;letter-spacing:2px;margin-bottom:24px;user-select:none;}
         body.content-loaded #loading-overlay{pointer-events:none;opacity:0;transition:opacity 0.5s;}
         body.content-loaded .loading-title{display:none;}
+
+        #darken-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0); 
+            z-index: 900; 
+            pointer-events: none; 
+            transition: background 0.5s ease-out;
+        }
+        #darken-overlay.active {
+            background: rgba(0, 0, 0, 1); 
+            pointer-events: auto;
+        }
     </style>
 </head>
 <body 
@@ -299,6 +316,8 @@
     </div>
 
     <img src="zetsy-lemonss-kuiper.gif" alt="AFK GIF" class="afk-gif" id="afk-gif">
+
+    <div id="darken-overlay"></div>
 
     <script>
         function checkRussianFont() {
@@ -401,6 +420,7 @@
         const cardScreen = document.getElementById('card-selection-screen');
         const mainInterface = document.getElementById('main-interface');
         const backButton = document.getElementById('back-button'); 
+        const darkenOverlay = document.getElementById('darken-overlay');
         let overlayClicked = false;
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -465,10 +485,15 @@
             videoBg.load();
             videoBg.classList.remove('video-active');
 
-            cardScreen.style.display = 'flex';
-            requestAnimationFrame(() => {
-                cardScreen.style.opacity = '1';
-            });
+            darkenOverlay.classList.add('active'); 
+
+            setTimeout(() => {
+                cardScreen.style.display = 'flex';
+                requestAnimationFrame(() => {
+                    cardScreen.style.opacity = '1';
+                });
+                darkenOverlay.classList.remove('active');
+            }, 500); 
             
             overlayClicked = false;
             afkEnabled = false;

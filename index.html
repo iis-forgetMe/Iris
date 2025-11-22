@@ -76,13 +76,12 @@
         }
         
         .card {
-            width: 240px; /* Ширина карточки */
-            height: 360px; /* Высота карточки */
+            width: 280px; /* Сделал квадратными */
+            height: 280px; /* Сделал квадратными */
             cursor: pointer;
             position: relative;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             border-radius: 10px;
-            /* Убираем фон и рамку контейнера, чтобы видно было только картинку */
             background: transparent;
         }
         
@@ -90,22 +89,27 @@
         .card img {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Или contain, если не хочешь обрезать */
+            object-fit: cover; 
             border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.8); /* Тень по умолчанию */
-            transition: box-shadow 0.4s;
+            box-shadow: 0 0 15px rgba(0,0,0,0.8);
+            
+            /* Настройка рамки */
+            box-sizing: border-box; /* Чтобы рамка не ломала размер */
+            border: 2px solid transparent; /* Прозрачная рамка по умолчанию */
+            
+            transition: box-shadow 0.4s, border-color 0.4s, transform 0.4s;
         }
 
         /* Эффект наведения на карточку */
         .card:hover {
-            transform: scale(1.1) translateY(-10px); /* Чуть вверх и больше */
+            transform: scale(1.1) translateY(-10px);
             z-index: 10;
         }
         
-        /* Белое свечение при наведении */
+        /* Белое свечение и рамка при наведении */
         .card:hover img {
             box-shadow: 0 0 35px rgba(255, 255, 255, 0.9), 0 0 10px rgba(255, 255, 255, 0.5);
-            border: 1px solid rgba(255,255,255,0.3);
+            border-color: #fff; /* Рамка становится белой */
         }
 
         /* --- СТАРЫЕ СТИЛИ --- */
@@ -158,7 +162,9 @@
             .volume-slider{width:65px;}
             .volume-percent{font-size:13px;min-width:22px;}
             #card-selection-screen { flex-direction: column; gap: 20px; }
-            .card { width: 60vw; height: auto; aspect-ratio: 2/3; }
+            
+            /* Квадратные карточки на телефоне */
+            .card { width: 60vw; height: auto; aspect-ratio: 1/1; } 
         }
         @media (max-width:600px) {
             header{max-width:97vw;padding:30px 4vw 18px 4vw;}

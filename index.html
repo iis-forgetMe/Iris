@@ -76,13 +76,23 @@
         }
         
         .card {
-            width: 280px; /* Сделал квадратными */
-            height: 280px; /* Сделал квадратными */
+            width: 280px; /* Квадратные */
+            height: 280px; /* Квадратные */
             cursor: pointer;
             position: relative;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border-radius: 10px;
-            background: transparent;
+            border-radius: 12px; /* Скруглённые углы у контейнера */
+            
+            /* Все важные эффекты теперь на самом контейнере */
+            background: #000; 
+            border: 2px solid transparent; /* Прозрачная рамка по умолчанию */
+            box-shadow: 0 0 15px rgba(0,0,0,0.8);
+            box-sizing: border-box;
+            overflow: hidden; /* Чтобы картинка не вылезала за скругление */
+            
+            /* Плавные переходы для всего сразу */
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+                        border-color 0.4s ease, 
+                        box-shadow 0.4s ease;
         }
         
         /* Сама картинка внутри карточки */
@@ -90,26 +100,19 @@
             width: 100%;
             height: 100%;
             object-fit: cover; 
+            display: block;
             border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.8);
-            
-            /* Настройка рамки */
-            box-sizing: border-box; /* Чтобы рамка не ломала размер */
-            border: 2px solid transparent; /* Прозрачная рамка по умолчанию */
-            
-            transition: box-shadow 0.4s, border-color 0.4s, transform 0.4s;
         }
 
-        /* Эффект наведения на карточку */
+        /* Эффект наведения (Hover) */
         .card:hover {
-            transform: scale(1.1) translateY(-10px);
+            transform: scale(1.1) translateY(-10px); /* Увеличение */
             z-index: 10;
-        }
-        
-        /* Белое свечение и рамка при наведении */
-        .card:hover img {
-            box-shadow: 0 0 35px rgba(255, 255, 255, 0.9), 0 0 10px rgba(255, 255, 255, 0.5);
-            border-color: #fff; /* Рамка становится белой */
+            
+            /* Свечение и белая рамка */
+            border-color: #fff;
+            box-shadow: 0 0 35px rgba(255, 255, 255, 0.8), 
+                        0 0 10px rgba(255, 255, 255, 0.4);
         }
 
         /* --- СТАРЫЕ СТИЛИ --- */

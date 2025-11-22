@@ -1,3 +1,3 @@
-# My first try
+# First github page
 
-Goodluck to me :3 
+Hm.. It's pretty good...

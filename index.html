@@ -6,7 +6,6 @@
     <link rel="icon" type="image/png" href="OwO.png">
     <title>Iris</title>
     
-    <!-- EMBED / OG / Twitter Card -->
     <meta property="og:title" content="Iris" />
     <meta property="og:description" content="Your love to me is fake </3" />
     <meta property="og:image" content="https://raw.githubusercontent.com/iis-forgetMe/Iris/main/Artful.jpg" />
@@ -130,11 +129,9 @@
     oncut="return false"
     onpaste="return false"
     oncontextmenu="return false">
-    <!-- Лоадер с прогрессом -->
     <div id="loading-overlay">
         <div class="loading-title">Loading: <span id="loading-percent">0%</span></div>
     </div>
-    <!-- Верхний бокс -->
     <div class="top-box">
         <span class="top-box-left">Links</span>
         <span class="top-box-right">
@@ -152,7 +149,6 @@
             </a>
         </span>
     </div>
-    <!-- Контроллер громкости -->
     <div class="volume-controller">
         <div class="volume-icon" tabindex="0">
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
@@ -163,7 +159,6 @@
         <input type="range" min="0" max="100" value="50" class="volume-slider">
         <span class="volume-percent" id="volume-percent">50%</span>
     </div>
-    <!-- Видео на бекграунде с автозапуском -->
     <video loop playsinline id="video-bg" preload="auto">
         <source src="007n7.mp4" />
     </video>
@@ -196,7 +191,6 @@
         document.addEventListener('contextmenu', e => e.preventDefault());
 
         // ---- AFK-логика ----
-       // ---- AFK-логика ----
 let afkTimer = null;
 let afkState = false;
 let afkEnabled = false;
@@ -401,7 +395,6 @@ loadingOverlay.addEventListener('touchend', function(e) {
       This person inspired me: diram1x
     </div>
 
-    <!-- BINARY FLYING TRAIL START -->
     <style>
     .binary-trail {
         position: fixed;
@@ -454,66 +447,7 @@ loadingOverlay.addEventListener('touchend', function(e) {
         return str;
     }
     </script>
-    <!-- BINARY FLYING TRAIL END -->
-    <!-- --- VIEW COUNTER START --- -->
-<script>
-function getFingerprint() {
-  let ua = navigator.userAgent;
-  let lang = navigator.language || navigator.userLanguage;
-  let scr = window.screen.width + "x" + window.screen.height;
-  if (localStorage.fingerprint) return localStorage.fingerprint;
-  let randomSeed = Math.random().toString(36).slice(2, 10)
-  let fp = btoa(ua + "_" + lang + "_" + scr + "_" + randomSeed);
-  localStorage.fingerprint = fp;
-  return fp;
-}
-function getViews() {
-  return localStorage.pageViews ? JSON.parse(localStorage.pageViews) : [];
-}
-function saveViews(views) {
-  localStorage.pageViews = JSON.stringify(views);
-}
-function incrementViewOnce() {
-  let fp = getFingerprint();
-  let views = getViews();
-  if (!views.includes(fp)) {
-    views.push(fp);
-    saveViews(views);
-  }
-  document.getElementById("views-value").textContent = views.length;
-}
-window.addEventListener("DOMContentLoaded", incrementViewOnce);
-</script>
-<!-- --- VIEW COUNTER END --- -->
     <script>
-function getFingerprint() {
-  let ua = navigator.userAgent;
-  let lang = navigator.language || navigator.userLanguage;
-  let scr = window.screen.width + "x" + window.screen.height;
-  if (localStorage.fingerprint) return localStorage.fingerprint;
-  let randomSeed = Math.random().toString(36).slice(2, 10)
-  let fp = btoa(ua + "_" + lang + "_" + scr + "_" + randomSeed);
-  localStorage.fingerprint = fp;
-  return fp;ММ
-}
-function getViews() {
-  return localStorage.pageViews ? JSON.parse(localStorage.pageViews) : [];
-}
-function saveViews(views) {
-  localStorage.pageViews = JSON.stringify(views);
-}
-function incrementViewOnce() {
-  let fp = getFingerprint();
-  let views = getViews();
-  if (!views.includes(fp)) {
-    views.push(fp);
-    saveViews(views);
-  }
-  document.getElementById("views-value").textContent = views.length;
-}
-window.addEventListener("DOMContentLoaded", incrementViewOnce);
-</script>
-<script>
 const phrases = [
   "iis_forgetMe",
   "furry",

@@ -71,27 +71,24 @@
             background: #000; z-index: 500;
             display: none; /* Скрыто до клика Enter */
             flex-direction: row; justify-content: center; align-items: center;
-            gap: 50px; /* Расстояние между карточками */
+            gap: 50px; 
             opacity: 0; transition: opacity 0.8s ease;
         }
         
         .card {
-            width: 280px; /* Квадратные */
-            height: 280px; /* Квадратные */
+            width: 280px; 
+            height: 280px; 
             cursor: pointer;
             position: relative;
-            border-radius: 12px; /* Скруглённые углы у контейнера */
+            border-radius: 12px; 
             
-            /* Все важные эффекты теперь на самом контейнере */
+        
             background: #000; 
-            border: 2px solid transparent; /* Прозрачная рамка по умолчанию */
-            box-shadow: 0 0 15px rgba(0,0,0,0.8);
+            border: none;
+            box-shadow: none; 
             box-sizing: border-box;
-            overflow: hidden; /* Чтобы картинка не вылезала за скругление */
-            
-            transition: transform 0.4s ease, 
-                        border-color 0.4s ease, 
-                        box-shadow 0.4s ease;
+            overflow: hidden; 
+            transition: transform 0.4s ease;
         }
         
         .card img {
@@ -106,9 +103,6 @@
             transform: scale(1.1) translateY(-10px); /* Увеличение */
             z-index: 10;
             
-            border-color: #fff;
-            box-shadow: 0 0 35px rgba(255, 255, 255, 0.8), 
-                        0 0 10px rgba(255, 255, 255, 0.4);
         }
 
         .top-box {
@@ -372,23 +366,24 @@
             loadingOverlay.style.cursor = 'pointer';
         });
 
-        // 2. Клик по Overlay -> Показать карточки
         function revealCards() {
             if (overlayClicked) return;
             overlayClicked = true;
             
-            // Прячем оверлей
             document.body.classList.add('content-loaded');
+            
             setTimeout(() => {
                 loadingOverlay.style.display = 'none';
                 
-                // Показываем экран с карточками
                 cardScreen.style.display = 'flex';
-                // Небольшая задержка для плавного появления opacity
+                
                 requestAnimationFrame(() => {
-                    cardScreen.style.opacity = '1';
+                    requestAnimationFrame(() => {
+                        cardScreen.style.opacity = '1';
+                    });
                 });
-            }, 500);
+                
+            }, 600); 
         }
 
         loadingOverlay.addEventListener('mousedown', e => { if(e.button===0) revealCards(); });

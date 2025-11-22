@@ -9,12 +9,6 @@
     <meta property="og:title" content="Iris" />
     <meta property="og:description" content="Your love to me is fake </3" />
     <meta property="og:image" content="https://raw.githubusercontent.com/iis-forgetMe/Iris/main/Artful.jpg" />
-    <meta property="og:url" content="https://iis-forgetMe.github.io/Iris/" />
-    <meta property="og:type" content="website" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Iris" />
-    <meta name="twitter:description" content="I don't know" />
-    <meta name="twitter:image" content="https://raw.githubusercontent.com/iis-forgetMe/Iris/main/Willowails.jpg" />
     
     <style>
         html, body {
@@ -45,10 +39,76 @@
             user-select: none; -webkit-user-select: none; -ms-user-select: none;
         }
         body.comic-sans { font-family: "Comic Sans MS", "Comic Sans", cursive !important; font-size: 20px !important;}
+        
+        /* ВИДЕО ФОН */
         #video-bg {
             position: fixed; right: 0; bottom: 0; min-width: 100vw; min-height: 100vh; width: 100vw; height: 100vh;
             object-fit: cover; object-position: center center; z-index: -1; background: #000; pointer-events: none; filter: brightness(0.5); left: 0; top: 0;
+            transition: opacity 1s; opacity: 0; /* Скрыто по умолчанию */
         }
+        #video-bg.video-active { opacity: 1; }
+
+        /* --- ГЛАВНЫЙ ИНТЕРФЕЙС (Скрыт до выбора карточки) --- */
+        #main-interface {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1.5s ease-in-out;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        #main-interface.active-interface {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* --- ВЫБОР КАРТОЧЕК --- */
+        #card-selection-screen {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #000; z-index: 500;
+            display: none; /* Скрыто до клика Enter */
+            flex-direction: row; justify-content: center; align-items: center;
+            gap: 50px; /* Расстояние между карточками */
+            opacity: 0; transition: opacity 0.8s ease;
+        }
+        
+        .card {
+            width: 240px; /* Ширина карточки */
+            height: 360px; /* Высота карточки */
+            cursor: pointer;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-radius: 10px;
+            /* Убираем фон и рамку контейнера, чтобы видно было только картинку */
+            background: transparent;
+        }
+        
+        /* Сама картинка внутри карточки */
+        .card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Или contain, если не хочешь обрезать */
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.8); /* Тень по умолчанию */
+            transition: box-shadow 0.4s;
+        }
+
+        /* Эффект наведения на карточку */
+        .card:hover {
+            transform: scale(1.1) translateY(-10px); /* Чуть вверх и больше */
+            z-index: 10;
+        }
+        
+        /* Белое свечение при наведении */
+        .card:hover img {
+            box-shadow: 0 0 35px rgba(255, 255, 255, 0.9), 0 0 10px rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        /* --- СТАРЫЕ СТИЛИ --- */
         .top-box {
             position: fixed; left: 28px; right: 28px; top: 20px; z-index: 22; min-height: 44px; display: flex; align-items: center;
             justify-content: space-between; background: rgba(40, 40, 40, 0.74); border-radius: 999px; box-shadow: 0 3px 18px 0 #0007;
@@ -97,6 +157,8 @@
             .volume-controller:hover,.volume-controller:focus-within{width:134px;}
             .volume-slider{width:65px;}
             .volume-percent{font-size:13px;min-width:22px;}
+            #card-selection-screen { flex-direction: column; gap: 20px; }
+            .card { width: 60vw; height: auto; aspect-ratio: 2/3; }
         }
         @media (max-width:600px) {
             header{max-width:97vw;padding:30px 4vw 18px 4vw;}
@@ -129,47 +191,68 @@
     oncut="return false"
     onpaste="return false"
     oncontextmenu="return false">
+
     <div id="loading-overlay">
-        <div class="loading-title">Loading: <span id="loading-percent">0%</span></div>
+        <div class="loading-title">Loading...</div>
     </div>
-    <div class="top-box">
-        <span class="top-box-left">Links</span>
-        <span class="top-box-right">
-            <a href="https://discord.com/users/1236359938721185902" target="_blank" class="icon-link" title="Discord">
-            <img src="https://cdn-icons-png.flaticon.com/512/5968/5968756.png" alt="Discord" class="social-icon" />
-        </a>
-        <a href="https://t.me/iis_forgetMe" target="_blank" class="icon-link" title="Telegram">
-            <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png" alt="Telegram" class="social-icon" />
-        </a>
-        <a href="https://open.spotify.com/user/312jjwkfbshd5mjnzmyyc363k5ni" target="_blank" class="icon-link" title="Spotify">
-            <img src="https://cdn-icons-png.flaticon.com/512/174/174872.png" alt="Spotify" class="social-icon" />
-        </a>
-        <a href="https://www.roblox.com/users/703442568/profile" target="_blank" class="icon-link" title="Roblox">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Roblox_Logo.svg/512px-Roblox_Logo.svg.png" alt="Roblox" class="social-icon" />
-            </a>
-        </span>
-    </div>
-    <div class="volume-controller">
-        <div class="volume-icon" tabindex="0">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-                <path d="M4 9v6h4l5 5V4L8 9H4z" fill="#fff"/>
-                <path d="M16 7.82A6 6 0 0 1 16 16.18" stroke="#fff" stroke-width="2" fill="none"/>
-            </svg>
+
+    <div id="card-selection-screen">
+        <div class="card" data-video="DWELLING.mp4">
+            <img src="Terenry.png" alt="Terenry">
         </div>
-        <input type="range" min="0" max="100" value="50" class="volume-slider">
-        <span class="volume-percent" id="volume-percent">50%</span>
+        
+        <div class="card" data-video="ULTRASONIC FAITH.mp4">
+            <img src="grace.jpg" alt="grace">
+        </div>
+        
+        <div class="card" data-video="007n7.mp4">
+            <img src="007n7.jpg" alt="007n7">
+        </div>
     </div>
+
     <video loop playsinline id="video-bg" preload="auto">
-        <source src="007n7.mp4" />
-    </video>
-    <header id="afk-banner" style="position: relative;">
-    <h1>Yo! It's Iris!</h1>
-    <h2>About me</h2>
-    <p>Name: Iris</p>
-    <p>Age: 15</p>
-    <p>Just a silly guy who likes furries. Also I can adapt literally to everything! Bisexual and yep, taken by Mr Kinako :3</p>
-    <p style="color: #ff2222;">お前が変わったからと言って、俺を超えたとは限らない</p>
-</header>
+        </video>
+
+    <div id="main-interface">
+        <div class="top-box">
+            <span class="top-box-left">Links</span>
+            <span class="top-box-right">
+                <a href="https://discord.com/users/1236359938721185902" target="_blank" class="icon-link" title="Discord">
+                <img src="https://cdn-icons-png.flaticon.com/512/5968/5968756.png" alt="Discord" class="social-icon" />
+            </a>
+            <a href="https://t.me/iis_forgetMe" target="_blank" class="icon-link" title="Telegram">
+                <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png" alt="Telegram" class="social-icon" />
+            </a>
+            <a href="https://open.spotify.com/user/312jjwkfbshd5mjnzmyyc363k5ni" target="_blank" class="icon-link" title="Spotify">
+                <img src="https://cdn-icons-png.flaticon.com/512/174/174872.png" alt="Spotify" class="social-icon" />
+            </a>
+            <a href="https://www.roblox.com/users/703442568/profile" target="_blank" class="icon-link" title="Roblox">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Roblox_Logo.svg/512px-Roblox_Logo.svg.png" alt="Roblox" class="social-icon" />
+                </a>
+            </span>
+        </div>
+
+        <div class="volume-controller">
+            <div class="volume-icon" tabindex="0">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+                    <path d="M4 9v6h4l5 5V4L8 9H4z" fill="#fff"/>
+                    <path d="M16 7.82A6 6 0 0 1 16 16.18" stroke="#fff" stroke-width="2" fill="none"/>
+                </svg>
+            </div>
+            <input type="range" min="0" max="100" value="50" class="volume-slider">
+            <span class="volume-percent" id="volume-percent">50%</span>
+        </div>
+
+        <header id="afk-banner" style="position: relative;">
+            <h1>Yo! It's Iris!</h1>
+            <h2>About me</h2>
+            <p>Name: Iris</p>
+            <p>Age: 15</p>
+            <p>Just a silly guy who likes furries. Also I can adapt literally to everything! Bisexual and yep, taken by Mr Kinako :3</p>
+            <p style="color: #ff2222;">お前が変わったからと言って、俺を超えたとは限らない</p>
+        </header>
+    </div>
+
     <img src="zetsy-lemonss-kuiper.gif" alt="AFK GIF" class="afk-gif" id="afk-gif">
 
     <script>
@@ -191,78 +274,60 @@
         document.addEventListener('contextmenu', e => e.preventDefault());
 
         // ---- AFK-логика ----
-let afkTimer = null;
-let afkState = false;
-let afkEnabled = false;
+        let afkTimer = null;
+        let afkState = false;
+        let afkEnabled = false;
 
-// Проверка мобильного устройства
-function isMobileDevice() {
-  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|Opera Mini|IEMobile|Mobile/i.test(navigator.userAgent);
-}
+        function isMobileDevice() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|Opera Mini|IEMobile|Mobile/i.test(navigator.userAgent);
+        }
+        function setAfkTimer() {
+            if (!afkEnabled) return;
+            clearTimeout(afkTimer);
+            removeAfk();
+            afkTimer = setTimeout(showAfk, 8000);
+        }
+        function showAfk() {
+            if (!afkEnabled) return;
+            afkState = true;
+            const banner = document.getElementById("afk-banner");
+            const gif = document.getElementById("afk-gif");
+            if (isMobileDevice()) {
+                banner.classList.add("afk-hidden");
+                gif.classList.remove("afk-active");
+            } else {
+                banner.classList.add("afk-hidden");
+                gif.classList.add("afk-active");
+            }
+        }
+        function removeAfk() {
+            if (!afkEnabled) return;
+            afkState = false;
+            const banner = document.getElementById("afk-banner");
+            const gif = document.getElementById("afk-gif");
+            gif.classList.remove("afk-active");
+            banner.classList.remove("afk-hidden");
+        }
+        function enableAfkFeature() {
+            if (afkEnabled) return;
+            afkEnabled = true;
+            window.addEventListener("mousemove", setAfkTimer);
+            window.addEventListener("keydown", setAfkTimer);
+            window.addEventListener("touchstart", setAfkTimer);
+            window.addEventListener("mousedown", setAfkTimer);
+            document.addEventListener("visibilitychange", function () {
+                if (!afkEnabled) return;
+                if (document.hidden) {
+                    if (afkTimer) setTimeout(() => { if (afkTimer) showAfk(); }, 8000);
+                } else {
+                    removeAfk();
+                    setAfkTimer();
+                }
+            });
+            setAfkTimer();
+        }
 
-// Установка таймера AFK
-function setAfkTimer() {
-  if (!afkEnabled) return;
-  clearTimeout(afkTimer);
-  removeAfk();
-  afkTimer = setTimeout(showAfk, 8000); // 8 секунд до перехода в AFK
-}
-
-// Включить AFK (при бездействии)
-function showAfk() {
-  if (!afkEnabled) return;
-  afkState = true;
-
-  const banner = document.getElementById("afk-banner");
-  const gif = document.getElementById("afk-gif");
-
-  if (isMobileDevice()) {
-    banner.classList.add("afk-hidden");
-    gif.classList.remove("afk-active");
-  } else {
-    banner.classList.add("afk-hidden");
-    gif.classList.add("afk-active");
-  }
-}
-
-// Выключить AFK (при активности)
-function removeAfk() {
-  if (!afkEnabled) return;
-  afkState = false;
-  const banner = document.getElementById("afk-banner");
-  const gif = document.getElementById("afk-gif");
-  gif.classList.remove("afk-active");
-  banner.classList.remove("afk-hidden");
-}
-
-// Запуск системы AFK
-function enableAfkFeature() {
-  if (afkEnabled) return;
-  afkEnabled = true;
-
-  window.addEventListener("mousemove", setAfkTimer);
-  window.addEventListener("keydown", setAfkTimer);
-  window.addEventListener("touchstart", setAfkTimer);
-  window.addEventListener("mousedown", setAfkTimer);
-
-  document.addEventListener("visibilitychange", function () {
-    if (!afkEnabled) return;
-    if (document.hidden) {
-      if (afkTimer) {
-        setTimeout(() => {
-          if (afkTimer) showAfk();
-        }, 8000);
-      }
-    } else {
-      removeAfk();
-      setAfkTimer();
-    }
-  });
-
-  setAfkTimer();
-}
-
-        // --- Контроллер громкости и запуск видео --- //
+        // --- Громкость ---
         const volumeSlider = document.querySelector('.volume-controller .volume-slider');
         const videoBg = document.getElementById('video-bg');
         const volumePercent = document.getElementById('volume-percent');
@@ -282,132 +347,89 @@ function enableAfkFeature() {
             videoBg.muted = (+this.value === 0);
             updateVolumePercent();
         });
-
         document.querySelector('.volume-controller .volume-icon').addEventListener('click', function () {
             videoBg.muted = !videoBg.muted;
             updateVolumePercent();
         });
-
         videoBg.addEventListener('volumechange', updateVolumePercent);
 
-        // ---- ЛОАДЕР: прогресс, click/tap по overlay ----
+
+        // ---- НОВАЯ ЛОГИКА ЗАГРУЗКИ И КАРТОЧЕК ----
         const loadingOverlay = document.getElementById('loading-overlay');
         const loadingTitle = document.querySelector('.loading-title');
-        const loadingPercent = document.getElementById('loading-percent');
-        let videoLoaded = false;
+        const cardScreen = document.getElementById('card-selection-screen');
+        const mainInterface = document.getElementById('main-interface');
+        let overlayClicked = false;
 
-        function updateLoadingProgress() {
-            let percent = 0;
-            if (videoBg.buffered.length) {
-                percent = Math.round((videoBg.buffered.end(0) / Math.max(videoBg.duration, 1)) * 95);
-            }
-            loadingPercent.textContent = percent + '%';
-        }
-
-        videoBg.addEventListener('progress', updateLoadingProgress);
-        videoBg.addEventListener('loadeddata', updateLoadingProgress);
-
-        videoBg.addEventListener('canplaythrough', () => {
-            videoLoaded = true;
+        // 1. Загрузка страницы
+        window.addEventListener('DOMContentLoaded', () => {
+            loadingOverlay.style.display = '';
             loadingTitle.textContent = 'Click to enter...';
             loadingOverlay.style.cursor = 'pointer';
         });
 
-  function getNextVideo() {
-  const videos = ["007n7.mp4", "DWELLING.mp4", "ULTRASONIC FAITH.mp4"];
-  let lastVideo = localStorage.getItem('lastVideo');
-  let chosen;
-  if (!lastVideo || !videos.includes(lastVideo)) {
-    chosen = videos[Math.floor(Math.random() * videos.length)];
-  } else {
-    let candidates = videos.filter(v => v !== lastVideo);
-    chosen = candidates[Math.floor(Math.random() * candidates.length)];
-  }
-  localStorage.setItem('lastVideo', chosen);
-  return chosen;
-}
+        // 2. Клик по Overlay -> Показать карточки
+        function revealCards() {
+            if (overlayClicked) return;
+            overlayClicked = true;
+            
+            // Прячем оверлей
+            document.body.classList.add('content-loaded');
+            setTimeout(() => {
+                loadingOverlay.style.display = 'none';
+                
+                // Показываем экран с карточками
+                cardScreen.style.display = 'flex';
+                // Небольшая задержка для плавного появления opacity
+                requestAnimationFrame(() => {
+                    cardScreen.style.opacity = '1';
+                });
+            }, 500);
+        }
 
+        loadingOverlay.addEventListener('mousedown', e => { if(e.button===0) revealCards(); });
+        loadingOverlay.addEventListener('touchend', revealCards);
 
-loadingOverlay.addEventListener('mousedown', function(e) {
-    if (!videoLoaded) return;
-    if (e.button !== 0) return;
+        // 3. Клик по карточке -> Запуск видео и интерфейса
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
+            card.addEventListener('click', function() {
+                const videoSrc = this.getAttribute('data-video');
+                
+                // Прячем карточки
+                cardScreen.style.opacity = '0';
+                setTimeout(() => {
+                    cardScreen.style.display = 'none';
+                    
+                    // Ставим и запускаем видео
+                    videoBg.src = videoSrc;
+                    videoBg.muted = false;
+                    videoBg.volume = 0.1;
+                    videoBg.play();
+                    videoBg.classList.add('video-active'); // Показываем видео
 
-    const chosen = getNextVideo();
-    videoBg.src = chosen;
+                    // Показываем основной интерфейс
+                    mainInterface.classList.add('active-interface');
+                    
+                    // Включаем AFK
+                    enableAfkFeature();
 
-    const blurBg = document.getElementById("blur-bg");
-    if (blurBg) blurBg.style.backgroundImage = `url(${chosen})`;
-
-    videoBg.muted = false;
-    videoBg.volume = 0.1;
-    videoBg.play();
-
-    document.body.classList.add('content-loaded');
-    setTimeout(() => {
-        enableAfkFeature();
-    }, 500);
-});
-
-loadingOverlay.addEventListener('touchend', function(e) {
-    if (!videoLoaded) return;
-
-    const chosen = getNextVideo();
-    videoBg.src = chosen;
-
-    const blurBg = document.getElementById("blur-bg");
-    if (blurBg) blurBg.style.backgroundImage = "none";
-
-
-    videoBg.muted = false;
-    videoBg.volume = 0.1;
-    videoBg.play();
-
-    document.body.classList.add('content-loaded');
-    setTimeout(() => {
-        loadingOverlay.style.display = 'none';
-        tryPlayVideoWithSound();
-        enableAfkFeature();
-    }, 500);
-});
-
-
-        window.addEventListener('DOMContentLoaded', () => {
-            loadingOverlay.style.display = '';
-            document.body.classList.remove('content-loaded');
-            loadingTitle.textContent = 'Loading: ';
-            if (loadingPercent) {
-                loadingTitle.appendChild(loadingPercent);
-                loadingPercent.textContent = '0%';
-            }
-            updateLoadingProgress();
+                }, 800); // Время исчезновения карточек
+            });
         });
 
-        // Запуск видео только по overlay
-        let videoTriedToPlay = false;
-        function tryPlayVideoWithSound() {
-            if (!videoTriedToPlay) {
-                videoTriedToPlay = true;
-                videoBg.play().catch(()=>{});
-            }
-        }
     </script>
+    
     <div style="position: fixed; right: 22px; bottom: 16px; z-index: 40; color: #f5f5f5; opacity: 0.38; font-size: 17px; font-family: inherit; pointer-events: none; background: none; text-shadow: 0 3px 16px #000a; white-space: nowrap; user-select: none;">
       This person inspired me: diram1x
     </div>
 
     <style>
     .binary-trail {
-        position: fixed;
-        pointer-events: none;
-        font-family: 'Consolas', 'Courier New', monospace;
-        font-size: 22px;
-        color: rgb(255,20,20);
-        opacity: 0.92;
-        user-select: none;
+        position: fixed; pointer-events: none; font-family: 'Consolas', 'Courier New', monospace;
+        font-size: 22px; color: rgb(255,20,20); opacity: 0.92; user-select: none;
         transition: opacity 0.7s, transform 1s cubic-bezier(.33,1.13,.83,-0.13);
-        z-index: 9999;
-        white-space: nowrap;
-        text-shadow: 0 0 8px #f008, 0 0 18px #400a;
+        z-index: 9999; white-space: nowrap; text-shadow: 0 0 8px #f008, 0 0 18px #400a;
         will-change: opacity, transform;
     }
     </style>
@@ -421,7 +443,6 @@ loadingOverlay.addEventListener('touchend', function(e) {
         span.textContent = randomBinary(1);
         span.style.left = (x - 4 + Math.random()*3) + 'px';
         span.style.top = (y - 8 + Math.random()*3) + 'px';
-        span.style.transform = 'translate(0px,0px)';
         document.body.appendChild(span);
         let life = 0;
         const changeInterval = setInterval(() => {
@@ -435,109 +456,62 @@ loadingOverlay.addEventListener('touchend', function(e) {
             span.style.transform = `translate(${dx}px, ${dy}px)`;
             span.style.opacity = '0';
         }, 50);
-        setTimeout(() => {
-            if (span && span.parentNode)
-                span.parentNode.removeChild(span);
-        }, 900);
+        setTimeout(() => { if (span.parentNode) span.parentNode.removeChild(span); }, 900);
     }
     function randomBinary(len) {
         let str = '';
-        for (let i = 0; i < len; ++i)
-            str += Math.random() > 0.5 ? '1' : '0';
+        for (let i = 0; i < len; ++i) str += Math.random() > 0.5 ? '1' : '0';
         return str;
     }
     </script>
-    <script>
-const phrases = [
-  "iis_forgetMe",
-  "furry",
-  "silly :3",
-  "Iris",
-  ">:3c",
-  "Meosssy <3",
-  "Mr Kinako <3"
-];
-let lastIndex = -1;
-let phrase = "";
-let index = 0;
-let direction = 1;
-let displayText = "";
-let cursorVisible = true;
 
-const typeSpeed = 450;   // скорость "печати" букв
-const pauseSpeed = 950;  // пауза после написания/стирания
-const blankPause = 600;  // пауза с полностью пустым заголовком
-const blinkSpeed = 500;  // скорость мигания "_"
+<script>
+const phrases = [
+  "iis_forgetMe", "furry", "silly :3", "Iris", ">:3c", "Meosssy <3", "Mr Kinako <3"
+];
+let lastIndex = -1, phrase = "", index = 0, direction = 1, displayText = "", cursorVisible = true;
+const typeSpeed = 450, pauseSpeed = 950, blankPause = 600, blinkSpeed = 500;
 
 function pickRandomPhrase() {
   let newIndex;
-  do {
-    newIndex = Math.floor(Math.random() * phrases.length);
-  } while (newIndex === lastIndex && phrases.length > 1);
+  do { newIndex = Math.floor(Math.random() * phrases.length); } while (newIndex === lastIndex && phrases.length > 1);
   lastIndex = newIndex;
   return phrases[newIndex];
 }
-
-// Функция мигания курсора
 function blinkCursor() {
   document.title = displayText + (cursorVisible ? "_" : "");
   cursorVisible = !cursorVisible;
   setTimeout(blinkCursor, blinkSpeed);
 }
-
-// Функция анимации появления/исчезновения текста
 function animateTitle() {
   if (direction === 1 && index <= phrase.length) {
-    displayText = phrase.slice(0, index);
-    index++;
+    displayText = phrase.slice(0, index++);
     setTimeout(animateTitle, typeSpeed);
   } else if (direction === -1 && index >= 0) {
-    displayText = phrase.slice(0, index);
-    index--;
+    displayText = phrase.slice(0, index--);
     setTimeout(animateTitle, typeSpeed);
   } else {
-    // Пауза после окончания появления/стирания
     setTimeout(() => {
-      if (direction === 1) {
-        direction = -1;
-        index = phrase.length - 1;
-      } else {
-        // Пауза с пустой вкладкой перед сменой фразы
-        displayText = "";
-        document.title = "";
-        setTimeout(() => {
-          direction = 1;
-          phrase = pickRandomPhrase();
-          index = 0;
-          animateTitle();
-        }, blankPause);
+      if (direction === 1) { direction = -1; index = phrase.length - 1; } 
+      else {
+        displayText = ""; document.title = "";
+        setTimeout(() => { direction = 1; phrase = pickRandomPhrase(); index = 0; animateTitle(); }, blankPause);
         return;
       }
       animateTitle();
     }, pauseSpeed);
   }
 }
-
-// Запуск анимации
 phrase = pickRandomPhrase();
-index = 0;
-displayText = "";
 blinkCursor();
 animateTitle();
 </script>
     <script>
 document.addEventListener('keydown', e => {
-  if (
-    e.key === 'F12' ||
-    (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'i') ||
-    (e.ctrlKey && e.key.toLowerCase() === 'u')
-  ) {
-    e.preventDefault();
-    e.stopPropagation();
-    return false;
+  if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'i') || (e.ctrlKey && e.key.toLowerCase() === 'u')) {
+    e.preventDefault(); e.stopPropagation(); return false;
   }
 });
-
 document.addEventListener('contextmenu', e => e.preventDefault());
 </script>
 </body>

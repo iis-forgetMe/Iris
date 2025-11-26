@@ -106,7 +106,7 @@
             left: 24px; 
             top: 76px;
             z-index: 22; 
-            display: none;
+            display: flex;
             align-items: center; 
             justify-content: center;
             
@@ -117,13 +117,14 @@
             width: 32px;
             height: 32px; 
             cursor: pointer;
-            transition: opacity 1.5s ease, transform 0.2s ease; 
+            transition: opacity 1.5s ease-in-out, transform 0.2s ease;
             opacity: 0;
+            pointer-events: none;
         }
 
         .back-button-controller.visible {
             opacity: 1;
-            display: flex;
+            pointer-events: auto;
         }
 
         .back-button-controller:hover {
@@ -477,7 +478,11 @@
         });
 
         function goBackToSelection() {
-            mainInterface.classList.remove('active-interface'); 
+            afkEnabled = false;
+            clearTimeout(afkTimer);
+            removeAfk();
+
+            mainInterface.classList.remove('active-interface');
             backButton.classList.remove('visible');
             
             videoBg.pause();
@@ -496,8 +501,6 @@
             }, 500); 
             
             overlayClicked = false;
-            afkEnabled = false;
-            clearTimeout(afkTimer);
         }
 
         backButton.addEventListener('click', goBackToSelection);

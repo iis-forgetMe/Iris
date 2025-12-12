@@ -286,7 +286,7 @@
             border-radius: 50%;
             object-fit: cover;
             position: relative; 
-            z-index: 15; /* Аватар под рамкой */
+            z-index: 15; 
             
             pointer-events: none; 
             -webkit-user-drag: none;
@@ -311,7 +311,7 @@
             background-size: cover;
             background-position: center;
             
-            z-index: 16; /* Рамка СВЕРХУ аватара */
+            z-index: 16; 
             pointer-events: none; 
         }
 
@@ -335,7 +335,7 @@
         .discord-tag {
             font-size: 15px;
             color: #b9bbbe;
-            margin-bottom: 5px; /* Уменьшаем отступ, чтобы освободить место для бейджей */
+            margin-bottom: 5px; 
         }
         
         /* Контейнер для бейджей */
@@ -350,7 +350,7 @@
         .discord-badge {
             width: 24px; 
             height: 24px; 
-            margin-right: 6px; /* Отступ между бейджами */
+            margin-right: 6px; 
             display: inline-block;
             filter: drop-shadow(0 0 2px rgba(0,0,0,0.5));
             -webkit-user-drag: none;
@@ -471,20 +471,24 @@
                     <div id="discord-avatar-container" class="discord-avatar-container">
                         <img id="discord-pfp" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Avatar" class="discord-avatar">
                         
+                        
                         <div id="avatar-frame-overlay"></div>
                     </div>
                     <div id="discord-name" class="discord-username">Loading...</div>
                     <div id="discord-tag" class="discord-tag">@username</div>
                     
+                    
                     <div class="discord-badges-container">
+                        
                         <img 
-                            src="https://icones8.fr/icon/u1TI0IQMcE7q/discord-hypesquad-bravery-house-badge" 
+                            src="https://img.icons8.com/?size=100&id=u1TI0IQMcE7q&format=png&color=000000" 
                             alt="HypeSquad Bravery" 
                             class="discord-badge" 
                             title="HypeSquad Bravery"
                         >
+                        
                         <img 
-                            src="https://icones8.fr/icon/S6odLj8qKMjU/discord-nitro-badge" 
+                            src="https://img.icons8.com/?size=100&id=S6odLj8qKMjU&format=png&color=000000" 
                             alt="Nitro" 
                             class="discord-badge" 
                             title="Discord Nitro"

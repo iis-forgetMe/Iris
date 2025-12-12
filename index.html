@@ -205,7 +205,6 @@
         .volume-slider { width: 90px; max-width: 36vw; margin-left: 12px; accent-color: rgb(255,8,0);}
         .volume-percent { color: #fff; min-width: 32px; text-align: right; font-family: inherit; font-size: 15px; margin-left: 8px;}
         
-        /* --- DISCORD BOX (LANYARD) --- */
         #afk-banner {
             position: relative;
             background: rgba(20, 20, 20, 0.85);
@@ -266,7 +265,6 @@
             background-color: #747f8d; 
             box-shadow: 0 0 5px rgba(0,0,0,0.5);
         }
-        /* Цвета статусов */
         .status-online { background-color: #3ba55c; box-shadow: 0 0 8px #3ba55c; }
         .status-idle { background-color: #faa61a; box-shadow: 0 0 8px #faa61a; }
         .status-dnd { background-color: #ed4245; box-shadow: 0 0 8px #ed4245; }
@@ -487,14 +485,9 @@
 
         let activeCardIndex = 1; 
 
-        // ----- LANYARD DISCORD API LOGIC -----
-        
-        // --- НАСТРОЙКИ ---
         const DISCORD_ID = "1236359938721185902"; 
-        // Твоя кастомная аватарка (локальный файл)
         const CUSTOM_PFP_URL = "gyol.png"; 
-        
-        // --- КОНЕЦ НАСТРОЕК ---
+        const CUSTOM_BANNER_URL = "https://cdn.discordapp.com/banners/1236359938721185902/cd8eed09b334a65a412b4c4a91f5f210.webp?size=1024"; 
         
         async function fetchDiscordStatus() {
             try {
@@ -516,43 +509,37 @@
             const activityElement = document.getElementById('discord-activity');
             const bannerElement = document.getElementById('discord-banner'); 
 
-            // 1. Аватар (Используем CUSTOM_PFP_URL, как ты указал)
             let avatarUrl;
             if (CUSTOM_PFP_URL.trim() !== "") {
                 avatarUrl = CUSTOM_PFP_URL;
             } else {
-                // Если CUSTOM_PFP_URL пуст, берем из Дискорда
                 avatarUrl = data.discord_user.avatar 
                     ? `https://cdn.discordapp.com/avatars/${DISCORD_ID}/${data.discord_user.avatar}.png?size=128`
                     : `https://cdn.discordapp.com/embed/avatars/${parseInt(data.discord_user.discriminator) % 5}.png`;
             }
             pfpElement.src = avatarUrl;
             
-            // 2. Баннер (Берем из Дискорда, size=1024)
-            if (data.banner) {
-                // Если есть URL баннера (теперь с size=1024)
+            if (CUSTOM_BANNER_URL.trim() !== "") {
+                bannerElement.style.backgroundImage = `url('${CUSTOM_BANNER_URL}')`;
+                bannerElement.style.backgroundColor = "transparent";
+            } else if (data.banner) {
                 const bannerUrl = `https://cdn.discordapp.com/banners/${DISCORD_ID}/${data.banner}.webp?size=1024`;
                 bannerElement.style.backgroundImage = `url('${bannerUrl}')`;
-                bannerElement.style.backgroundColor = 'transparent'; 
+                bannerElement.style.backgroundColor = "transparent"; 
             } else {
-                // Если баннера-картинки нет
                 if (data.banner_color) {
-                     // Используем цвет из Дискорд-профиля (если установлен)
                      bannerElement.style.backgroundColor = data.banner_color;
-                     bannerElement.style.backgroundImage = 'none';
+                     bannerElement.style.backgroundImage = "none";
                 } else {
-                     // Запасной цвет, если нет ни картинки, ни цвета
-                     bannerElement.style.backgroundColor = '#333';
-                     bannerElement.style.backgroundImage = 'none';
+                     bannerElement.style.backgroundColor = "#333";
+                     bannerElement.style.backgroundImage = "none";
                 }
             }
 
 
-            // 3. Имя
             nameElement.textContent = data.discord_user.display_name || data.discord_user.username;
 
-            // 4. Статус (цвет)
-            statusElement.className = 'discord-status-dot'; // сброс
+            statusElement.className = 'discord-status-dot'; 
             switch (data.discord_status) {
                 case 'online': statusElement.classList.add('status-online'); break;
                 case 'idle': statusElement.classList.add('status-idle'); break;
@@ -560,9 +547,7 @@
                 default: statusElement.classList.add('status-offline');
             }
 
-            // 5. Активность
             if (data.activities && data.activities.length > 0) {
-                // Ищем Spotify или Игру
                 const spotify = data.activities.find(a => a.id === 'spotify:1');
                 const game = data.activities.find(a => a.type === 0);
                 const custom = data.activities.find(a => a.type === 4);
@@ -581,11 +566,8 @@
             }
         }
 
-        // Запуск обновления статуса
         fetchDiscordStatus();
-        setInterval(fetchDiscordStatus, 5000); // Обновлять каждые 5 сек
-
-        // -----------------------------------------------------
+        setInterval(fetchDiscordStatus, 5000); 
 
         function checkRussianFont() {
             const bodyText = document.body.innerText || document.body.textContent;

@@ -492,7 +492,7 @@
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
                     
                     <path d="M4 9v6h4l5 5V4L8 9H4z" fill="#fff"/>
-                    <path d="M16 7.82A6 6 0 1 16 16.18" stroke="#fff" stroke-width="2" fill="none"/>
+                    <path d="M15 8a4 4 0 0 1 0 8" stroke="#fff" stroke-width="2" fill="none"/>
                 </svg>
             </div>
             <input type="range" min="0" max="100" value="50" class="volume-slider">
@@ -609,9 +609,6 @@
             const statusMessageElement = document.getElementById('dynamic-status-message');
             const frameOverlay = document.getElementById('avatar-frame-overlay');
             
-            // УДАЛЕН КОД, КОТОРЫЙ ИЗМЕНЯЛ BORDER И BOX-SHADOW КОНТЕЙНЕРА 
-            // НА ОСНОВЕ data.accent_color, ЧТОБЫ ИСПОЛЬЗОВАТЬ ПОСТОЯННЫЙ ГРАДИЕНТ ИЗ CSS.
-
             if (CUSTOM_BANNER_URL.trim() !== "") {
                 bannerElement.style.backgroundImage = `url('${CUSTOM_BANNER_URL}')`;
                 bannerElement.style.backgroundColor = "transparent";

@@ -311,7 +311,7 @@
             background-size: cover;
             background-position: center;
             
-            z-index: 15; /* ИЗМЕНЕНИЕ: Рамка ПОД статусом */
+            z-index: 15; /* Рамка ПОД статусом */
             pointer-events: none; 
         }
 
@@ -329,9 +329,8 @@
             
             background-color: #747f8d; 
             box-shadow: 0 0 5px rgba(0,0,0,0.5);
-            z-index: 16; /* ИЗМЕНЕНИЕ: Статус СВЕРХУ рамки */
+            z-index: 16; /* Статус СВЕРХУ рамки */
             
-            /* Стилизация иконок */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -347,38 +346,44 @@
             display: block;
             background-repeat: no-repeat;
             background-position: center;
-            background-size: 16px 16px; /* Размер иконки */
+            background-size: 10px 10px; /* Размер иконки */
         }
         
         /* 1. ONLINE (Зеленый круг) */
         .status-online { background-color: #3ba55c; box-shadow: 0 0 8px #3ba55c; }
-        .status-online:before { content: none; } /* Нет иконки для Online */
+        .status-online:before { content: none; }
         
-        /* 2. IDLE (Луна) */
+        /* 2. IDLE (Луна - #faa61a) */
         .status-idle { 
             background-color: #faa61a; 
             box-shadow: 0 0 8px #faa61a;
             
         }
         .status-idle:before { 
-            content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23FFFFFF"><path d="M12 2A10 10 0 0 0 12 22A10 10 0 0 0 12 2Z" style="fill:none;stroke:%231a1a1a;stroke-width:2;"/><path d="M12 4a8 8 0 0 1 0 16" fill="%23FFFFFF"/></svg>');
-            width: 12px; height: 12px; background-size: contain;
+            /* Луна */
+            content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="%23FFFFFF"><path d="M8 1.5A6.5 6.5 0 0 0 8 14.5A6.5 6.5 0 0 0 8 1.5Z" style="fill:none;stroke:%231a1a1a;stroke-width:1;"/><path d="M8 2.5a5.5 5.5 0 0 1 0 11" fill="%23FFFFFF"/></svg>');
+            width: 10px; height: 10px; background-size: contain;
         }
         
-        /* 3. DND (Черта) */
+        /* 3. DND (Черта - #ed4245) */
         .status-dnd { 
             background-color: #ed4245; 
             box-shadow: 0 0 8px #ed4245; 
         }
         .status-dnd:before { 
-            content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23FFFFFF"><rect x="5" y="11" width="14" height="2" fill="%23FFFFFF" /></svg>');
-            width: 12px; height: 12px; background-size: contain;
+            /* Черта */
+            content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="%23FFFFFF"><rect x="3" y="7" width="10" height="2" rx="0.5" fill="%23FFFFFF" /></svg>');
+            width: 10px; height: 10px; background-size: contain;
         }
         
-        /* 4. OFFLINE (Прозрачный или серый) */
+        /* 4. OFFLINE/INVISIBLE (Пустой круг - #747f8d) */
         .status-offline { background-color: #747f8d; }
-        /* Discord не имеет иконки для офлайн/скрыт, но если нужна - можно добавить крестик */
-        .status-offline:before { content: none; }
+        .status-offline:before { 
+            /* Кольцо */
+            content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="%23FFFFFF"><circle cx="8" cy="8" r="4" stroke="%23FFFFFF" stroke-width="2" fill="none"/></svg>');
+            width: 10px; height: 10px; background-size: contain;
+            background-size: 100%;
+        }
         
         /* ИМЯ: Шрифт OMORI + Градиент */
         .discord-username {

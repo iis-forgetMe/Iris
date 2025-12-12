@@ -224,7 +224,7 @@
             backdrop-filter: blur(12px);
             border-radius: 16px;
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-            overflow: hidden;
+            /* Убрали overflow: hidden отсюда, но оставили border-radius для контейнера */
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
@@ -240,7 +240,8 @@
             background-color: #1a1a1a;
             display: flex;
             flex-direction: column;
-            overflow-y: auto;
+            /* Изменено на visible, чтобы избежать обрезки аватара и рамки по вертикали */
+            overflow-y: visible; 
             padding-bottom: 20px;
             z-index: 1; 
         }
@@ -262,33 +263,34 @@
 
         .profile-content {
             padding: 0 20px;
-            margin-top: -60px; /* Вернули исходное смещение для аватара 92px */
+            margin-top: -60px; 
         }
         
         /* КОНТЕЙНЕР АВАТАРКИ/РАМКИ (РОДИТЕЛЬ) */
         .discord-avatar-container {
             position: relative;
-            width: 92px; /* Возвращено к исходному размеру */
-            height: 92px; /* Возвращено к исходному размеру */
+            width: 92px; 
+            height: 92px; 
             flex-shrink: 0;
             border-radius: 50%;
             z-index: 10; 
             
-            border: none; /* Убрали, чтобы не мешать выступающей рамке */
+            border: none; 
             background-color: #1a1a1a;
             
-            overflow: visible; /* РАЗРЕШАЕМ содержимому выступать */
+            /* КРИТИЧНОЕ ИЗМЕНЕНИЕ: Должно быть visible, чтобы рамка выступала */
+            overflow: visible !important; 
         }
         
         /* САМ АВАТАР */
         .discord-avatar {
-            width: 92px; /* Полный размер родителя */
+            width: 92px; 
             height: 92px;
             margin: 0; 
             border-radius: 50%;
             object-fit: cover;
             position: relative; 
-            z-index: 11; /* Аватар должен быть под рамкой-оверлеем (z-index: 15) */
+            z-index: 11; 
             
             pointer-events: none; 
             -webkit-user-drag: none;
@@ -301,7 +303,7 @@
         /* ОВЕРЛЕЙ-РАМКА (НОВЫЙ ЭЛЕМЕНТ - ПОВЕРХ ВСЕГО) */
         #avatar-frame-overlay {
             position: absolute;
-            /* Рамка выступает на 11px с каждой стороны (предполагаем размер 114px) */
+            /* Центрируем выступающую рамку 114x114px относительно 92x92px контейнера */
             top: -11px; 
             left: -11px; 
             
@@ -320,7 +322,7 @@
 
         .discord-status-dot {
             position: absolute;
-            /* Позиционирование статуса, чтобы он оказался НА рамке */
+            /* Смещаем позицию статуса, чтобы он оказался НА выступающей рамке */
             bottom: -15px; 
             right: -15px; 
             
@@ -328,7 +330,6 @@
             height: 20px;
             border-radius: 50%;
             
-            /* Обеспечиваем правильную черную обводку */
             border: 4px solid #1a1a1a; 
             
             background-color: #747f8d; 

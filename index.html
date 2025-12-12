@@ -209,7 +209,7 @@
             position: relative;
             z-index: 1;
             display: flex;
-            max-width: 860px;
+            max-width: 420px; /* Одноколоночный размер */
             width: 90%;
             height: 580px;
             background: rgba(20, 20, 20, 0.85);
@@ -226,15 +226,19 @@
         }
 
         .discord-main-block {
-            width: 420px;
+            width: 100%;
             flex-shrink: 0;
             position: relative;
             background-color: #1a1a1a;
-            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            border-right: none; /* Убрана граница */
             display: flex;
             flex-direction: column;
             overflow-y: auto;
             padding-bottom: 20px;
+        }
+
+        .discord-activity-box {
+            display: none; /* Полностью скрываем боковую панель */
         }
 
         .discord-banner {
@@ -366,97 +370,6 @@
             line-height: 1.3;
         }
 
-
-        .discord-activity-box {
-            width: 320px;
-            flex-shrink: 0;
-            background: #232428;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-        }
-
-        .activity-header {
-            font-size: 14px;
-            font-weight: bold;
-            color: #b9bbbe;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-        }
-
-        .activity-card {
-            background-color: #1a1b1f;
-            border-radius: 8px;
-            padding: 10px;
-            margin-bottom: 15px;
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: background-color 0.2s;
-            flex-direction: column;
-            align-items: flex-start;
-        }
-        .activity-card:hover {
-            background-color: #1e1f24;
-        }
-
-        .activity-details-wrapper {
-            display: flex;
-            gap: 12px;
-            align-items: flex-start;
-            width: 100%;
-        }
-        
-        .activity-image-container {
-            position: relative;
-            flex-shrink: 0;
-        }
-        .activity-image {
-            width: 64px;
-            height: 64px;
-            border-radius: 8px;
-            object-fit: cover;
-            background: #000;
-        }
-        .activity-small-image {
-            position: absolute;
-            bottom: -4px;
-            right: -4px;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            border: 3px solid #1a1b1f;
-            background-color: #000;
-        }
-        
-        .activity-text {
-            flex-grow: 1;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-        .activity-text .type { font-size: 13px; color: #b9bbbe; margin-bottom: 2px;}
-        .activity-text .title { font-size: 16px; color: #fff; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2;}
-        .activity-text .line { font-size: 14px; color: #ddd; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px;}
-
-        .activity-timestamps {
-            width: 100%;
-            height: 4px;
-            background-color: #333;
-            border-radius: 2px;
-            margin-top: 10px;
-            display: none;
-        }
-        .activity-timestamps.visible { display: block; }
-        .activity-progress {
-            height: 100%;
-            background-color: #5865f2;
-            border-radius: 2px;
-            transition: width 1s linear;
-        }
-
         @media (max-width: 900px) {
             #discord-profile-container {
                 flex-direction: column;
@@ -469,14 +382,6 @@
                 width: 100%;
                 border-right: none;
                 border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            }
-            .discord-activity-box {
-                width: 100%;
-                height: auto;
-                flex-shrink: 1;
-                padding: 15px;
-                background: #1a1b1f;
-                border-radius: 0;
             }
             .tab-bar {
                 padding: 10px 0 0 15px;
@@ -515,18 +420,6 @@
         #darken-overlay.active {
             background: rgba(0, 0, 0, 1); 
             pointer-events: auto;
-        }
-        #no-current-activity {
-            font-size: 16px;
-            color: #b9bbbe;
-            padding: 5px 0;
-            text-align: center;
-        }
-        #no-sidebar-activity {
-            font-size: 16px;
-            color: #b9bbbe;
-            padding: 5px 0;
-            text-align: center;
         }
     </style>
 </head>
@@ -598,7 +491,6 @@
                     
                     <div class="tab-bar">
                         <div class="tab active" data-tab="board">Board</div>
-                        <div class="tab" data-tab="activity">Activity</div>
                         <div class="tab" data-tab="wishlist">Wishlist</div>
                     </div>
                     
@@ -625,41 +517,6 @@
                                 <div class="info-line">v327</div>
                             </div>
                         </div>
-                        <div id="activity-content" style="display: none;">
-                             <div class="activity-header">Current activity</div>
-                             <div id="current-activity-container">
-                                <div id="no-current-activity">No current activity.</div>
-                             </div>
-                             
-                             <div class="activity-header" style="margin-top: 25px;">Recent activity</div>
-                             <div id="recent-activity-container">
-                                <div class="activity-card">
-                                    <div class="activity-details-wrapper">
-                                        <div class="activity-image-container">
-                                            <img class="activity-image" src="https://tr.rbxcdn.com/f951f285d852ccff246e7f14b62e49c9/150/150/Image/Png" alt="Roblox">
-                                        </div>
-                                        <div class="activity-text">
-                                            <div class="type">Playing Roblox</div>
-                                            <div class="title">Roblox</div>
-                                            <div class="line">8h ago • 3x Streak</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="activity-card">
-                                    <div class="activity-details-wrapper">
-                                        <div class="activity-image-container">
-                                            <img class="activity-image" src="https://i.scdn.co/image/ab67616d00001e022f4625d97f1f0a20e2e5055b" alt="Mastermind">
-                                        </div>
-                                        <div class="activity-text">
-                                            <div class="type">Playing</div>
-                                            <div class="title">Mastermind</div>
-                                            <div class="line">Helluva Boss</div>
-                                            <div class="line">1d ago</div>
-                                        </div>
-                                    </div>
-                                </div>
-                             </div>
-                        </div>
                         <div id="wishlist-content" style="display: none;">
                             <div class="info-line">No items on wishlist.</div>
                         </div>
@@ -667,27 +524,7 @@
                 </div>
             </div>
             
-            <div class="discord-activity-box">
-                <div class="activity-header">Activity</div>
-                <div id="current-activity-sidebar">
-                    <div id="no-sidebar-activity">No current activity.</div>
-                </div>
-                <div class="activity-header" style="margin-top: 25px;">Recent activity</div>
-                <div id="recent-activity-sidebar">
-                    <div class="activity-card">
-                        <div class="activity-details-wrapper">
-                            <div class="activity-image-container">
-                                <img class="activity-image" src="https://tr.rbxcdn.com/f951f285d852ccff246e7f14b62e49c9/150/150/Image/Png" alt="Roblox">
-                            </div>
-                            <div class="activity-text">
-                                <div class="type">Playing Roblox</div>
-                                <div class="title">Roblox</div>
-                                <div class="line">8h ago • 3x Streak</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div class="discord-activity-box"></div>
         </div>
     </div>
 
@@ -703,7 +540,6 @@
         ];
 
         let activeCardIndex = 1; 
-        const discordActivityTimers = {};
 
         const DISCORD_ID = "1236359938721185902"; 
         const CUSTOM_PFP_URL = "gyol.png"; 
@@ -744,173 +580,6 @@
             return '#' + toHex(r) + toHex(g) + toHex(b);
         }
 
-        function getDiscordAssetUrl(activity, assetKey) {
-            if (!activity.assets || !activity.assets[assetKey]) return '';
-            
-            const assetId = activity.assets[assetKey];
-            
-            if (assetId.startsWith('spotify:')) {
-                const trackId = assetId.replace('spotify:', '');
-                return `https://i.scdn.co/image/${trackId}`;
-            }
-
-            if (assetId.startsWith('mp:')) {
-                return `https://media.discordapp.net/${assetId.replace('mp:', 'external/')}`;
-            }
-
-            if (activity.application_id) {
-                return `https://cdn.discordapp.com/app-assets/${activity.application_id}/${assetId}.png`;
-            }
-
-            return '';
-        }
-
-        function formatTime(timestamp) {
-            const totalSeconds = Math.floor((Date.now() - timestamp) / 1000);
-            const h = Math.floor(totalSeconds / 3600).toString().padStart(2, '0');
-            const m = Math.floor((totalSeconds % 3600) / 60).toString().padStart(2, '0');
-            const s = Math.floor(totalSeconds % 60).toString().padStart(2, '0');
-
-            return `${h}:${m}:${s} elapsed`;
-        }
-
-        function updateActivityCard(activity, containerId) {
-            const container = document.getElementById(containerId);
-            container.innerHTML = '';
-            
-            const noActivityElementId = containerId === 'current-activity-container' ? 'no-current-activity' : 'no-sidebar-activity';
-            const noActivityElement = document.getElementById(noActivityElementId);
-            if (noActivityElement) noActivityElement.style.display = 'none';
-
-            if (discordActivityTimers[containerId]) {
-                clearInterval(discordActivityTimers[containerId]);
-                delete discordActivityTimers[containerId];
-            }
-
-            const card = document.createElement('div');
-            card.className = 'activity-card';
-
-            const wrapper = document.createElement('div');
-            wrapper.className = 'activity-details-wrapper';
-
-            const imgContainer = document.createElement('div');
-            imgContainer.className = 'activity-image-container';
-
-            const largeImage = document.createElement('img');
-            largeImage.className = 'activity-image';
-            largeImage.src = getDiscordAssetUrl(activity, 'large_image');
-            largeImage.alt = 'Activity Large Image';
-
-            const smallImage = document.createElement('img');
-            smallImage.className = 'activity-small-image';
-            smallImage.src = getDiscordAssetUrl(activity, 'small_image');
-            smallImage.alt = 'Activity Small Image';
-
-            imgContainer.appendChild(largeImage);
-            
-            if (smallImage.src) {
-                 smallImage.style.display = 'block';
-                 imgContainer.appendChild(smallImage);
-            }
-
-            const text = document.createElement('div');
-            text.className = 'activity-text';
-
-            const type = document.createElement('div');
-            type.className = 'type';
-            let activityTypeLabel = '';
-
-            switch (activity.type) {
-                case 0: activityTypeLabel = 'Playing'; break;
-                case 1: activityTypeLabel = 'Streaming'; break;
-                case 2: activityTypeLabel = 'Listening to'; break;
-                case 3: activityTypeLabel = 'Watching'; break;
-                case 5: activityTypeLabel = 'Competing in'; break;
-                default: activityTypeLabel = '';
-            }
-            if (activity.id === 'spotify:1') activityTypeLabel = 'Listening to Spotify';
-
-            type.textContent = activityTypeLabel;
-
-            const title = document.createElement('div');
-            title.className = 'title';
-            title.textContent = activity.name || activity.details || '';
-
-            const line1 = document.createElement('div');
-            line1.className = 'line';
-            line1.textContent = activity.details && activity.id !== 'spotify:1' ? activity.details : (activity.state ? activity.state : '');
-
-            const line2 = document.createElement('div');
-            line2.className = 'line';
-            line2.id = `activity-time-line-${containerId}`; 
-            line2.textContent = ''; 
-
-            text.appendChild(type);
-            text.appendChild(title);
-            text.appendChild(line1);
-            text.appendChild(line2);
-
-            wrapper.appendChild(imgContainer);
-            wrapper.appendChild(text);
-            card.appendChild(wrapper);
-
-            let hasTimestamps = false;
-
-            if (activity.timestamps && activity.timestamps.start && activity.timestamps.end) {
-                const timestamps = document.createElement('div');
-                timestamps.className = 'activity-timestamps visible';
-                timestamps.id = `activity-timestamps-bar-${containerId}`; 
-
-                const progress = document.createElement('div');
-                progress.className = 'activity-progress';
-                progress.id = `activity-progress-bar-${containerId}`;
-
-                timestamps.appendChild(progress);
-                card.appendChild(timestamps);
-                hasTimestamps = true;
-            }
-
-            container.appendChild(card);
-            
-            if (activity.timestamps && activity.timestamps.start) {
-                const startTime = activity.timestamps.start;
-                const endTime = activity.timestamps.end;
-
-                function updateTime() {
-                    const lineElement = document.getElementById(`activity-time-line-${containerId}`);
-                    if (!lineElement) return;
-
-                    if (hasTimestamps) {
-                        const duration = endTime - startTime;
-                        const elapsed = Date.now() - startTime;
-                        const remaining = endTime - Date.now();
-
-                        if (remaining <= 0) {
-                            lineElement.textContent = "Finished";
-                            document.getElementById(`activity-progress-bar-${containerId}`).style.width = '100%';
-                            clearInterval(discordActivityTimers[containerId]);
-                            return;
-                        }
-
-                        const percentage = Math.min(100, (elapsed / duration) * 100);
-                        
-                        document.getElementById(`activity-progress-bar-${containerId}`).style.width = percentage + '%';
-                        
-                        const remainingSeconds = Math.floor(remaining / 1000);
-                        const remM = Math.floor((remainingSeconds % 3600) / 60).toString().padStart(2, '0');
-                        const remS = Math.floor(remainingSeconds % 60).toString().padStart(2, '0');
-                        
-                        lineElement.textContent = `${remM}:${remS} remaining`;
-
-                    } else {
-                        lineElement.textContent = formatTime(startTime);
-                    }
-                }
-                updateTime();
-                discordActivityTimers[containerId] = setInterval(updateTime, 1000);
-            }
-        }
-
         function updateDiscordUI(data) {
             const pfpContainer = document.getElementById('discord-profile-container');
             const pfpElement = document.getElementById('discord-pfp');
@@ -919,12 +588,6 @@
             const nameElement = document.getElementById('discord-name');
             const bannerElement = document.getElementById('discord-banner'); 
             const tagElement = document.getElementById('discord-tag');
-            
-            const sidebarActivityContainer = document.getElementById('current-activity-sidebar');
-            const tabActivityContainer = document.getElementById('current-activity-container');
-            const noSidebarActivity = document.getElementById('no-sidebar-activity');
-            const noTabActivity = document.getElementById('no-current-activity');
-
             
             if (data.accent_color && data.accent_color !== "0") {
                 const primaryColor = '#' + data.accent_color;
@@ -977,37 +640,6 @@
                 case 'idle': statusElement.classList.add('status-idle'); break;
                 case 'dnd': statusElement.classList.add('status-dnd'); break;
                 default: statusElement.classList.add('status-offline');
-            }
-            
-            sidebarActivityContainer.innerHTML = '';
-            tabActivityContainer.innerHTML = '';
-            
-            for (const key in discordActivityTimers) {
-                clearInterval(discordActivityTimers[key]);
-                delete discordActivityTimers[key];
-            }
-
-            if (data.activities && data.activities.length > 0) {
-                const activities = data.activities.filter(a => a.type !== 4); 
-                
-                const spotify = activities.find(a => a.id === 'spotify:1');
-                const watching = activities.find(a => a.type === 3); 
-                const game = activities.find(a => a.type === 0);
-                
-                let currentActivity = spotify || watching || game;
-
-                if (currentActivity) {
-                    noSidebarActivity.style.display = 'none';
-                    noTabActivity.style.display = 'none';
-                    updateActivityCard(currentActivity, 'current-activity-sidebar');
-                    updateActivityCard(currentActivity, 'current-activity-container');
-                } else {
-                    noSidebarActivity.style.display = 'block';
-                    noTabActivity.style.display = 'block';
-                }
-            } else {
-                noSidebarActivity.style.display = 'block';
-                noTabActivity.style.display = 'block';
             }
         }
         

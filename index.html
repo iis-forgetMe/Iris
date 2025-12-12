@@ -296,7 +296,7 @@
             box-sizing: border-box;
         }
 
-        /* ОВЕРЛЕЙ-РАМКА (114x114px, КВАДРАТ) */
+        /* АВАТАР ДЕКОРАЦИЯ (РАМКА) */
         #avatar-frame-overlay {
             position: absolute;
             top: -11px; 
@@ -314,6 +314,28 @@
             z-index: 16; 
             pointer-events: none; 
         }
+        
+        /* ЭФФЕКТ ПРОФИЛЯ (ПОВЕРХ ВСЕГО) */
+        #profile-effect-overlay {
+            position: absolute;
+            top: -24px; /* Регулировка, чтобы покрыть декорацию и аватар */
+            left: -24px;
+            
+            /* Размер должен быть больше, чем у рамки, чтобы покрыть эффект */
+            width: 140px; 
+            height: 140px; 
+            
+            background-image: url('profile.gif'); /* Ваша GIF */
+            background-size: cover;
+            background-position: center;
+            
+            z-index: 17; /* Выше рамки и аватара */
+            pointer-events: none;
+            
+            /* Добавляем эффект смешивания, чтобы GIF выглядела лучше */
+            mix-blend-mode: screen; 
+        }
+
 
         /* ИМЯ: Шрифт OMORI + Градиент */
         .discord-username {
@@ -325,7 +347,6 @@
             overflow: hidden;
             text-overflow: ellipsis;
             
-            /* Градиентные свойства оставлены */
             background-image: linear-gradient(to right, #ba98ff, #acfdff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -473,6 +494,7 @@
                         
                         
                         <div id="avatar-frame-overlay"></div>
+                        <div id="profile-effect-overlay"></div>
                     </div>
                     <div id="discord-name" class="discord-username">Loading...</div>
                     <div id="discord-tag" class="discord-tag">@username</div>

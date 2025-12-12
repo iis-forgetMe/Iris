@@ -315,9 +315,6 @@
             pointer-events: none; 
         }
 
-        /* ТОЧКА СТАТУСА УДАЛЕНА */
-
-
         /* ИМЯ: Шрифт OMORI + Градиент */
         .discord-username {
             font-size: 28px; 
@@ -338,8 +335,28 @@
         .discord-tag {
             font-size: 15px;
             color: #b9bbbe;
-            margin-bottom: 15px;
+            margin-bottom: 5px; /* Уменьшаем отступ, чтобы освободить место для бейджей */
         }
+        
+        /* Контейнер для бейджей */
+        .discord-badges-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px; 
+            height: 24px;
+        }
+
+        /* Стиль для отдельного бейджа */
+        .discord-badge {
+            width: 24px; 
+            height: 24px; 
+            margin-right: 6px; /* Отступ между бейджами */
+            display: inline-block;
+            filter: drop-shadow(0 0 2px rgba(0,0,0,0.5));
+            -webkit-user-drag: none;
+            user-select: none;
+        }
+
         .discord-bio-box {
             display: none; 
         }
@@ -459,6 +476,21 @@
                     <div id="discord-name" class="discord-username">Loading...</div>
                     <div id="discord-tag" class="discord-tag">@username</div>
                     
+                    <div class="discord-badges-container">
+                        <img 
+                            src="https://icones8.fr/icon/u1TI0IQMcE7q/discord-hypesquad-bravery-house-badge" 
+                            alt="HypeSquad Bravery" 
+                            class="discord-badge" 
+                            title="HypeSquad Bravery"
+                        >
+                        <img 
+                            src="https://icones8.fr/icon/S6odLj8qKMjU/discord-nitro-badge" 
+                            alt="Nitro" 
+                            class="discord-badge" 
+                            title="Discord Nitro"
+                        >
+                    </div>
+                    
                     <div class="tab-content-wrapper">
                         <div id="dynamic-status-message"></div>
                     </div>
@@ -575,7 +607,6 @@
             nameElement.textContent = data.discord_user.display_name || data.discord_user.username;
             tagElement.textContent = `@${data.discord_user.username}`; 
 
-            // Удалено обновление статуса, так как элемента discord-status больше нет
             
             const customStatus = data.activities.find(a => a.type === 4); 
             if (customStatus && customStatus.state) {

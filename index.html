@@ -209,9 +209,11 @@
             position: relative;
             z-index: 1;
             display: flex;
-            max-width: 420px; /* Одноколоночный размер */
+            flex-direction: column;
+            max-width: 420px; 
             width: 90%;
-            height: 580px;
+            height: auto; 
+            min-height: 250px; 
             background: rgba(20, 20, 20, 0.85);
             backdrop-filter: blur(12px);
             border-radius: 16px;
@@ -230,15 +232,15 @@
             flex-shrink: 0;
             position: relative;
             background-color: #1a1a1a;
-            border-right: none; /* Убрана граница */
             display: flex;
             flex-direction: column;
             overflow-y: auto;
             padding-bottom: 20px;
         }
 
-        .discord-activity-box {
-            display: none; /* Полностью скрываем боковую панель */
+        .discord-activity-box,
+        .tab-bar {
+            display: none !important; 
         }
 
         .discord-banner {
@@ -315,79 +317,32 @@
             margin-bottom: 15px;
         }
         .discord-bio-box {
-            background-color: #121212;
-            border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 15px;
-            font-size: 16px;
-            color: #dddddd;
-            border: 1px solid #333;
+            display: none; 
         }
-        .discord-bio-box p {
-            margin: 0;
-            line-height: 1.4;
-        }
-        
-        .tab-bar {
-            display: flex;
-            padding: 10px 0 0 20px;
-            flex-shrink: 0;
-        }
-        .tab {
-            padding: 8px 15px;
-            font-size: 16px;
-            cursor: pointer;
-            color: #aaa;
-            border-radius: 6px 6px 0 0;
-            margin-right: 4px;
-            transition: color 0.2s;
-            border: 1px solid transparent;
-        }
-        .tab.active {
-            color: #fff;
-            background-color: #2c2c2c;
-            border-bottom: 2px solid #5865f2;
+        .info-section {
+            display: none; 
         }
         .tab-content-wrapper {
-            flex-grow: 1;
-            padding: 0 20px;
-            overflow-y: auto;
-        }
-        #board-content { display: block; }
-        #activity-content { display: none; }
-        
-        .info-section h3 {
-            font-size: 14px;
-            color: #b9bbbe;
-            text-transform: uppercase;
-            margin: 15px 0 5px 0;
-            font-weight: bold;
-        }
-        .info-line {
-            font-size: 17px;
-            color: #ffffff;
-            margin: 5px 0;
-            line-height: 1.3;
+            padding: 0 20px 20px 20px; 
+            overflow: visible;
         }
 
         @media (max-width: 900px) {
             #discord-profile-container {
-                flex-direction: column;
                 max-width: 98vw;
-                height: 90vh;
+                min-height: auto;
+                height: auto;
                 margin-top: 60px;
                 margin-bottom: 10px;
             }
             .discord-main-block {
-                width: 100%;
-                border-right: none;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+                padding-bottom: 10px;
             }
-            .tab-bar {
-                padding: 10px 0 0 15px;
+            .profile-content {
+                padding: 0 15px;
             }
             .tab-content-wrapper {
-                padding: 0 15px;
+                padding: 0 15px 15px 15px;
             }
         }
 
@@ -487,39 +442,10 @@
                         <div id="discord-status" class="discord-status-dot status-offline"></div>
                     </div>
                     <div id="discord-name" class="discord-username">Loading...</div>
-                    <div id="discord-tag" class="discord-tag">@username • MW/AH</div>
-                    
-                    <div class="tab-bar">
-                        <div class="tab active" data-tab="board">Board</div>
-                        <div class="tab" data-tab="wishlist">Wishlist</div>
-                    </div>
+                    <div id="discord-tag" class="discord-tag">@username</div>
                     
                     <div class="tab-content-wrapper">
-                        <div id="board-content">
-                            <div class="discord-bio-box">
-                                <p>I'm the mastermind, the hand that holds the...</p>
-                                <p>Don't give your life to clean my slate.</p>
-                            </div>
-                            <div class="info-section">
-                                <h3>About me</h3>
-                                <div class="info-line">Age: ?</div>
-                                <div class="info-line">Gender: Δ</div>
-                                <div class="info-line">RU // ENG</div>
-                            </div>
-                            <div class="info-section">
-                                <h3>Relationships</h3>
-                                <div class="info-line">Mr Kinako ❤️</div>
-                                <div class="info-line">Meosssy 💕 (Don't worry, I need you...)</div>
-                            </div>
-                            <div class="info-section">
-                                <h3>Other</h3>
-                                <div class="info-line">06.12.24 ❤️💙</div>
-                                <div class="info-line">v327</div>
-                            </div>
-                        </div>
-                        <div id="wishlist-content" style="display: none;">
-                            <div class="info-line">No items on wishlist.</div>
-                        </div>
+                        <div id="dynamic-status-message"></div>
                     </div>
                 </div>
             </div>
@@ -588,6 +514,7 @@
             const nameElement = document.getElementById('discord-name');
             const bannerElement = document.getElementById('discord-banner'); 
             const tagElement = document.getElementById('discord-tag');
+            const statusMessageElement = document.getElementById('dynamic-status-message');
             
             if (data.accent_color && data.accent_color !== "0") {
                 const primaryColor = '#' + data.accent_color;
@@ -632,7 +559,7 @@
             pfpElement.src = avatarUrl;
             
             nameElement.textContent = data.discord_user.display_name || data.discord_user.username;
-            tagElement.textContent = `@${data.discord_user.username} • MW/AH`;
+            tagElement.textContent = `@${data.discord_user.username}`; 
 
             statusElement.className = 'discord-status-dot'; 
             switch (data.discord_status) {
@@ -641,29 +568,27 @@
                 case 'dnd': statusElement.classList.add('status-dnd'); break;
                 default: statusElement.classList.add('status-offline');
             }
+
+            const customStatus = data.activities.find(a => a.type === 4); 
+            if (customStatus && customStatus.state) {
+                statusMessageElement.textContent = customStatus.state;
+                statusMessageElement.style.cssText = `
+                    font-size: 17px;
+                    color: #fff;
+                    margin-top: 15px;
+                    padding: 8px 12px;
+                    border-radius: 6px;
+                    background: #25262b;
+                    border-left: 3px solid #7289da; 
+                `;
+            } else {
+                statusMessageElement.textContent = '';
+                statusMessageElement.style.cssText = ''; 
+            }
         }
         
         fetchDiscordStatus();
         setInterval(fetchDiscordStatus, 5000); 
-
-
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            document.querySelectorAll('.tab-content-wrapper > div').forEach(content => {
-                content.style.display = 'none';
-            });
-
-            document.querySelector(`.tab[data-tab="${tabName}"]`).classList.add('active');
-            document.getElementById(`${tabName}-content`).style.display = 'block';
-        }
-
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                switchTab(tab.dataset.tab);
-            });
-        });
 
 
         function checkRussianFont() {

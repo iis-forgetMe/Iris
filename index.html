@@ -262,33 +262,33 @@
 
         .profile-content {
             padding: 0 20px;
-            margin-top: -80px; /* Скорректировано для нового размера контейнера (120px) */
+            margin-top: -60px; /* Вернули исходное смещение для аватара 92px */
         }
         
         /* КОНТЕЙНЕР АВАТАРКИ/РАМКИ (РОДИТЕЛЬ) */
         .discord-avatar-container {
             position: relative;
-            width: 120px; /* УВЕЛИЧЕНО для рамки */
-            height: 120px; /* УВЕЛИЧЕНО для рамки */
+            width: 92px; /* Возвращено к исходному размеру */
+            height: 92px; /* Возвращено к исходному размеру */
             flex-shrink: 0;
             border-radius: 50%;
             z-index: 10; 
             
-            border: 3px solid #1a1a1a; 
+            border: none; /* Убрали, чтобы не мешать выступающей рамке */
             background-color: #1a1a1a;
             
-            margin-left: -15px; /* Корректируем смещение */
+            overflow: visible; /* РАЗРЕШАЕМ содержимому выступать */
         }
         
         /* САМ АВАТАР */
         .discord-avatar {
-            width: 90px; /* Уменьшено, чтобы вместить отступы */
-            height: 90px;
-            margin: 12px; /* Центрируем аватар внутри контейнера 120x120 */
+            width: 92px; /* Полный размер родителя */
+            height: 92px;
+            margin: 0; 
             border-radius: 50%;
             object-fit: cover;
             position: relative; 
-            z-index: 11; 
+            z-index: 11; /* Аватар должен быть под рамкой-оверлеем (z-index: 15) */
             
             pointer-events: none; 
             -webkit-user-drag: none;
@@ -301,10 +301,12 @@
         /* ОВЕРЛЕЙ-РАМКА (НОВЫЙ ЭЛЕМЕНТ - ПОВЕРХ ВСЕГО) */
         #avatar-frame-overlay {
             position: absolute;
-            top: -3px; /* Компенсируем border родителя (3px) */
-            left: -3px; /* Компенсируем border родителя (3px) */
-            width: 126px; /* 120px + 2*3px = 126px */
-            height: 126px; /* 120px + 2*3px = 126px */
+            /* Рамка выступает на 11px с каждой стороны (предполагаем размер 114px) */
+            top: -11px; 
+            left: -11px; 
+            
+            width: 114px; 
+            height: 114px; 
             border-radius: 50%;
             
             background-image: url('Aurora Fox.gif');
@@ -318,12 +320,17 @@
 
         .discord-status-dot {
             position: absolute;
-            bottom: 5px; /* Корректируем позицию для нового размера 120x120 */
-            right: 5px; /* Корректируем позицию для нового размера 120x120 */
+            /* Позиционирование статуса, чтобы он оказался НА рамке */
+            bottom: -15px; 
+            right: -15px; 
+            
             width: 20px;
             height: 20px;
             border-radius: 50%;
+            
+            /* Обеспечиваем правильную черную обводку */
             border: 4px solid #1a1a1a; 
+            
             background-color: #747f8d; 
             box-shadow: 0 0 5px rgba(0,0,0,0.5);
             z-index: 16; /* Статус поверх рамки */

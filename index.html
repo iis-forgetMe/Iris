@@ -312,7 +312,7 @@
             flex-grow: 1;
             overflow: hidden;
             display: flex;
-            justify-content: space-between;
+            justify-content: space-between; 
             align-items: flex-start;
         }
 
@@ -327,11 +327,13 @@
         }
 
         .discord-activity-box {
+            position: absolute; 
+            top: 20px; 
+            right: 25px; 
+            width: 200px;
             background: rgba(40, 40, 40, 0.7);
             border-radius: 8px;
-            padding: 10px 15px;
-            max-width: 250px; 
-            min-width: 120px;
+            padding: 10px;
             text-align: left;
             font-size: 15px;
             color: #ccc;
@@ -339,14 +341,42 @@
             transition: opacity 0.5s;
             flex-shrink: 0; 
             display: none;
+            flex-direction: column;
         }
         .discord-activity-box.visible {
             opacity: 1;
-            display: block; 
+            display: flex; 
         }
-        .discord-activity-box b { color: #fff; font-size: 17px; display: block; margin-bottom: 2px; }
-        .discord-activity-box .label { font-size: 13px; color: #999; }
-        
+
+        .activity-header {
+            font-size: 14px;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .activity-details {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .activity-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            object-fit: cover;
+            flex-shrink: 0;
+            background: #000;
+        }
+        .activity-text {
+            flex-grow: 1;
+            overflow: hidden;
+        }
+        .activity-text .type { font-size: 13px; color: #999; margin-bottom: 2px;}
+        .activity-text .title { font-size: 16px; color: #fff; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2;}
+        .activity-text .line { font-size: 14px; color: #ccc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+
 
         .afk-hidden {opacity:0;pointer-events:none;}
         .afk-gif {
@@ -525,7 +555,18 @@
                         <div class="discord-info">
                             <div id="discord-name" class="discord-username">Loading...</div>
                         </div>
-                        <div id="discord-activity-box" class="discord-activity-box"></div>
+                    </div>
+                    <div id="discord-activity-box" class="discord-activity-box">
+                        <div class="activity-header">Activity</div>
+                        <div class="activity-details">
+                            <img id="activity-image" class="activity-image" src="" alt="Activity Image">
+                            <div class="activity-text">
+                                <div id="activity-type" class="type"></div>
+                                <div id="activity-title" class="title"></div>
+                                <div id="activity-line-1" class="line"></div>
+                                <div id="activity-line-2" class="line"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -585,6 +626,39 @@
             return '#' + toHex(r) + toHex(g) + toHex(b);
         }
 
+        function getDiscordAssetUrl(activity, assetKey) {
+            if (!activity.assets || !activity.assets[assetKey]) return '';
+            
+            const assetId = activity.assets[assetKey];
+            
+            if (assetId.startsWith('spotify:')) {
+                const trackId = assetId.replace('spotify:', '');
+                return `https://i.scdn.co/image/${trackId}`;
+            }
+
+            if (assetId.startsWith('mp:')) {
+                return `https://media.discordapp.net/${assetId.replace('mp:', 'external/')}`;
+            }
+
+            if (activity.application_id) {
+                return `https://cdn.discordapp.com/app-assets/${activity.application_id}/${assetId}.png`;
+            }
+
+            return '';
+        }
+
+        function formatTime(timestamp) {
+            const seconds = Math.floor((Date.now() - timestamp) / 1000);
+            const days = Math.floor(seconds / (3600 * 24));
+            const hours = Math.floor(seconds % (3600 * 24) / 3600);
+            const minutes = Math.floor(seconds % 3600 / 60);
+
+            if (days > 0) return `for ${days}d ${hours}h`;
+            if (hours > 0) return `for ${hours}h ${minutes}m`;
+            if (minutes > 0) return `for ${minutes}m`;
+            return `for <1m`;
+        }
+
         function updateDiscordUI(data) {
             const pfpElement = document.getElementById('discord-pfp');
             const pfpContainer = document.getElementById('discord-avatar-container');
@@ -593,6 +667,11 @@
             const bannerElement = document.getElementById('discord-banner'); 
             const gradientBorder = document.getElementById('discord-gradient-border');
             const activityBox = document.getElementById('discord-activity-box');
+            const activityImage = document.getElementById('activity-image');
+            const activityType = document.getElementById('activity-type');
+            const activityTitle = document.getElementById('activity-title');
+            const activityLine1 = document.getElementById('activity-line-1');
+            const activityLine2 = document.getElementById('activity-line-2');
 
             if (CUSTOM_BANNER_URL.trim() !== "") {
                 bannerElement.style.backgroundImage = `url('${CUSTOM_BANNER_URL}')`;
@@ -646,29 +725,49 @@
                 case 'dnd': statusElement.classList.add('status-dnd'); break;
                 default: statusElement.classList.add('status-offline');
             }
-
-            activityBox.innerHTML = '';
-            activityBox.classList.remove('visible');
             
+            activityBox.classList.remove('visible');
+            activityLine2.textContent = ''; 
+
             if (data.activities && data.activities.length > 0) {
                 const spotify = data.activities.find(a => a.id === 'spotify:1');
                 const game = data.activities.find(a => a.type === 0);
-                const custom = data.activities.find(a => a.type === 4);
+                const watching = data.activities.find(a => a.type === 3); 
                 
-                let activityHtml = '';
+                let activity = null;
+                let activityTypeLabel = '';
 
                 if (spotify) {
-                    activityHtml = `<div class="label">Listening to Spotify</div><b>${spotify.details}</b><div style="margin-top:2px;">${spotify.state}</div>`;
-                } else if (game) {
-                    activityHtml = `<div class="label">Playing a Game</div><b>${game.name}</b>`;
-                    if (game.details) activityHtml += `<div style="margin-top:2px;">${game.details}</div>`;
-                } else if (custom && custom.state) {
-                    activityHtml = `<div class="label">Custom Status</div><b>${custom.state}</b>`;
-                }
+                    activity = spotify;
+                    activityTypeLabel = 'Listening to Spotify';
+                    activityImage.src = getDiscordAssetUrl(activity, 'large_image');
+                    activityType.textContent = 'Listening to Spotify';
+                    activityTitle.textContent = activity.details || '';
+                    activityLine1.textContent = activity.state ? `by ${activity.state.replace(/;/g, ', ')}` : '';
+                    activityLine2.textContent = activity.timestamps ? formatTime(activity.timestamps.start) : '';
 
-                if (activityHtml) {
-                    activityBox.innerHTML = activityHtml;
+                } else if (watching) {
+                    activity = watching;
+                    activityTypeLabel = 'Watching';
+                    activityImage.src = getDiscordAssetUrl(activity, 'large_image');
+                    activityType.textContent = activityTypeLabel;
+                    activityTitle.textContent = activity.name || 'Unknown';
+                    activityLine1.textContent = activity.details || '';
+                    activityLine2.textContent = activity.timestamps ? formatTime(activity.timestamps.start) : '';
+
+                } else if (game) {
+                    activity = game;
+                    activityTypeLabel = 'Playing';
+                    activityImage.src = getDiscordAssetUrl(activity, 'large_image');
+                    activityType.textContent = activityTypeLabel;
+                    activityTitle.textContent = activity.name || 'Unknown Game';
+                    activityLine1.textContent = activity.details || '';
+                    activityLine2.textContent = activity.timestamps ? formatTime(activity.timestamps.start) : '';
+                } 
+
+                if (activity) {
                     activityBox.classList.add('visible');
+                    activityImage.style.display = activityImage.src ? 'block' : 'none';
                 }
             } 
         }

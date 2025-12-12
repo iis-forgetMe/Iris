@@ -268,12 +268,19 @@
             background-color: #000;
         }
         
-        .discord-avatar-container.with-frame {
+        /* Стили для кастомной рамки */
+        .discord-avatar-container.custom-frame {
             padding: 3px; 
-            border: 6px solid #1a1a1a;
+            border: none; 
             background-clip: padding-box;
             background-origin: padding-box;
-            background-image: linear-gradient(to right, #7289da, #99aab5);
+            background-size: cover;
+            background-position: center;
+            animation: rotateFrame 10s linear infinite; 
+        }
+        @keyframes rotateFrame {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
         .discord-avatar {
@@ -302,14 +309,21 @@
         .status-dnd { background-color: #ed4245; box-shadow: 0 0 8px #ed4245; }
         .status-offline { background-color: #747f8d; }
         
+        /* Изменения здесь: градиентное имя */
         .discord-username {
             font-size: 28px;
-            font-weight: bold;
+            font-weight: normal; /* Для 8bit шрифтов */
             margin: 10px 0 2px 0;
-            color: #fff;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            
+            /* Градиентные свойства */
+            background-image: linear-gradient(to right, #ba98ff, #acfdff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
         }
         .discord-tag {
             font-size: 15px;
@@ -470,7 +484,8 @@
         const DISCORD_ID = "1236359938721185902"; 
         const CUSTOM_PFP_URL = "gyol.png"; 
         const CUSTOM_BANNER_URL = "https://cdn.discordapp.com/banners/1236359938721185902/cd8eed09b334a65a412b4c4a91f5f210.webp?size=1024"; 
-        const APPLY_PFP_FRAME = true; 
+        const CUSTOM_FRAME_URL = "https://cdn.discordapp.com/avatar-decoration-presets/a_c7b40675ee8e5d4a658a933629ac992f.png?size=80&passthrough=false";
+        const APPLY_PFP_FRAME = false; 
         
         async function fetchDiscordStatus() {
             try {
@@ -542,10 +557,15 @@
                 }
             }
 
-            if (APPLY_PFP_FRAME) {
-                avatarContainer.classList.add('with-frame');
+            if (CUSTOM_FRAME_URL.trim() !== "" && !APPLY_PFP_FRAME) {
+                avatarContainer.classList.add('custom-frame');
+                avatarContainer.style.backgroundImage = `url('${CUSTOM_FRAME_URL}')`;
+            } else if (APPLY_PFP_FRAME) {
+                avatarContainer.classList.add('custom-frame'); 
+                avatarContainer.style.backgroundImage = `linear-gradient(to right, #7289da, #99aab5)`; 
             } else {
-                avatarContainer.classList.remove('with-frame');
+                avatarContainer.classList.remove('custom-frame');
+                avatarContainer.style.backgroundImage = 'none';
             }
 
             let avatarUrl;

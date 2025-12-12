@@ -242,6 +242,7 @@
             flex-direction: column;
             overflow-y: auto;
             padding-bottom: 20px;
+            z-index: 1; /* Основной контент ниже рамки */
         }
 
         .discord-activity-box,
@@ -264,19 +265,20 @@
             margin-top: -60px; 
         }
         
+        /* ИЗМЕНЕНИЯ ЗДЕСЬ */
         .discord-avatar-container {
             position: relative;
             width: 92px;
             height: 92px;
             flex-shrink: 0;
             border-radius: 50%;
-            border: 6px solid #1a1a1a; 
-            background-color: #000;
-            /* Рамка должна быть поверх */
-            z-index: 3; /* <--- ИЗМЕНЕНИЕ: Контейнер-рамка поверх других элементов */
+            
+            z-index: 10; /* УВЕЛИЧЕННЫЙ Z-INDEX для рамки */
+            transform: translateY(0); 
+            border: none;
         }
         
-        /* Стили для кастомной рамки */
+        /* Стили для кастомной рамки (Aurora Fox.gif) */
         .discord-avatar-container.custom-frame {
             padding: 3px; 
             border: none; 
@@ -292,12 +294,16 @@
             border-radius: 50%;
             object-fit: cover;
             position: relative; 
-            z-index: 4; /* <--- ИЗМЕНЕНИЕ: Аватар должен быть поверх рамки, если рамка - фон контейнера */
+            z-index: 11; /* Аватар поверх фона-рамки */
             
-            /* Запрет взаимодействия с аватаром */
-            pointer-events: none; /* <--- ИЗМЕНЕНИЕ: Отключает взаимодействие с изображением */
-            -webkit-user-drag: none; /* <--- Дополнительный запрет на перетаскивание для WebKit */
+            pointer-events: none; 
+            -webkit-user-drag: none;
             user-select: none;
+            
+            /* Делаем "внутреннюю" рамку, чтобы фон-рамка была видна */
+            border: 6px solid #1a1a1a; 
+            background-color: #000;
+            box-sizing: border-box;
         }
 
         .discord-status-dot {
@@ -310,7 +316,7 @@
             border: 4px solid #1a1a1a; 
             background-color: #747f8d; 
             box-shadow: 0 0 5px rgba(0,0,0,0.5);
-            z-index: 5; /* <--- ИЗМЕНЕНИЕ: Статус должен быть поверх рамки и аватара */
+            z-index: 12; /* Статус поверх всего */
         }
         .status-online { background-color: #3ba55c; box-shadow: 0 0 8px #3ba55c; }
         .status-idle { background-color: #faa61a; box-shadow: 0 0 8px #faa61a; }
@@ -406,7 +412,9 @@
     oncut="return false"
     onpaste="return false"
     oncontextmenu="return false"
-    ondragstart="return false"> <div id="loading-overlay">
+    ondragstart="return false">
+
+    <div id="loading-overlay">
         <div class="loading-title">Loading...</div>
     </div>
 

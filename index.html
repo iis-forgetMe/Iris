@@ -205,19 +205,6 @@
         .volume-slider { width: 90px; max-width: 36vw; margin-left: 12px; accent-color: rgb(255,8,0);}
         .volume-percent { color: #fff; min-width: 32px; text-align: right; font-family: inherit; font-size: 15px; margin-left: 8px;}
         
-        #afk-banner {
-            position: relative;
-            background: rgba(20, 20, 20, 0.85);
-            backdrop-filter: blur(12px);
-            border-radius: 16px;
-            max-width: 450px;
-            width: 90%;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-            overflow: hidden; 
-            transition: all 1s;
-            opacity: 1;
-        }
-        
         #discord-gradient-border {
             border-radius: 16px;
             padding: 1px;
@@ -225,14 +212,23 @@
             position: relative;
             z-index: 1;
             transition: all 0.5s ease;
+            max-width: 650px; 
+            width: 90%;
         }
         #discord-gradient-border.active {
-            background: linear-gradient(135deg, #FF69B4, #8A2BE2);
+            background: linear-gradient(135deg, #FF69B4, #8A2BE2); 
         }
         
         #afk-banner {
-            border: none;
+            position: relative;
+            background: rgba(20, 20, 20, 0.85);
+            backdrop-filter: blur(12px);
+            border-radius: 16px;
             width: 100%;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            overflow: hidden; 
+            transition: opacity 1s;
+            opacity: 1;
         }
 
         .discord-banner {
@@ -246,10 +242,10 @@
 
         .discord-content {
             display: flex;
-            align-items: center;
+            align-items: flex-start; 
             gap: 20px;
             padding: 20px 25px; 
-            position: relative;
+            min-height: 140px; 
         }
 
         .discord-avatar-container {
@@ -304,11 +300,20 @@
         .status-offline { background-color: #747f8d; }
 
 
+        .discord-info-wrapper {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            padding-top: 20px; 
+        }
+        
         .discord-info {
             text-align: left;
             flex-grow: 1;
             overflow: hidden;
-            padding-right: 15px; 
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
         }
 
         .discord-username {
@@ -322,23 +327,22 @@
         }
 
         .discord-activity-box {
-            position: absolute;
-            top: 20px;
-            right: 25px;
             background: rgba(40, 40, 40, 0.7);
             border-radius: 8px;
             padding: 10px 15px;
-            max-width: 160px;
+            max-width: 250px; 
+            min-width: 120px;
+            text-align: left;
             font-size: 15px;
             color: #ccc;
             opacity: 0;
-            pointer-events: none;
             transition: opacity 0.5s;
-            text-align: left;
+            flex-shrink: 0; 
+            display: none;
         }
         .discord-activity-box.visible {
             opacity: 1;
-            pointer-events: auto;
+            display: block; 
         }
         .discord-activity-box b { color: #fff; font-size: 17px; display: block; margin-bottom: 2px; }
         .discord-activity-box .label { font-size: 13px; color: #999; }
@@ -400,11 +404,12 @@
                 height: 24px;
             }
             
-            #afk-banner {
+            #discord-gradient-border {
                 max-width: 98vw;
             }
             .discord-content {
                 padding: 15px;
+                min-height: 120px;
             }
             .discord-banner {
                 height: 80px; 
@@ -421,14 +426,14 @@
             }
             .discord-username { font-size: 20px; }
             .discord-activity-box {
-                display: none;
+                display: none !important; 
             }
         }
         @media (max-width:600px) {
             .afk-gif{display:none!important;}
         }
         @media (max-width:800px) and (orientation: landscape) {
-            #afk-banner {
+            #discord-gradient-border {
                 max-width: 98vw;
             }
         }
@@ -516,10 +521,12 @@
                         <img id="discord-pfp" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Avatar" class="discord-avatar">
                         <div id="discord-status" class="discord-status-dot status-offline"></div>
                     </div>
-                    <div class="discord-info">
-                        <div id="discord-name" class="discord-username">Loading...</div>
+                    <div class="discord-info-wrapper">
+                        <div class="discord-info">
+                            <div id="discord-name" class="discord-username">Loading...</div>
+                        </div>
+                        <div id="discord-activity-box" class="discord-activity-box"></div>
                     </div>
-                    <div id="discord-activity-box" class="discord-activity-box"></div>
                 </div>
             </div>
         </div>
@@ -553,8 +560,8 @@
                 }
             } catch (error) {
                 console.error("Lanyard API Error:", error);
-                const info = document.getElementById('discord-info');
-                info.textContent = "Error loading status.";
+                const nameElement = document.getElementById('discord-name');
+                nameElement.textContent = "Error loading status.";
             }
         }
 
@@ -655,8 +662,8 @@
                 } else if (game) {
                     activityHtml = `<div class="label">Playing a Game</div><b>${game.name}</b>`;
                     if (game.details) activityHtml += `<div style="margin-top:2px;">${game.details}</div>`;
-                } else if (custom) {
-                    activityHtml = `<div class="label">Custom Status</div><b>${custom.state || '...'}</b>`;
+                } else if (custom && custom.state) {
+                    activityHtml = `<div class="label">Custom Status</div><b>${custom.state}</b>`;
                 }
 
                 if (activityHtml) {

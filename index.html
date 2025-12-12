@@ -286,7 +286,7 @@
             border-radius: 50%;
             object-fit: cover;
             position: relative; 
-            z-index: 11; 
+            z-index: 15; /* Аватар под рамкой */
             
             pointer-events: none; 
             -webkit-user-drag: none;
@@ -311,80 +311,13 @@
             background-size: cover;
             background-position: center;
             
-            z-index: 15; /* Рамка ПОД статусом */
+            z-index: 16; /* Рамка СВЕРХУ аватара */
             pointer-events: none; 
         }
 
+        /* ТОЧКА СТАТУСА УДАЛЕНА */
 
-        .discord-status-dot {
-            position: absolute;
-            top: 75px; 
-            left: 75px; 
-            
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            
-            border: 4px solid #1a1a1a; 
-            
-            background-color: #747f8d; 
-            box-shadow: 0 0 5px rgba(0,0,0,0.5);
-            z-index: 16; /* Статус СВЕРХУ рамки */
-            
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden; 
-            box-sizing: border-box;
-        }
-        
-        .discord-status-dot:before {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            display: block;
-            background-repeat: no-repeat;
-            background-position: center;
-            background-size: 10px 10px; /* Размер иконки */
-        }
-        
-        /* 1. ONLINE (Зеленый круг) */
-        .status-online { background-color: #3ba55c; box-shadow: 0 0 8px #3ba55c; }
-        .status-online:before { content: none; }
-        
-        /* 2. IDLE (Луна - #faa61a) */
-        .status-idle { 
-            background-color: #faa61a; 
-            box-shadow: 0 0 8px #faa61a;
-            
-        }
-        .status-idle:before { 
-            /* Луна */
-            content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="%23FFFFFF"><path d="M8 1.5A6.5 6.5 0 0 0 8 14.5A6.5 6.5 0 0 0 8 1.5Z" style="fill:none;stroke:%231a1a1a;stroke-width:1;"/><path d="M8 2.5a5.5 5.5 0 0 1 0 11" fill="%23FFFFFF"/></svg>');
-            width: 10px; height: 10px; background-size: contain;
-        }
-        
-        /* 3. DND (Черта - #ed4245) */
-        .status-dnd { 
-            background-color: #ed4245; 
-            box-shadow: 0 0 8px #ed4245; 
-        }
-        .status-dnd:before { 
-            /* Черта */
-            content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="%23FFFFFF"><rect x="3" y="7" width="10" height="2" rx="0.5" fill="%23FFFFFF" /></svg>');
-            width: 10px; height: 10px; background-size: contain;
-        }
-        
-        /* 4. OFFLINE/INVISIBLE (Пустой круг - #747f8d) */
-        .status-offline { background-color: #747f8d; }
-        .status-offline:before { 
-            /* Кольцо */
-            content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="%23FFFFFF"><circle cx="8" cy="8" r="4" stroke="%23FFFFFF" stroke-width="2" fill="none"/></svg>');
-            width: 10px; height: 10px; background-size: contain;
-            background-size: 100%;
-        }
-        
+
         /* ИМЯ: Шрифт OMORI + Градиент */
         .discord-username {
             font-size: 28px; 
@@ -521,8 +454,6 @@
                     <div id="discord-avatar-container" class="discord-avatar-container">
                         <img id="discord-pfp" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Avatar" class="discord-avatar">
                         
-                        <div id="discord-status" class="discord-status-dot status-offline"></div>
-                        
                         <div id="avatar-frame-overlay"></div>
                     </div>
                     <div id="discord-name" class="discord-username">Loading...</div>
@@ -592,7 +523,6 @@
         function updateDiscordUI(data) {
             const pfpContainer = document.getElementById('discord-profile-container');
             const pfpElement = document.getElementById('discord-pfp');
-            const statusElement = document.getElementById('discord-status');
             const nameElement = document.getElementById('discord-name');
             const bannerElement = document.getElementById('discord-banner'); 
             const tagElement = document.getElementById('discord-tag');
@@ -645,14 +575,8 @@
             nameElement.textContent = data.discord_user.display_name || data.discord_user.username;
             tagElement.textContent = `@${data.discord_user.username}`; 
 
-            statusElement.className = 'discord-status-dot'; 
-            switch (data.discord_status) {
-                case 'online': statusElement.classList.add('status-online'); break;
-                case 'idle': statusElement.classList.add('status-idle'); break;
-                case 'dnd': statusElement.classList.add('status-dnd'); break;
-                default: statusElement.classList.add('status-offline');
-            }
-
+            // Удалено обновление статуса, так как элемента discord-status больше нет
+            
             const customStatus = data.activities.find(a => a.type === 4); 
             if (customStatus && customStatus.state) {
                 statusMessageElement.textContent = customStatus.state;

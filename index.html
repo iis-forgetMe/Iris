@@ -212,8 +212,9 @@
             position: relative;
             z-index: 1;
             transition: all 0.5s ease;
-            max-width: 650px; 
+            max-width: 860px; /* Увеличиваем, чтобы вместить активность справа */
             width: 90%;
+            display: flex; /* Делаем Flex-контейнером для activity-area */
         }
         #discord-gradient-border.active {
             background: linear-gradient(135deg, #FF69B4, #8A2BE2); 
@@ -229,6 +230,14 @@
             overflow: hidden; 
             transition: opacity 1s;
             opacity: 1;
+            display: flex; /* Flex-контейнер для основного блока и активности */
+        }
+
+        .discord-main-block {
+            flex-grow: 1; 
+            max-width: 420px; 
+            min-width: 320px;
+            position: relative;
         }
 
         .discord-banner {
@@ -327,43 +336,56 @@
         }
 
         .discord-activity-box {
-            position: absolute; 
-            top: 20px; 
-            right: 25px; 
-            width: 200px;
-            background: rgba(40, 40, 40, 0.7);
-            border-radius: 8px;
-            padding: 10px;
+            width: 280px; /* Фиксированная ширина для активности */
+            flex-shrink: 0;
+            background: rgba(30, 30, 30, 0.85);
+            backdrop-filter: blur(8px);
+            border-radius: 12px;
+            padding: 15px;
             text-align: left;
             font-size: 15px;
             color: #ccc;
             opacity: 0;
             transition: opacity 0.5s;
-            flex-shrink: 0; 
-            display: none;
-            flex-direction: column;
-        }
-        .discord-activity-box.visible {
-            opacity: 1;
             display: flex; 
+            flex-direction: column;
+            align-self: stretch; /* Растягиваем по высоте, чтобы быть рядом с основным блоком */
+            margin: 1px; /* Визуально отделить, если это отдельный элемент */
+            margin-left: 0;
+            border-left: 1px solid rgba(255, 255, 255, 0.05); /* Визуальный разделитель */
         }
 
+        .discord-activity-box.visible {
+            opacity: 1;
+        }
+        
+        /* Контейнер для активности, который будет находиться справа */
+        .discord-activity-area {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            padding: 20px 0; /* Отступ сверху/снизу для выравнивания */
+        }
+        
         .activity-header {
-            font-size: 14px;
+            font-size: 15px;
             font-weight: bold;
             color: #fff;
             margin-bottom: 8px;
             text-transform: uppercase;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 6px;
         }
 
         .activity-details {
             display: flex;
-            gap: 10px;
-            align-items: center;
+            gap: 12px;
+            align-items: flex-start;
         }
         .activity-image {
-            width: 50px;
-            height: 50px;
+            width: 64px;
+            height: 64px;
             border-radius: 8px;
             object-fit: cover;
             flex-shrink: 0;
@@ -375,8 +397,15 @@
         }
         .activity-text .type { font-size: 13px; color: #999; margin-bottom: 2px;}
         .activity-text .title { font-size: 16px; color: #fff; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2;}
-        .activity-text .line { font-size: 14px; color: #ccc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+        .activity-text .line { font-size: 14px; color: #ccc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px;}
 
+        /* Скрываем активность на маленьких экранах */
+        @media (max-width: 900px) {
+            .discord-activity-area { display: none !important; }
+            #discord-gradient-border { max-width: 500px; }
+            #afk-banner { display: block; }
+            .discord-main-block { max-width: 100%; min-width: auto; }
+        }
 
         .afk-hidden {opacity:0;pointer-events:none;}
         .afk-gif {
@@ -386,79 +415,6 @@
         }
         .afk-gif.afk-active{opacity:1;pointer-events:auto;}
         
-        @media (max-width:900px) {
-            .top-box{left:6px;right:6px;top:10px;min-height:38px;padding:0 12px;font-size:18px;}
-            .top-box-left{font-size:18px;padding-right:12px;}
-            .social-icon{width:22px;height:22px;}
-            .volume-controller{left:10px;bottom:10px;width:38px;height:38px;padding:4px;}
-            .volume-controller:hover,.volume-controller:focus-within{width:134px;}
-            .volume-slider{width:65px;}
-            .volume-percent{font-size:13px;min-width:22px;}
-            
-            #card-selection-screen {
-                align-items: flex-start;
-                padding-top: 80px; 
-                overflow-y: auto; 
-                -webkit-overflow-scrolling: touch; 
-            }
-
-            .cards-wrapper {
-                flex-direction: column; 
-                height: auto; 
-                width: 100%;
-                gap: 30px; 
-                padding-bottom: 100px;
-                display: flex;
-            }
-            
-            .card { 
-                position: relative !important; 
-                width: 70vw; 
-                height: auto; 
-                aspect-ratio: 1/1; 
-                transform: none !important; 
-                opacity: 1 !important;
-                filter: none !important; 
-                margin: 0 auto; 
-            } 
-            
-            .back-button-controller {
-                left: 10px;
-                top: 60px;
-                width: 32px;
-                height: 32px;
-                padding: 4px;
-            }
-            .back-icon {
-                width: 24px;
-                height: 24px;
-            }
-            
-            #discord-gradient-border {
-                max-width: 98vw;
-            }
-            .discord-content {
-                padding: 15px;
-                min-height: 120px;
-            }
-            .discord-banner {
-                height: 80px; 
-            }
-            .discord-avatar-container { 
-                width: 60px; 
-                height: 60px; 
-                margin-top: -45px; 
-                border: 4px solid rgba(20, 20, 20, 0.85);
-            }
-            .discord-avatar-container.with-frame {
-                border: 4px solid transparent; 
-                padding: 2px;
-            }
-            .discord-username { font-size: 20px; }
-            .discord-activity-box {
-                display: none !important; 
-            }
-        }
         @media (max-width:600px) {
             .afk-gif{display:none!important;}
         }
@@ -545,17 +501,22 @@
 
         <div id="discord-gradient-border">
             <div id="afk-banner">
-                <div id="discord-banner" class="discord-banner"></div>
-                <div class="discord-content">
-                    <div id="discord-avatar-container" class="discord-avatar-container">
-                        <img id="discord-pfp" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Avatar" class="discord-avatar">
-                        <div id="discord-status" class="discord-status-dot status-offline"></div>
-                    </div>
-                    <div class="discord-info-wrapper">
-                        <div class="discord-info">
-                            <div id="discord-name" class="discord-username">Loading...</div>
+                <div class="discord-main-block">
+                    <div id="discord-banner" class="discord-banner"></div>
+                    <div class="discord-content">
+                        <div id="discord-avatar-container" class="discord-avatar-container">
+                            <img id="discord-pfp" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Avatar" class="discord-avatar">
+                            <div id="discord-status" class="discord-status-dot status-offline"></div>
+                        </div>
+                        <div class="discord-info-wrapper">
+                            <div class="discord-info">
+                                <div id="discord-name" class="discord-username">Loading...</div>
+                            </div>
                         </div>
                     </div>
+                </div>
+                
+                <div class="discord-activity-area">
                     <div id="discord-activity-box" class="discord-activity-box">
                         <div class="activity-header">Activity</div>
                         <div class="activity-details">
@@ -666,6 +627,7 @@
             const nameElement = document.getElementById('discord-name');
             const bannerElement = document.getElementById('discord-banner'); 
             const gradientBorder = document.getElementById('discord-gradient-border');
+            const activityArea = document.querySelector('.discord-activity-area');
             const activityBox = document.getElementById('discord-activity-box');
             const activityImage = document.getElementById('activity-image');
             const activityType = document.getElementById('activity-type');
@@ -727,21 +689,25 @@
             }
             
             activityBox.classList.remove('visible');
+            activityArea.style.display = 'none';
             activityLine2.textContent = ''; 
 
             if (data.activities && data.activities.length > 0) {
-                const spotify = data.activities.find(a => a.id === 'spotify:1');
-                const game = data.activities.find(a => a.type === 0);
-                const watching = data.activities.find(a => a.type === 3); 
+                const activities = data.activities.filter(a => a.type !== 4); // Исключаем Custom Status
+                
+                const spotify = activities.find(a => a.id === 'spotify:1');
+                const game = activities.find(a => a.type === 0);
+                const watching = activities.find(a => a.type === 3); 
                 
                 let activity = null;
                 let activityTypeLabel = '';
+                let imageUrl = '';
 
                 if (spotify) {
                     activity = spotify;
-                    activityTypeLabel = 'Listening to Spotify';
-                    activityImage.src = getDiscordAssetUrl(activity, 'large_image');
-                    activityType.textContent = 'Listening to Spotify';
+                    activityTypeLabel = 'Spotify';
+                    imageUrl = getDiscordAssetUrl(activity, 'large_image');
+                    activityType.textContent = 'Listening to';
                     activityTitle.textContent = activity.details || '';
                     activityLine1.textContent = activity.state ? `by ${activity.state.replace(/;/g, ', ')}` : '';
                     activityLine2.textContent = activity.timestamps ? formatTime(activity.timestamps.start) : '';
@@ -749,7 +715,7 @@
                 } else if (watching) {
                     activity = watching;
                     activityTypeLabel = 'Watching';
-                    activityImage.src = getDiscordAssetUrl(activity, 'large_image');
+                    imageUrl = getDiscordAssetUrl(activity, 'large_image');
                     activityType.textContent = activityTypeLabel;
                     activityTitle.textContent = activity.name || 'Unknown';
                     activityLine1.textContent = activity.details || '';
@@ -758,7 +724,7 @@
                 } else if (game) {
                     activity = game;
                     activityTypeLabel = 'Playing';
-                    activityImage.src = getDiscordAssetUrl(activity, 'large_image');
+                    imageUrl = getDiscordAssetUrl(activity, 'large_image');
                     activityType.textContent = activityTypeLabel;
                     activityTitle.textContent = activity.name || 'Unknown Game';
                     activityLine1.textContent = activity.details || '';
@@ -766,8 +732,11 @@
                 } 
 
                 if (activity) {
+                    activityArea.style.display = 'flex';
                     activityBox.classList.add('visible');
-                    activityImage.style.display = activityImage.src ? 'block' : 'none';
+                    
+                    activityImage.src = imageUrl || '';
+                    activityImage.style.display = imageUrl ? 'block' : 'none';
                 }
             } 
         }

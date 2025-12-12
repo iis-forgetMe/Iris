@@ -434,6 +434,8 @@
         .activity-text {
             flex-grow: 1;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
         .activity-text .type { font-size: 13px; color: #b9bbbe; margin-bottom: 2px;}
         .activity-text .title { font-size: 16px; color: #fff; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2;}
@@ -515,6 +517,12 @@
             pointer-events: auto;
         }
         #no-current-activity {
+            font-size: 16px;
+            color: #b9bbbe;
+            padding: 5px 0;
+            text-align: center;
+        }
+        #no-sidebar-activity {
             font-size: 16px;
             color: #b9bbbe;
             padding: 5px 0;
@@ -617,10 +625,10 @@
                                 <div class="info-line">v327</div>
                             </div>
                         </div>
-                        <div id="activity-content">
+                        <div id="activity-content" style="display: none;">
                              <div class="activity-header">Current activity</div>
                              <div id="current-activity-container">
-                                <div id="no-current-activity" class="info-line" style="color: #b9bbbe;">No current activity.</div>
+                                <div id="no-current-activity">No current activity.</div>
                              </div>
                              
                              <div class="activity-header" style="margin-top: 25px;">Recent activity</div>
@@ -662,7 +670,7 @@
             <div class="discord-activity-box">
                 <div class="activity-header">Activity</div>
                 <div id="current-activity-sidebar">
-                    <div id="no-sidebar-activity" class="info-line" style="color: #b9bbbe;">No current activity.</div>
+                    <div id="no-sidebar-activity">No current activity.</div>
                 </div>
                 <div class="activity-header" style="margin-top: 25px;">Recent activity</div>
                 <div id="recent-activity-sidebar">
@@ -695,6 +703,7 @@
         ];
 
         let activeCardIndex = 1; 
+        const discordActivityTimers = {};
 
         const DISCORD_ID = "1236359938721185902"; 
         const CUSTOM_PFP_URL = "gyol.png"; 
@@ -769,8 +778,14 @@
             const container = document.getElementById(containerId);
             container.innerHTML = '';
             
-            const noActivityElement = document.getElementById(containerId === 'current-activity-container' ? 'no-current-activity' : 'no-sidebar-activity');
+            const noActivityElementId = containerId === 'current-activity-container' ? 'no-current-activity' : 'no-sidebar-activity';
+            const noActivityElement = document.getElementById(noActivityElementId);
             if (noActivityElement) noActivityElement.style.display = 'none';
+
+            if (discordActivityTimers[containerId]) {
+                clearInterval(discordActivityTimers[containerId]);
+                delete discordActivityTimers[containerId];
+            }
 
             const card = document.createElement('div');
             card.className = 'activity-card';
@@ -873,6 +888,7 @@
                         if (remaining <= 0) {
                             lineElement.textContent = "Finished";
                             document.getElementById(`activity-progress-bar-${containerId}`).style.width = '100%';
+                            clearInterval(discordActivityTimers[containerId]);
                             return;
                         }
 
@@ -891,13 +907,7 @@
                     }
                 }
                 updateTime();
-                const timer = setInterval(() => {
-                    if (document.getElementById(containerId).contains(card)) {
-                        updateTime();
-                    } else {
-                        clearInterval(timer);
-                    }
-                }, 1000);
+                discordActivityTimers[containerId] = setInterval(updateTime, 1000);
             }
         }
 
@@ -954,7 +964,7 @@
             } else {
                 avatarUrl = data.discord_user.avatar 
                     ? `https://cdn.discordapp.com/avatars/${DISCORD_ID}/${data.discord_user.avatar}.png?size=128`
-                    : `https://cdn.discordapp.com/embed/avatars/${parseInt(data.discord_user.discriminator) % 5}.png`;
+                    : `https://cdn.discordapp.com/embed/avatars/${(data.discord_user.discriminator === '0' ? (BigInt(data.discord_user.id) >> 22n) % 6n : BigInt(data.discord_user.discriminator) % 5n)}.png`;
             }
             pfpElement.src = avatarUrl;
             
@@ -972,6 +982,11 @@
             sidebarActivityContainer.innerHTML = '';
             tabActivityContainer.innerHTML = '';
             
+            for (const key in discordActivityTimers) {
+                clearInterval(discordActivityTimers[key]);
+                delete discordActivityTimers[key];
+            }
+
             if (data.activities && data.activities.length > 0) {
                 const activities = data.activities.filter(a => a.type !== 4); 
                 

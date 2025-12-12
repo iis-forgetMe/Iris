@@ -311,7 +311,7 @@
             background-size: cover;
             background-position: center;
             
-            z-index: 17; /* ИЗМЕНЕНИЕ: Рамка СВЕРХУ статуса */
+            z-index: 15; /* ИЗМЕНЕНИЕ: Рамка ПОД статусом */
             pointer-events: none; 
         }
 
@@ -329,12 +329,56 @@
             
             background-color: #747f8d; 
             box-shadow: 0 0 5px rgba(0,0,0,0.5);
-            z-index: 16; /* ИЗМЕНЕНИЕ: Статус ПОД рамкой, но над аватаром */
+            z-index: 16; /* ИЗМЕНЕНИЕ: Статус СВЕРХУ рамки */
+            
+            /* Стилизация иконок */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden; 
+            box-sizing: border-box;
         }
+        
+        .discord-status-dot:before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: block;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 16px 16px; /* Размер иконки */
+        }
+        
+        /* 1. ONLINE (Зеленый круг) */
         .status-online { background-color: #3ba55c; box-shadow: 0 0 8px #3ba55c; }
-        .status-idle { background-color: #faa61a; box-shadow: 0 0 8px #faa61a; }
-        .status-dnd { background-color: #ed4245; box-shadow: 0 0 8px #ed4245; }
+        .status-online:before { content: none; } /* Нет иконки для Online */
+        
+        /* 2. IDLE (Луна) */
+        .status-idle { 
+            background-color: #faa61a; 
+            box-shadow: 0 0 8px #faa61a;
+            
+        }
+        .status-idle:before { 
+            content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23FFFFFF"><path d="M12 2A10 10 0 0 0 12 22A10 10 0 0 0 12 2Z" style="fill:none;stroke:%231a1a1a;stroke-width:2;"/><path d="M12 4a8 8 0 0 1 0 16" fill="%23FFFFFF"/></svg>');
+            width: 12px; height: 12px; background-size: contain;
+        }
+        
+        /* 3. DND (Черта) */
+        .status-dnd { 
+            background-color: #ed4245; 
+            box-shadow: 0 0 8px #ed4245; 
+        }
+        .status-dnd:before { 
+            content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23FFFFFF"><rect x="5" y="11" width="14" height="2" fill="%23FFFFFF" /></svg>');
+            width: 12px; height: 12px; background-size: contain;
+        }
+        
+        /* 4. OFFLINE (Прозрачный или серый) */
         .status-offline { background-color: #747f8d; }
+        /* Discord не имеет иконки для офлайн/скрыт, но если нужна - можно добавить крестик */
+        .status-offline:before { content: none; }
         
         /* ИМЯ: Шрифт OMORI + Градиент */
         .discord-username {
@@ -458,7 +502,7 @@
             <div class="volume-icon" tabindex="0">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
                     <path d="M4 9v6h4l5 5V4L8 9H4z" fill="#fff"/>
-                    <path d="M16 7.82A6 6 6 0 1 16 16.18" stroke="#fff" stroke-width="2" fill="none"/>
+                    <path d="M16 7.82A6 6 0 1 16 16.18" stroke="#fff" stroke-width="2" fill="none"/>
                 </svg>
             </div>
             <input type="range" min="0" max="100" value="50" class="volume-slider">

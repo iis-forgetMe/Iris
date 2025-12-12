@@ -189,7 +189,10 @@
         .top-box-right { min-width: 32px; display: flex; align-items: center; }
         .top-box-right .icon-link { display: inline-flex; align-items: center; margin-left: 16px; transition: transform 0.2s;}
         .top-box-right .icon-link:first-child {margin-left: 0;}
-        .social-icon { width: 28px; height: 28px; display: block; filter: brightness(0.99) drop-shadow(0 2px 4px #0007); transition: filter 0.2s, transform 0.2s;}
+        .social-icon { display: block; filter: brightness(0.99) drop-shadow(0 2px 4px #0007); transition: filter 0.2s, transform 0.2s; 
+            width: 28px; height: 28px; 
+            -webkit-user-drag: none; user-select: none;
+        }
         .icon-link:hover .social-icon { filter: brightness(1.2) drop-shadow(0 2px 5px #fff7); transform: scale(1.1);}
         .volume-controller {
             position: fixed; left: 24px; bottom: 24px; z-index: 20; display: flex; align-items: center; gap: 0;
@@ -269,6 +272,8 @@
             border-radius: 50%;
             border: 6px solid #1a1a1a; 
             background-color: #000;
+            /* Рамка должна быть поверх */
+            z-index: 3; /* <--- ИЗМЕНЕНИЕ: Контейнер-рамка поверх других элементов */
         }
         
         /* Стили для кастомной рамки */
@@ -287,7 +292,12 @@
             border-radius: 50%;
             object-fit: cover;
             position: relative; 
-            z-index: 2;
+            z-index: 4; /* <--- ИЗМЕНЕНИЕ: Аватар должен быть поверх рамки, если рамка - фон контейнера */
+            
+            /* Запрет взаимодействия с аватаром */
+            pointer-events: none; /* <--- ИЗМЕНЕНИЕ: Отключает взаимодействие с изображением */
+            -webkit-user-drag: none; /* <--- Дополнительный запрет на перетаскивание для WebKit */
+            user-select: none;
         }
 
         .discord-status-dot {
@@ -300,7 +310,7 @@
             border: 4px solid #1a1a1a; 
             background-color: #747f8d; 
             box-shadow: 0 0 5px rgba(0,0,0,0.5);
-            z-index: 3;
+            z-index: 5; /* <--- ИЗМЕНЕНИЕ: Статус должен быть поверх рамки и аватара */
         }
         .status-online { background-color: #3ba55c; box-shadow: 0 0 8px #3ba55c; }
         .status-idle { background-color: #faa61a; box-shadow: 0 0 8px #faa61a; }
@@ -395,9 +405,8 @@
     oncopy="return false" 
     oncut="return false"
     onpaste="return false"
-    oncontextmenu="return false">
-
-    <div id="loading-overlay">
+    oncontextmenu="return false"
+    ondragstart="return false"> <div id="loading-overlay">
         <div class="loading-title">Loading...</div>
     </div>
 
@@ -483,7 +492,7 @@
         const DISCORD_ID = "1236359938721185902"; 
         const CUSTOM_PFP_URL = "gyol.png"; 
         const CUSTOM_BANNER_URL = "https://cdn.discordapp.com/banners/1236359938721185902/cd8eed09b334a65a412b4c4a91f5f210.webp?size=1024"; 
-        const CUSTOM_FRAME_URL = "Aurora Fox.gif"; // <-- ИСПОЛЬЗУЕТСЯ ВАШ ЛОКАЛЬНЫЙ GIF
+        const CUSTOM_FRAME_URL = "Aurora Fox.gif"; 
         const APPLY_PFP_FRAME = false; 
         
         async function fetchDiscordStatus() {

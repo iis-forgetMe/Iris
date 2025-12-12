@@ -224,39 +224,8 @@
             border-radius: 16px;
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.05);
-            overflow: hidden; 
         }
 
-        /* Обновление стиля для эффекта: теперь он действует как контейнер для градиента */
-        #profile-effect-bg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1; 
-            pointer-events: none;
-            transition: background-image 0.5s ease;
-        }
-
-        /* Добавляем элемент для GIF-анимации, чтобы она была поверх градиента */
-        #profile-effect-bg::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            
-            background-image: url('profile.gif'); /* Ваша GIF */
-            background-size: cover;
-            background-position: center;
-            
-            opacity: 0.8; 
-            mix-blend-mode: screen; 
-            filter: brightness(1.2); 
-        }
-        
         #discord-profile-container.active {
             box-shadow: 0 0 20px rgba(114, 137, 218, 0.4); 
             border: 1px solid rgba(114, 137, 218, 0.3); 
@@ -266,7 +235,7 @@
             width: 100%;
             flex-shrink: 0;
             position: relative;
-            background-color: rgba(20, 20, 20, 0.85); 
+            background-color: #1a1a1a;
             display: flex;
             flex-direction: column;
             overflow-y: visible; 
@@ -344,6 +313,27 @@
             
             z-index: 16; 
             pointer-events: none; 
+        }
+        
+        /* ЭФФЕКТ ПРОФИЛЯ (ПОВЕРХ ВСЕГО) */
+        #profile-effect-overlay {
+            position: absolute;
+            top: -24px; /* Регулировка, чтобы покрыть декорацию и аватар */
+            left: -24px;
+            
+            /* Размер должен быть больше, чем у рамки, чтобы покрыть эффект */
+            width: 140px; 
+            height: 140px; 
+            
+            background-image: url('profile.gif'); /* Ваша GIF */
+            background-size: cover;
+            background-position: center;
+            
+            z-index: 17; /* Выше рамки и аватара */
+            pointer-events: none;
+            
+            /* Добавляем эффект смешивания, чтобы GIF выглядела лучше */
+            mix-blend-mode: screen; 
         }
 
 
@@ -496,8 +486,6 @@
         </div>
 
         <div id="discord-profile-container">
-            <div id="profile-effect-bg"></div>
-            
             <div class="discord-main-block">
                 <div id="discord-banner" class="discord-banner"></div>
                 <div class="profile-content">
@@ -506,6 +494,7 @@
                         
                         
                         <div id="avatar-frame-overlay"></div>
+                        <div id="profile-effect-overlay"></div>
                     </div>
                     <div id="discord-name" class="discord-username">Loading...</div>
                     <div id="discord-tag" class="discord-tag">@username</div>
@@ -597,24 +586,15 @@
             const tagElement = document.getElementById('discord-tag');
             const statusMessageElement = document.getElementById('dynamic-status-message');
             const frameOverlay = document.getElementById('avatar-frame-overlay');
-            const profileEffectBg = document.getElementById('profile-effect-bg');
             
-            let primaryColor = '#7289da'; 
-
             if (data.accent_color && data.accent_color !== "0") {
-                primaryColor = '#' + data.accent_color;
+                const primaryColor = '#' + data.accent_color;
                 pfpContainer.classList.add('active');
                 pfpContainer.style.border = `1px solid ${adjustColor(primaryColor, -60)}`;
             } else {
                 pfpContainer.classList.remove('active');
                 pfpContainer.style.border = `1px solid rgba(255, 255, 255, 0.05)`;
             }
-
-            const startColor = primaryColor;
-            const endColor = adjustColor(primaryColor, 40);
-            
-            profileEffectBg.style.backgroundImage = `linear-gradient(135deg, ${startColor} 0%, ${endColor} 100%)`;
-
 
             if (CUSTOM_BANNER_URL.trim() !== "") {
                 bannerElement.style.backgroundImage = `url('${CUSTOM_BANNER_URL}')`;

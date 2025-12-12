@@ -209,14 +209,30 @@
             position: relative;
             background: rgba(20, 20, 20, 0.85);
             backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 16px;
             max-width: 450px;
             width: 90%;
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
             overflow: hidden; 
-            transition: opacity 1s;
+            transition: all 1s;
             opacity: 1;
+        }
+        
+        #discord-gradient-border {
+            border-radius: 16px;
+            padding: 1px;
+            background: transparent;
+            position: relative;
+            z-index: 1;
+            transition: all 0.5s ease;
+        }
+        #discord-gradient-border.active {
+            background: linear-gradient(135deg, #FF69B4, #8A2BE2);
+        }
+        
+        #afk-banner {
+            border: none;
+            width: 100%;
         }
 
         .discord-banner {
@@ -233,6 +249,7 @@
             align-items: center;
             gap: 20px;
             padding: 20px 25px; 
+            position: relative;
         }
 
         .discord-avatar-container {
@@ -245,6 +262,15 @@
             border: 5px solid rgba(20, 20, 20, 0.85); 
             background-color: #000;
         }
+        
+        .discord-avatar-container.with-frame {
+            padding: 3px; 
+            border: 5px solid transparent; 
+            background-clip: padding-box;
+            background-origin: padding-box;
+            background-image: linear-gradient(to right, #7289da, #99aab5);
+            box-shadow: 0 0 12px rgba(114, 137, 218, 0.6);
+        }
 
         .discord-avatar {
             width: 100%;
@@ -252,6 +278,12 @@
             border-radius: 50%;
             object-fit: cover;
             border: 2px solid rgba(255,255,255,0.1);
+            position: relative; 
+            z-index: 2;
+        }
+        
+        .discord-avatar-container.with-frame .discord-avatar {
+             border: none;
         }
 
         .discord-status-dot {
@@ -264,6 +296,7 @@
             border: 3px solid rgba(20, 20, 20, 0.85); 
             background-color: #747f8d; 
             box-shadow: 0 0 5px rgba(0,0,0,0.5);
+            z-index: 3;
         }
         .status-online { background-color: #3ba55c; box-shadow: 0 0 8px #3ba55c; }
         .status-idle { background-color: #faa61a; box-shadow: 0 0 8px #faa61a; }
@@ -275,6 +308,7 @@
             text-align: left;
             flex-grow: 1;
             overflow: hidden;
+            padding-right: 15px; 
         }
 
         .discord-username {
@@ -287,17 +321,28 @@
             text-overflow: ellipsis;
         }
 
-        .discord-activity {
-            font-size: 16px;
-            color: #bbb;
-            margin-top: 5px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            min-height: 20px;
+        .discord-activity-box {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            background: rgba(40, 40, 40, 0.7);
+            border-radius: 8px;
+            padding: 10px 15px;
+            max-width: 160px;
+            font-size: 15px;
+            color: #ccc;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s;
+            text-align: left;
         }
+        .discord-activity-box.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .discord-activity-box b { color: #fff; font-size: 17px; display: block; margin-bottom: 2px; }
+        .discord-activity-box .label { font-size: 13px; color: #999; }
         
-        .discord-activity b { color: #fff; }
 
         .afk-hidden {opacity:0;pointer-events:none;}
         .afk-gif {
@@ -370,8 +415,14 @@
                 margin-top: -45px; 
                 border: 4px solid rgba(20, 20, 20, 0.85);
             }
+            .discord-avatar-container.with-frame {
+                border: 4px solid transparent; 
+                padding: 2px;
+            }
             .discord-username { font-size: 20px; }
-            .discord-activity { font-size: 14px; }
+            .discord-activity-box {
+                display: none;
+            }
         }
         @media (max-width:600px) {
             .afk-gif{display:none!important;}
@@ -457,16 +508,18 @@
             <span class="volume-percent" id="volume-percent">50%</span>
         </div>
 
-        <div id="afk-banner">
-            <div id="discord-banner" class="discord-banner"></div>
-            <div class="discord-content">
-                <div class="discord-avatar-container">
-                    <img id="discord-pfp" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Avatar" class="discord-avatar">
-                    <div id="discord-status" class="discord-status-dot status-offline"></div>
-                </div>
-                <div class="discord-info">
-                    <div id="discord-name" class="discord-username">Loading...</div>
-                    <div id="discord-activity" class="discord-activity">Connecting to Lanyard...</div>
+        <div id="discord-gradient-border">
+            <div id="afk-banner">
+                <div id="discord-banner" class="discord-banner"></div>
+                <div class="discord-content">
+                    <div id="discord-avatar-container" class="discord-avatar-container">
+                        <img id="discord-pfp" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Avatar" class="discord-avatar">
+                        <div id="discord-status" class="discord-status-dot status-offline"></div>
+                    </div>
+                    <div class="discord-info">
+                        <div id="discord-name" class="discord-username">Loading...</div>
+                    </div>
+                    <div id="discord-activity-box" class="discord-activity-box"></div>
                 </div>
             </div>
         </div>
@@ -488,6 +541,7 @@
         const DISCORD_ID = "1236359938721185902"; 
         const CUSTOM_PFP_URL = "gyol.png"; 
         const CUSTOM_BANNER_URL = "https://cdn.discordapp.com/banners/1236359938721185902/cd8eed09b334a65a412b4c4a91f5f210.webp?size=1024"; 
+        const APPLY_PFP_FRAME = true; 
         
         async function fetchDiscordStatus() {
             try {
@@ -499,26 +553,40 @@
                 }
             } catch (error) {
                 console.error("Lanyard API Error:", error);
+                const info = document.getElementById('discord-info');
+                info.textContent = "Error loading status.";
             }
+        }
+
+        function hexToRgb(hex) {
+            const bigint = parseInt(hex.slice(1), 16);
+            const r = (bigint >> 16) & 255;
+            const g = (bigint >> 8) & 255;
+            const b = bigint & 255;
+            return { r, g, b };
+        }
+
+        function adjustColor(hex, lum) {
+            let rgb = hexToRgb(hex);
+            let r = rgb.r, g = rgb.g, b = rgb.b;
+
+            r = Math.min(255, Math.max(0, r + lum));
+            g = Math.min(255, Math.max(0, g + lum));
+            b = Math.min(255, Math.max(0, b + lum));
+
+            const toHex = c => c.toString(16).padStart(2, '0');
+            return '#' + toHex(r) + toHex(g) + toHex(b);
         }
 
         function updateDiscordUI(data) {
             const pfpElement = document.getElementById('discord-pfp');
+            const pfpContainer = document.getElementById('discord-avatar-container');
             const statusElement = document.getElementById('discord-status');
             const nameElement = document.getElementById('discord-name');
-            const activityElement = document.getElementById('discord-activity');
             const bannerElement = document.getElementById('discord-banner'); 
+            const gradientBorder = document.getElementById('discord-gradient-border');
+            const activityBox = document.getElementById('discord-activity-box');
 
-            let avatarUrl;
-            if (CUSTOM_PFP_URL.trim() !== "") {
-                avatarUrl = CUSTOM_PFP_URL;
-            } else {
-                avatarUrl = data.discord_user.avatar 
-                    ? `https://cdn.discordapp.com/avatars/${DISCORD_ID}/${data.discord_user.avatar}.png?size=128`
-                    : `https://cdn.discordapp.com/embed/avatars/${parseInt(data.discord_user.discriminator) % 5}.png`;
-            }
-            pfpElement.src = avatarUrl;
-            
             if (CUSTOM_BANNER_URL.trim() !== "") {
                 bannerElement.style.backgroundImage = `url('${CUSTOM_BANNER_URL}')`;
                 bannerElement.style.backgroundColor = "transparent";
@@ -536,7 +604,32 @@
                 }
             }
 
+            if (data.accent_color && data.accent_color !== "0") {
+                const primaryColor = '#' + data.accent_color;
+                const secondaryColor = adjustColor(primaryColor, -40); 
+                gradientBorder.classList.add('active');
+                gradientBorder.style.background = `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})`;
+            } else {
+                gradientBorder.classList.remove('active');
+                gradientBorder.style.background = 'transparent';
+            }
+            
+            if (APPLY_PFP_FRAME) {
+                pfpContainer.classList.add('with-frame');
+            } else {
+                pfpContainer.classList.remove('with-frame');
+            }
 
+            let avatarUrl;
+            if (CUSTOM_PFP_URL.trim() !== "") {
+                avatarUrl = CUSTOM_PFP_URL;
+            } else {
+                avatarUrl = data.discord_user.avatar 
+                    ? `https://cdn.discordapp.com/avatars/${DISCORD_ID}/${data.discord_user.avatar}.png?size=128`
+                    : `https://cdn.discordapp.com/embed/avatars/${parseInt(data.discord_user.discriminator) % 5}.png`;
+            }
+            pfpElement.src = avatarUrl;
+            
             nameElement.textContent = data.discord_user.display_name || data.discord_user.username;
 
             statusElement.className = 'discord-status-dot'; 
@@ -547,23 +640,30 @@
                 default: statusElement.classList.add('status-offline');
             }
 
+            activityBox.innerHTML = '';
+            activityBox.classList.remove('visible');
+            
             if (data.activities && data.activities.length > 0) {
                 const spotify = data.activities.find(a => a.id === 'spotify:1');
                 const game = data.activities.find(a => a.type === 0);
                 const custom = data.activities.find(a => a.type === 4);
+                
+                let activityHtml = '';
 
                 if (spotify) {
-                    activityElement.innerHTML = `Listening to <b>${spotify.details}</b>`;
+                    activityHtml = `<div class="label">Listening to Spotify</div><b>${spotify.details}</b><div style="margin-top:2px;">${spotify.state}</div>`;
                 } else if (game) {
-                    activityElement.innerHTML = `Playing <b>${game.name}</b>`;
+                    activityHtml = `<div class="label">Playing a Game</div><b>${game.name}</b>`;
+                    if (game.details) activityHtml += `<div style="margin-top:2px;">${game.details}</div>`;
                 } else if (custom) {
-                    activityElement.textContent = custom.state;
-                } else {
-                    activityElement.textContent = "Just chillin'";
+                    activityHtml = `<div class="label">Custom Status</div><b>${custom.state || '...'}</b>`;
                 }
-            } else {
-                activityElement.textContent = "Just chillin'";
-            }
+
+                if (activityHtml) {
+                    activityBox.innerHTML = activityHtml;
+                    activityBox.classList.add('visible');
+                }
+            } 
         }
 
         fetchDiscordStatus();
@@ -602,7 +702,7 @@
         function showAfk() {
             if (!afkEnabled) return;
             afkState = true;
-            const banner = document.getElementById("afk-banner");
+            const banner = document.getElementById("afk-banner").parentNode;
             const gif = document.getElementById("afk-gif");
             if (isMobileDevice()) {
                 banner.classList.add("afk-hidden");
@@ -615,7 +715,7 @@
         function removeAfk() {
             if (!afkEnabled) return;
             afkState = false;
-            const banner = document.getElementById("afk-banner");
+            const banner = document.getElementById("afk-banner").parentNode;
             const gif = document.getElementById("afk-gif");
             gif.classList.remove("afk-active");
             banner.classList.remove("afk-hidden");

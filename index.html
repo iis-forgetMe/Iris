@@ -5,12 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="icon" type="image/png" href="OwO.png">
     <title>Iris</title>
-    
+
     <meta property="og:title" content="Iris" />
     <meta property="og:description" content="You're my light." />
     <meta property="og:image" content="https://raw.githubusercontent.com/iis-forgetMe/Iris/main/Artful.jpg" />
 
-    
     <style>
         html, body {
             height: 100%;
@@ -141,22 +140,9 @@
         }
 
         .back-button-controller {
-            position: fixed; 
-            left: 24px; 
-            top: 76px;
-            z-index: 22; 
-            display: flex;
-            align-items: center; 
-            justify-content: center;
-            
-            background: rgba(40, 40, 40, 0.74); 
-            border-radius: 999px; 
-            box-shadow: 0 3px 18px 0 #0007; 
-            padding: 4px; 
-            width: 32px;
-            height: 32px; 
-            cursor: pointer;
-            transition: opacity 1.5s ease-in-out, transform 0.2s ease;
+            position: fixed; left: 24px; top: 76px; z-index: 22; display: flex; align-items: center; justify-content: center;
+            background: rgba(40, 40, 40, 0.74); border-radius: 999px; box-shadow: 0 3px 18px 0 #0007; padding: 4px; 
+            width: 32px; height: 32px; cursor: pointer; transition: opacity 1.5s ease-in-out, transform 0.2s ease;
             opacity: 0;
             pointer-events: none;
         }
@@ -171,12 +157,7 @@
         }
 
         .back-icon {
-            width: 24px; 
-            height: 24px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            transform: translateX(1px); 
+            width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; transform: translateX(1px);
         }
 
         .top-box {
@@ -188,11 +169,9 @@
         .top-box-right { min-width: 32px; display: flex; align-items: center; }
         .top-box-right .icon-link { display: inline-flex; align-items: center; margin-left: 16px; transition: transform 0.2s;}
         .top-box-right .icon-link:first-child {margin-left: 0;}
-        .social-icon { display: block; filter: brightness(0.99) drop-shadow(0 2px 4px #0007); transition: filter 0.2s, transform 0.2s; 
-            width: 28px; height: 28px; 
-            -webkit-user-drag: none; user-select: none;
-        }
+        .social-icon { display: block; filter: brightness(0.99) drop-shadow(0 2px 4px #0007); transition: filter 0.2s, transform 0.2s; width: 28px; height: 28px; -webkit-user-drag: none; user-select: none;}
         .icon-link:hover .social-icon { filter: brightness(1.2) drop-shadow(0 2px 5px #fff7); transform: scale(1.1);}
+        
         .volume-controller {
             position: fixed; left: 24px; bottom: 24px; z-index: 20; display: flex; align-items: center; gap: 0;
             background: rgba(40, 40, 40, 0.74); border-radius: 999px; box-shadow: 0 3px 18px 0 #0007; padding: 6px;
@@ -211,191 +190,79 @@
         .volume-percent { color: #fff; min-width: 32px; text-align: right; font-family: inherit; font-size: 15px; margin-left: 8px;}
         
         #discord-profile-container {
-            position: relative;
-            z-index: 1;
-            display: flex;
-            flex-direction: column;
-            max-width: 420px; 
-            width: 90%;
-            height: auto; 
-            min-height: 250px; 
-            background: rgba(20, 20, 20, 0.85);
-            backdrop-filter: blur(12px);
-            border-radius: 16px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            position: relative; z-index: 1; display: flex; flex-direction: column; max-width: 420px; 
+            width: 90%; height: auto; min-height: 250px; background: rgba(20, 20, 20, 0.85);
+            backdrop-filter: blur(12px); border-radius: 16px; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         #discord-profile-container.active {
-            box-shadow: 0 0 20px rgba(114, 137, 218, 0.4); 
-            border: 1px solid rgba(114, 137, 218, 0.3); 
+            box-shadow: 0 0 20px rgba(114, 137, 218, 0.4); border: 1px solid rgba(114, 137, 218, 0.3); 
         }
 
         .discord-main-block {
-            width: 100%;
-            flex-shrink: 0;
-            position: relative;
-            background-color: #1a1a1a;
-            display: flex;
-            flex-direction: column;
-            overflow-y: visible; 
-            padding-bottom: 20px;
-            z-index: 1; 
+            width: 100%; flex-shrink: 0; position: relative; background-color: #1a1a1a;
+            display: flex; flex-direction: column; overflow-y: visible; padding-bottom: 20px; z-index: 1;
         }
 
         .discord-activity-box,
         .tab-bar {
-            display: none !important; 
+            display: none !important;
         }
 
         .discord-banner {
-            width: 100%;
-            height: 120px; 
-            background-size: cover;
-            background-position: center;
-            background-color: #333; 
-            flex-shrink: 0;
-            position: relative;
+            width: 100%; height: 120px; background-size: cover; background-position: center;
+            background-color: #333; flex-shrink: 0; position: relative;
         }
 
         .profile-content {
-            padding: 0 20px;
-            margin-top: -60px; 
+            padding: 0 20px; margin-top: -60px; 
         }
         
-        /* КОНТЕЙНЕР АВАТАРКИ/РАМКИ (РОДИТЕЛЬ) */
         .discord-avatar-container {
-            position: relative;
-            width: 92px; 
-            height: 92px; 
-            flex-shrink: 0;
-            border-radius: 50%;
-            z-index: 10; 
-            
-            border: none; 
-            background-color: #1a1a1a;
-            
-            overflow: visible !important; 
+            position: relative; width: 92px; height: 92px; flex-shrink: 0; border-radius: 50%;
+            z-index: 10; border: none; background-color: #1a1a1a; overflow: visible !important;
         }
         
-        /* САМ АВАТАР */
         .discord-avatar {
-            width: 92px; 
-            height: 92px;
-            margin: 0; 
-            border-radius: 50%;
-            object-fit: cover;
-            position: relative; 
-            z-index: 15; 
-            
-            pointer-events: none; 
-            -webkit-user-drag: none;
-            user-select: none;
-            
-            border: none;
-            box-sizing: border-box;
-        }
-
-        /* АВАТАР ДЕКОРАЦИЯ (РАМКА) */
-        #avatar-frame-overlay {
-            position: absolute;
-            top: -11px; 
-            left: -11px; 
-            
-            width: 114px; 
-            height: 114px; 
-            
-            border-radius: 0; 
-            
-            background-image: url('Aurora Fox.gif');
-            background-size: cover;
-            background-position: center;
-            
-            z-index: 16; 
-            pointer-events: none; 
+            width: 92px; height: 92px; margin: 0; border-radius: 50%; object-fit: cover;
+            position: relative; z-index: 15; pointer-events: none; -webkit-user-drag: none;
+            user-select: none; border: none; box-sizing: border-box;
         }
         
-        /* ЭФФЕКТ ПРОФИЛЯ (ПОВЕРХ ВСЕГО) */
-        #profile-effect-overlay {
-            position: absolute;
-            top: -24px; /* Регулировка, чтобы покрыть декорацию и аватар */
-            left: -24px;
-            
-            /* Размер должен быть больше, чем у рамки, чтобы покрыть эффект */
-            width: 140px; 
-            height: 140px; 
-            
-            background-image: url('profile.gif'); /* Ваша GIF */
-            background-size: cover;
-            background-position: center;
-            
-            z-index: 17; /* Выше рамки и аватара */
-            pointer-events: none;
-            
-            /* Добавляем эффект смешивания, чтобы GIF выглядела лучше */
-            mix-blend-mode: screen; 
-        }
-
-
-        /* ИМЯ: Шрифт OMORI + Градиент */
         .discord-username {
-            font-size: 28px; 
-            font-weight: normal; 
-            font-family: 'OMORI', monospace; 
-            margin: 10px 0 2px 0;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            
+            font-size: 28px; font-weight: normal; font-family: 'OMORI', monospace; 
+            margin: 10px 0 2px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
             background-image: linear-gradient(to right, #ba98ff, #acfdff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-fill-color: transparent;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text; text-fill-color: transparent;
         }
         .discord-tag {
-            font-size: 15px;
-            color: #b9bbbe;
-            margin-bottom: 5px; 
+            font-size: 15px; color: #b9bbbe; margin-bottom: 5px; 
         }
         
-        /* Контейнер для бейджей */
         .discord-badges-container {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px; 
-            height: 24px;
+            display: flex; align-items: center; margin-bottom: 15px; height: 24px;
         }
 
-        /* Стиль для отдельного бейджа */
         .discord-badge {
-            width: 24px; 
-            height: 24px; 
-            margin-right: 6px; 
-            display: inline-block;
-            filter: drop-shadow(0 0 2px rgba(0,0,0,0.5));
-            -webkit-user-drag: none;
-            user-select: none;
+            width: 24px; height: 24px; margin-right: 6px; display: inline-block;
+            filter: drop-shadow(0 0 2px rgba(0,0,0,0.5)); -webkit-user-drag: none; user-select: none;
         }
 
         .discord-bio-box {
-            display: none; 
+            display: none;
         }
         .info-section {
-            display: none; 
+            display: none;
         }
         .tab-content-wrapper {
-            padding: 0 20px 20px 20px; 
-            overflow: visible;
+            padding: 0 20px 20px 20px; overflow: visible;
         }
 
         @media (max-width: 900px) {
             #discord-profile-container {
-                max-width: 98vw;
-                min-height: auto;
-                height: auto;
-                margin-top: 60px;
-                margin-bottom: 10px;
+                max-width: 98vw; min-height: auto; height: auto; margin-top: 60px; margin-bottom: 10px;
             }
             .discord-main-block {
                 padding-bottom: 10px;
@@ -406,6 +273,18 @@
             .tab-content-wrapper {
                 padding: 0 15px 15px 15px;
             }
+        }
+
+        .afk-hidden {opacity:0;pointer-events:none;}
+        .afk-gif {
+            position:fixed;left:32px;bottom:32px;width:300px;max-width:24vw;max-height:24vh;height:auto;z-index:10;
+            border-radius:16px;box-shadow:0 0 36px #8B000080;opacity:0;pointer-events:none;
+            transition:opacity 1.1s,width 0.7s,max-width 0.7s,max-height 0.7s,left 0.7s,bottom 0.7s;
+        }
+        .afk-gif.afk-active{opacity:1;pointer-events:auto;}
+
+        @media (max-width:600px) {
+            .afk-gif{display:none!important;}
         }
 
         #loading-overlay {
@@ -420,17 +299,17 @@
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(0, 0, 0, 0); 
             z-index: 900; 
-            pointer-events: none; 
+            pointer-events: none;
             transition: background 0.5s ease-out;
         }
         #darken-overlay.active {
-            background: rgba(0, 0, 0, 1); 
+            background: rgba(0, 0, 0, 1);
             pointer-events: auto;
         }
     </style>
 </head>
 <body 
-    oncopy="return false" 
+    oncopy="return false"
     oncut="return false"
     onpaste="return false"
     oncontextmenu="return false"
@@ -444,8 +323,7 @@
         <div class="cards-wrapper" id="cards-container"></div>
     </div>
 
-    <video loop playsinline id="video-bg" preload="auto">
-        </video>
+    <video loop playsinline id="video-bg" preload="auto"></video>
 
     <div class="back-button-controller" id="back-button">
         <div class="back-icon" tabindex="0">
@@ -470,7 +348,7 @@
             </a>
             <a href="https://www.roblox.com/users/703442568/profile" target="_blank" class="icon-link" title="Roblox">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Roblox_Logo.svg/512px-Roblox_Logo.svg.png" alt="Roblox" class="social-icon" />
-                </a>
+            </a>
             </span>
         </div>
 
@@ -478,7 +356,6 @@
             <div class="volume-icon" tabindex="0">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
                     <path d="M4 9v6h4l5 5V4L8 9H4z" fill="#fff"/>
-                    <path d="M16 7.82A6 6 0 1 16 16.18" stroke="#fff" stroke-width="2" fill="none"/>
                 </svg>
             </div>
             <input type="range" min="0" max="100" value="50" class="volume-slider">
@@ -491,30 +368,20 @@
                 <div class="profile-content">
                     <div id="discord-avatar-container" class="discord-avatar-container">
                         <img id="discord-pfp" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Avatar" class="discord-avatar">
-                        
-                        
-                        <div id="avatar-frame-overlay"></div>
-                        <div id="profile-effect-overlay"></div>
                     </div>
                     <div id="discord-name" class="discord-username">Loading...</div>
                     <div id="discord-tag" class="discord-tag">@username</div>
                     
-                    
                     <div class="discord-badges-container">
-                        
-                        <img 
-                            src="https://img.icons8.com/?size=100&id=u1TI0IQMcE7q&format=png&color=000000" 
+                        <img src="https://img.icons8.com/size=100&id=u1TI0IQMcE7q&format=png&color=000000" 
                             alt="HypeSquad Bravery" 
                             class="discord-badge" 
-                            title="HypeSquad Bravery"
-                        >
+                            title="HypeSquad Bravery"/>
                         
-                        <img 
-                            src="https://img.icons8.com/?size=100&id=S6odLj8qKMjU&format=png&color=000000" 
+                        <img src="https://img.icons8.com/size=100&id=S6odLj8qKMjU&format=png&color=000000" 
                             alt="Nitro" 
                             class="discord-badge" 
-                            title="Discord Nitro"
-                        >
+                            title="Discord Nitro"/>
                     </div>
                     
                     <div class="tab-content-wrapper">
@@ -527,6 +394,8 @@
         </div>
     </div>
 
+    <img src="zetsy-lemonss-kuiper.gif" alt="AFK GIF" class="afk-gif" id="afk-gif">
+
     <div id="darken-overlay"></div>
 
     <script>
@@ -535,12 +404,11 @@
             { id: 1, img: "gracee.jpg", video: "ULTRASONIC FAITH.mp4" },
             { id: 2, img: "007n7.jpg", video: "007n7.mp4" }
         ];
-
         let activeCardIndex = 1; 
 
         const DISCORD_ID = "1236359938721185902"; 
         const CUSTOM_PFP_URL = "gyol.png"; 
-        const CUSTOM_BANNER_URL = "https://cdn.discordapp.com/banners/1236359938721185902/cd8eed09b334a65a412b4c4a91f5f210.webp?size=1024"; 
+        const CUSTOM_BANNER_URL = "https://cdn.discordapp.com/banners/1236359938721185902/cd8eed09b334a65a412b4c4a91f5f210.webp?size=1024";
         const CUSTOM_FRAME_URL = "Aurora Fox.gif"; 
         const APPLY_PFP_FRAME = false; 
         
@@ -585,7 +453,6 @@
             const bannerElement = document.getElementById('discord-banner'); 
             const tagElement = document.getElementById('discord-tag');
             const statusMessageElement = document.getElementById('dynamic-status-message');
-            const frameOverlay = document.getElementById('avatar-frame-overlay');
             
             if (data.accent_color && data.accent_color !== "0") {
                 const primaryColor = '#' + data.accent_color;
@@ -602,7 +469,7 @@
             } else if (data.banner) {
                 const bannerUrl = `https://cdn.discordapp.com/banners/${DISCORD_ID}/${data.banner}.webp?size=1024`;
                 bannerElement.style.backgroundImage = `url('${bannerUrl}')`;
-                bannerElement.style.backgroundColor = "transparent"; 
+                bannerElement.style.backgroundColor = "transparent";
             } else {
                 if (data.banner_color) {
                      bannerElement.style.backgroundColor = data.banner_color;
@@ -613,20 +480,13 @@
                 }
             }
 
-            if (CUSTOM_FRAME_URL.trim() !== "") {
-                frameOverlay.style.display = 'block';
-                frameOverlay.style.backgroundImage = `url('${CUSTOM_FRAME_URL}')`;
-            } else {
-                frameOverlay.style.display = 'none';
-            }
-
             let avatarUrl;
             if (CUSTOM_PFP_URL.trim() !== "") {
                 avatarUrl = CUSTOM_PFP_URL;
             } else {
                 avatarUrl = data.discord_user.avatar 
-                    ? `https://cdn.discordapp.com/avatars/${DISCORD_ID}/${data.discord_user.avatar}.png?size=128`
-                    : `https://cdn.discordapp.com/embed/avatars/${(data.discord_user.discriminator === '0' ? (BigInt(data.discord_user.id) >> 22n) % 6n : BigInt(data.discord_user.discriminator) % 5n)}.png`;
+                     ? `https://cdn.discordapp.com/avatars/${DISCORD_ID}/${data.discord_user.avatar}.png?size=128`
+                     : `https://cdn.discordapp.com/embed/avatars/${((BigInt(data.discord_user.id) >> 22n) % 6n)}.png`;
             }
             pfpElement.src = avatarUrl;
             
@@ -634,7 +494,7 @@
             tagElement.textContent = `@${data.discord_user.username}`; 
 
             
-            const customStatus = data.activities.find(a => a.type === 4); 
+            const customStatus = data.activities.find(a => a.type === 4);
             if (customStatus && customStatus.state) {
                 statusMessageElement.textContent = customStatus.state;
                 statusMessageElement.style.cssText = `
@@ -672,6 +532,59 @@
         document.addEventListener('cut', e => e.preventDefault());
         document.addEventListener('contextmenu', e => e.preventDefault());
 
+        let afkTimer = null;
+        let afkState = false;
+        let afkEnabled = false;
+
+        function isMobileDevice() {
+            return window.innerWidth <= 900;
+        }
+
+        function setAfkTimer() {
+            if (!afkEnabled) return;
+            clearTimeout(afkTimer);
+            removeAfk();
+            afkTimer = setTimeout(showAfk, 8000);
+        }
+        function showAfk() {
+            if (!afkEnabled) return;
+            afkState = true;
+            const banner = document.getElementById("discord-profile-container");
+            const gif = document.getElementById("afk-gif");
+            if (isMobileDevice()) {
+                banner.classList.add("afk-hidden");
+                gif.classList.remove("afk-active");
+            } else {
+                banner.classList.add("afk-hidden");
+                gif.classList.add("afk-active");
+            }
+        }
+        function removeAfk() {
+            if (!afkEnabled) return;
+            afkState = false;
+            const banner = document.getElementById("discord-profile-container");
+            const gif = document.getElementById("afk-gif");
+            gif.classList.remove("afk-active");
+            banner.classList.remove("afk-hidden");
+        }
+        function enableAfkFeature() {
+            if (afkEnabled) return;
+            afkEnabled = true;
+            window.addEventListener("mousemove", setAfkTimer);
+            window.addEventListener("keydown", setAfkTimer);
+            window.addEventListener("touchstart", setAfkTimer);
+            window.addEventListener("mousedown", setAfkTimer);
+            document.addEventListener("visibilitychange", function () {
+                if (!afkEnabled) return;
+                if (document.hidden) {
+                    if (afkTimer) setTimeout(() => { if (afkTimer) showAfk(); }, 8000);
+                } else {
+                    removeAfk();
+                    setAfkTimer();
+                }
+            });
+            setAfkTimer();
+        }
 
         const volumeSlider = document.querySelector('.volume-controller .volume-slider');
         const videoBg = document.getElementById('video-bg');
@@ -704,7 +617,7 @@
         const cardScreen = document.getElementById('card-selection-screen');
         const cardsContainer = document.getElementById('cards-container');
         const mainInterface = document.getElementById('main-interface');
-        const backButton = document.getElementById('back-button'); 
+        const backButton = document.getElementById('back-button');
         const darkenOverlay = document.getElementById('darken-overlay');
         let overlayClicked = false;
 
@@ -715,14 +628,14 @@
                 card.classList.add('card');
                 card.dataset.index = index;
                 card.dataset.video = vid.video;
-                
+
                 const img = document.createElement('img');
                 img.src = vid.img;
                 img.alt = "Card";
-                
+
                 card.appendChild(img);
                 cardsContainer.appendChild(card);
-                
+
                 card.addEventListener('click', () => handleCardClick(index));
             });
             updateCarousel();
@@ -734,7 +647,7 @@
             const cards = document.querySelectorAll('.card');
             cards.forEach((card, index) => {
                 card.removeAttribute('data-status');
-                
+
                 if (index === activeCardIndex) {
                     card.setAttribute('data-status', 'active');
                 } else if (index === activeCardIndex - 1) {
@@ -762,11 +675,11 @@
 
         function playVideo(index) {
             const vidData = videos[index];
-            
+
             cardScreen.style.opacity = '0';
             setTimeout(() => {
                 cardScreen.style.display = 'none';
-                
+
                 videoBg.src = vidData.video;
                 videoBg.muted = false;
                 videoBg.volume = 0.1;
@@ -776,12 +689,14 @@
                 mainInterface.classList.add('active-interface');
                 backButton.classList.add('visible'); 
 
+                enableAfkFeature();
+
             }, 800);
         }
 
         document.addEventListener('keydown', (e) => {
             if (cardScreen.style.display !== 'flex' || isMobileDevice()) return;
-            
+
             if (e.key === 'ArrowRight' && activeCardIndex < videos.length - 1) {
                 activeCardIndex++;
                 updateCarousel();
@@ -803,36 +718,40 @@
         function revealCards() {
             if (overlayClicked) return;
             overlayClicked = true;
-            
+
             document.body.classList.add('content-loaded');
-            
+
             setTimeout(() => {
                 loadingOverlay.style.display = 'none';
-                
+
                 cardScreen.style.display = 'flex';
-                
+
                 requestAnimationFrame(() => {
                     requestAnimationFrame(() => {
                         cardScreen.style.opacity = '1';
                     });
                 });
-                
-            }, 600); 
+
+            }, 600);
         }
 
         loadingOverlay.addEventListener('mousedown', e => { if(e.button===0) revealCards(); });
         loadingOverlay.addEventListener('touchend', revealCards);
 
         function goBackToSelection() {
+            afkEnabled = false;
+            clearTimeout(afkTimer);
+            removeAfk();
+
             mainInterface.classList.remove('active-interface');
             backButton.classList.remove('visible');
-            
+
             videoBg.pause();
             videoBg.removeAttribute('src');
             videoBg.load();
             videoBg.classList.remove('video-active');
 
-            darkenOverlay.classList.add('active'); 
+            darkenOverlay.classList.add('active');
 
             setTimeout(() => {
                 cardScreen.style.display = 'flex';
@@ -840,19 +759,15 @@
                     cardScreen.style.opacity = '1';
                 });
                 darkenOverlay.classList.remove('active');
-            }, 500); 
-            
+            }, 500);
+
             overlayClicked = false;
         }
 
         backButton.addEventListener('click', goBackToSelection);
-        
+
         window.addEventListener('resize', updateCarousel);
-        
-        function isMobileDevice() {
-            return window.innerWidth <= 900;
-        }
-        
+
     </script>
     
     <div style="position: fixed; right: 22px; bottom: 16px; z-index: 40; color: #f5f5f5; opacity: 0.38; font-size: 17px; font-family: inherit; pointer-events: none; background: none; text-shadow: 0 3px 16px #000a; white-space: nowrap; user-select: none;">

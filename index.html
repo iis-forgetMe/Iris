@@ -242,16 +242,25 @@
             background: rgba(20, 20, 20, 0.85);
             backdrop-filter: blur(12px);
             border-radius: 16px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            
+            /* ПОСТОЯННЫЙ ГРАДИЕНТНЫЙ СТИЛЬ БОКСА */
+            
+            /* ГРАДИЕНТНАЯ ТЕНЬ (имитация свечения) */
+            box-shadow: 
+                0 0 20px 0 rgba(0, 131, 152, 0.8), /* #008398 (Primary) */
+                0 0 40px 0 rgba(116, 0, 62, 0.5);  /* #74003e (Accent) */
+            
+            /* ПОСТОЯННАЯ ГРАДИЕНТНАЯ РАМКА */
+            border: 3px solid transparent; 
+            background-image: 
+                linear-gradient(rgba(20, 20, 20, 0.85), rgba(20, 20, 20, 0.85)), 
+                linear-gradient(to right, #008398, #74003e); /* Ваш градиент */
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+
             overflow: hidden;
         }
         
-        #discord-profile-container.active {
-            box-shadow: 0 0 20px rgba(114, 137, 218, 0.4);
-            border: 1px solid rgba(114, 137, 218, 0.3); 
-        }
-
         .discord-main-block {
             width: 100%;
             flex-shrink: 0;
@@ -600,14 +609,8 @@
             const statusMessageElement = document.getElementById('dynamic-status-message');
             const frameOverlay = document.getElementById('avatar-frame-overlay');
             
-            if (data.accent_color && data.accent_color !== "0") {
-                const primaryColor = '#' + data.accent_color;
-                pfpContainer.classList.add('active');
-                pfpContainer.style.border = `1px solid ${adjustColor(primaryColor, -60)}`;
-            } else {
-                pfpContainer.classList.remove('active');
-                pfpContainer.style.border = `1px solid rgba(255, 255, 255, 0.05)`;
-            }
+            // УДАЛЕН КОД, КОТОРЫЙ ИЗМЕНЯЛ BORDER И BOX-SHADOW КОНТЕЙНЕРА 
+            // НА ОСНОВЕ data.accent_color, ЧТОБЫ ИСПОЛЬЗОВАТЬ ПОСТОЯННЫЙ ГРАДИЕНТ ИЗ CSS.
 
             if (CUSTOM_BANNER_URL.trim() !== "") {
                 bannerElement.style.backgroundImage = `url('${CUSTOM_BANNER_URL}')`;

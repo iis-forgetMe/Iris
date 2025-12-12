@@ -10,8 +10,6 @@
     <meta property="og:description" content="You're my light." />
     <meta property="og:image" content="https://raw.githubusercontent.com/iis-forgetMe/Iris/main/Artful.jpg" />
 
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    
     <style>
         html, body {
             height: 100%;
@@ -23,7 +21,6 @@
             max-width: 100vw;
             touch-action: none;
         }
-        /* ВОССТАНОВЛЕНО: OMORI как локальный шрифт */
         @font-face {
             font-family: 'OMORI';
             src: url('OMORI_GAME2.ttf') format('truetype');
@@ -309,18 +306,17 @@
         .status-dnd { background-color: #ed4245; box-shadow: 0 0 8px #ed4245; }
         .status-offline { background-color: #747f8d; }
         
-        /* ИМЯ: 8-бит шрифт Press Start 2P + Градиент (ТОЛЬКО ДЛЯ НИКА) */
+        /* ИМЯ: Шрифт OMORI + Градиент */
         .discord-username {
-            font-size: 18px; 
-            line-height: 1.2;
+            font-size: 28px; /* Возвращено к исходному размеру */
             font-weight: normal; 
-            font-family: 'Press Start 2P', monospace; /* ШРИФТ ТОЛЬКО ДЛЯ НИКА */
+            font-family: 'OMORI', monospace; /* ШРИФТ OMORI ДЛЯ НИКА */
             margin: 10px 0 2px 0;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             
-            /* Градиентные свойства */
+            /* Градиентные свойства оставлены */
             background-image: linear-gradient(to right, #ba98ff, #acfdff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -329,7 +325,6 @@
         }
         .discord-tag {
             font-size: 15px;
-            /* Унаследует шрифт OMORI от body */
             color: #b9bbbe;
             margin-bottom: 15px;
         }

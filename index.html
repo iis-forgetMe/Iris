@@ -205,22 +205,35 @@
         .volume-slider { width: 90px; max-width: 36vw; margin-left: 12px; accent-color: rgb(255,8,0);}
         .volume-percent { color: #fff; min-width: 32px; text-align: right; font-family: inherit; font-size: 15px; margin-left: 8px;}
         
-        /* --- НОВЫЙ DISCORD BOX (LANYARD) --- */
+        /* --- DISCORD BOX (LANYARD) --- */
         #afk-banner {
             position: relative;
-            background: rgba(20, 20, 20, 0.85); /* Темный фон */
+            background: rgba(20, 20, 20, 0.85);
             backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 16px;
-            padding: 25px;
             max-width: 450px;
             width: 90%;
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            overflow: hidden; 
+            transition: opacity 1s;
+            opacity: 1;
+        }
+
+        .discord-banner {
+            width: 100%;
+            height: 100px; 
+            background-size: cover;
+            background-position: center;
+            background-color: #333; 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .discord-content {
             display: flex;
             align-items: center;
             gap: 20px;
-            transition: opacity 1s;
-            opacity: 1;
+            padding: 20px 25px; 
         }
 
         .discord-avatar-container {
@@ -228,6 +241,10 @@
             width: 80px;
             height: 80px;
             flex-shrink: 0;
+            margin-top: -60px; 
+            border-radius: 50%;
+            border: 5px solid rgba(20, 20, 20, 0.85); 
+            background-color: #000;
         }
 
         .discord-avatar {
@@ -245,8 +262,8 @@
             width: 18px;
             height: 18px;
             border-radius: 50%;
-            border: 3px solid #1a1a1a;
-            background-color: #747f8d; /* Offline default */
+            border: 3px solid rgba(20, 20, 20, 0.85); 
+            background-color: #747f8d; 
             box-shadow: 0 0 5px rgba(0,0,0,0.5);
         }
         /* Цвета статусов */
@@ -254,6 +271,7 @@
         .status-idle { background-color: #faa61a; box-shadow: 0 0 8px #faa61a; }
         .status-dnd { background-color: #ed4245; box-shadow: 0 0 8px #ed4245; }
         .status-offline { background-color: #747f8d; }
+
 
         .discord-info {
             text-align: left;
@@ -340,10 +358,20 @@
             }
             
             #afk-banner {
-                padding: 15px;
-                flex-direction: row;
+                max-width: 98vw;
             }
-            .discord-avatar-container { width: 60px; height: 60px; }
+            .discord-content {
+                padding: 15px;
+            }
+            .discord-banner {
+                height: 80px; 
+            }
+            .discord-avatar-container { 
+                width: 60px; 
+                height: 60px; 
+                margin-top: -45px; 
+                border: 4px solid rgba(20, 20, 20, 0.85);
+            }
             .discord-username { font-size: 20px; }
             .discord-activity { font-size: 14px; }
         }
@@ -353,7 +381,6 @@
         @media (max-width:800px) and (orientation: landscape) {
             #afk-banner {
                 max-width: 98vw;
-                padding: 10px;
             }
         }
         #loading-overlay {
@@ -433,13 +460,16 @@
         </div>
 
         <div id="afk-banner">
-            <div class="discord-avatar-container">
-                <img id="discord-pfp" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Avatar" class="discord-avatar">
-                <div id="discord-status" class="discord-status-dot status-offline"></div>
-            </div>
-            <div class="discord-info">
-                <div id="discord-name" class="discord-username">Loading...</div>
-                <div id="discord-activity" class="discord-activity">Connecting to Lanyard...</div>
+            <div id="discord-banner" class="discord-banner"></div>
+            <div class="discord-content">
+                <div class="discord-avatar-container">
+                    <img id="discord-pfp" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Avatar" class="discord-avatar">
+                    <div id="discord-status" class="discord-status-dot status-offline"></div>
+                </div>
+                <div class="discord-info">
+                    <div id="discord-name" class="discord-username">Loading...</div>
+                    <div id="discord-activity" class="discord-activity">Connecting to Lanyard...</div>
+                </div>
             </div>
         </div>
     </div>
@@ -458,7 +488,14 @@
         let activeCardIndex = 1; 
 
         // ----- LANYARD DISCORD API LOGIC -----
+        
+        // --- НАСТРОЙКИ ---
         const DISCORD_ID = "1236359938721185902"; 
+        // Если пусто (""), берется аватарка из Дискорда. 
+        // Если указана ссылка, берется эта аватарка.
+        const CUSTOM_PFP_URL = "https://raw.githubusercontent.com/iis-forgetMe/Iris/main/Artful.jpg"; 
+        
+        // --- КОНЕЦ НАСТРОЕК ---
         
         async function fetchDiscordStatus() {
             try {
@@ -478,17 +515,40 @@
             const statusElement = document.getElementById('discord-status');
             const nameElement = document.getElementById('discord-name');
             const activityElement = document.getElementById('discord-activity');
+            const bannerElement = document.getElementById('discord-banner'); 
 
-            // 1. Аватар
-            const avatarUrl = data.discord_user.avatar 
-                ? `https://cdn.discordapp.com/avatars/${DISCORD_ID}/${data.discord_user.avatar}.png?size=128`
-                : `https://cdn.discordapp.com/embed/avatars/${parseInt(data.discord_user.discriminator) % 5}.png`;
+            // 1. Аватар (Используем CUSTOM_PFP_URL, если он задан)
+            let avatarUrl;
+            if (CUSTOM_PFP_URL.trim() !== "") {
+                avatarUrl = CUSTOM_PFP_URL;
+            } else {
+                // Если CUSTOM_PFP_URL пуст, берем из Дискорда
+                avatarUrl = data.discord_user.avatar 
+                    ? `https://cdn.discordapp.com/avatars/${DISCORD_ID}/${data.discord_user.avatar}.png?size=128`
+                    : `https://cdn.discordapp.com/embed/avatars/${parseInt(data.discord_user.discriminator) % 5}.png`;
+            }
             pfpElement.src = avatarUrl;
+            
+            // 2. Баннер
+            if (data.banner) {
+                const bannerUrl = `https://cdn.discordapp.com/banners/${DISCORD_ID}/${data.banner}.webp?size=512`;
+                bannerElement.style.backgroundImage = `url('${bannerUrl}')`;
+            } else {
+                // Если баннера нет, используем цвет из профиля (если есть) или дефолтный серый
+                if (data.banner_color) {
+                    bannerElement.style.backgroundColor = data.banner_color;
+                    bannerElement.style.backgroundImage = 'none';
+                } else {
+                    bannerElement.style.backgroundColor = '#333';
+                    bannerElement.style.backgroundImage = 'none';
+                }
+            }
 
-            // 2. Имя
+
+            // 3. Имя
             nameElement.textContent = data.discord_user.display_name || data.discord_user.username;
 
-            // 3. Статус (цвет)
+            // 4. Статус (цвет)
             statusElement.className = 'discord-status-dot'; // сброс
             switch (data.discord_status) {
                 case 'online': statusElement.classList.add('status-online'); break;
@@ -497,7 +557,7 @@
                 default: statusElement.classList.add('status-offline');
             }
 
-            // 4. Активность
+            // 5. Активность
             if (data.activities && data.activities.length > 0) {
                 // Ищем Spotify или Игру
                 const spotify = data.activities.find(a => a.id === 'spotify:1');

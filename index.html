@@ -28,7 +28,6 @@
         }
         
         body {
-            /* ОСНОВНОЙ ШРИФТ: OMORI */
             font-family: 'OMORI', Arial, sans-serif;
             background-color: #000;
             color: #F5F5F5;
@@ -224,7 +223,6 @@
             backdrop-filter: blur(12px);
             border-radius: 16px;
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-            /* Убрали overflow: hidden отсюда, но оставили border-radius для контейнера */
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
@@ -240,8 +238,7 @@
             background-color: #1a1a1a;
             display: flex;
             flex-direction: column;
-            /* Изменено на visible, чтобы избежать обрезки аватара и рамки по вертикали */
-            overflow-y: visible; 
+            overflow-y: visible; /* ИЗМЕНЕНО: visible для предотвращения обрезки */
             padding-bottom: 20px;
             z-index: 1; 
         }
@@ -278,8 +275,7 @@
             border: none; 
             background-color: #1a1a1a;
             
-            /* КРИТИЧНОЕ ИЗМЕНЕНИЕ: Должно быть visible, чтобы рамка выступала */
-            overflow: visible !important; 
+            overflow: visible !important; /* КРИТИЧНОЕ ИЗМЕНЕНИЕ: visible, чтобы все выступало */
         }
         
         /* САМ АВАТАР */
@@ -300,16 +296,18 @@
             box-sizing: border-box;
         }
 
-        /* ОВЕРЛЕЙ-РАМКА (НОВЫЙ ЭЛЕМЕНТ - ПОВЕРХ ВСЕГО) */
+        /* ОВЕРЛЕЙ-РАМКА (НОВЫЙ ЭЛЕМЕНТ) */
         #avatar-frame-overlay {
             position: absolute;
-            /* Центрируем выступающую рамку 114x114px относительно 92x92px контейнера */
-            top: -11px; 
-            left: -11px; 
+            /* УВЕЛИЧЕННЫЙ КВАДРАТ: 150x150px, чтобы покрыть выступающую рамку */
+            top: -29px; /* (150 - 92) / 2 = 29px */
+            left: -29px; /* (150 - 92) / 2 = 29px */
             
-            width: 114px; 
-            height: 114px; 
-            border-radius: 50%;
+            width: 150px; 
+            height: 150px; 
+            
+            /* КРИТИЧНОЕ ИЗМЕНЕНИЕ: УБИРАЕМ border-radius: 50%;, чтобы рамка не обрезалась */
+            border-radius: 0; 
             
             background-image: url('Aurora Fox.gif');
             background-size: cover;
@@ -322,9 +320,9 @@
 
         .discord-status-dot {
             position: absolute;
-            /* Смещаем позицию статуса, чтобы он оказался НА выступающей рамке */
-            bottom: -15px; 
-            right: -15px; 
+            /* Корректируем позицию для 150px рамки */
+            bottom: -30px; 
+            right: -30px; 
             
             width: 20px;
             height: 20px;

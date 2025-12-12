@@ -242,7 +242,7 @@
             flex-direction: column;
             overflow-y: auto;
             padding-bottom: 20px;
-            z-index: 1; /* Основной контент ниже рамки */
+            z-index: 1; 
         }
 
         .discord-activity-box,
@@ -265,46 +265,56 @@
             margin-top: -60px; 
         }
         
-        /* ИЗМЕНЕНИЯ ЗДЕСЬ */
+        /* КОНТЕЙНЕР АВАТАРКИ/РАМКИ (РОДИТЕЛЬ) */
         .discord-avatar-container {
             position: relative;
             width: 92px;
             height: 92px;
             flex-shrink: 0;
             border-radius: 50%;
-            
-            z-index: 10; /* УВЕЛИЧЕННЫЙ Z-INDEX для рамки */
-            transform: translateY(0); 
-            border: none;
+            z-index: 10; 
+            border: 6px solid #1a1a1a; 
+            background-color: #1a1a1a;
         }
         
-        /* Стили для кастомной рамки (Aurora Fox.gif) */
-        .discord-avatar-container.custom-frame {
-            padding: 3px; 
-            border: none; 
-            background-clip: padding-box;
-            background-origin: padding-box;
-            background-size: cover;
-            background-position: center;
-        }
-        
+        /* САМ АВАТАР */
         .discord-avatar {
             width: 100%;
             height: 100%;
             border-radius: 50%;
             object-fit: cover;
             position: relative; 
-            z-index: 11; /* Аватар поверх фона-рамки */
+            z-index: 11; 
             
             pointer-events: none; 
             -webkit-user-drag: none;
             user-select: none;
             
-            /* Делаем "внутреннюю" рамку, чтобы фон-рамка была видна */
-            border: 6px solid #1a1a1a; 
-            background-color: #000;
+            /* Убрали лишние рамки/отступы здесь */
+            border: none;
             box-sizing: border-box;
         }
+
+        /* ОВЕРЛЕЙ-РАМКА (НОВЫЙ ЭЛЕМЕНТ - ПОВЕРХ ВСЕГО) */
+        #avatar-frame-overlay {
+            position: absolute;
+            top: -6px; /* Компенсируем border родителя */
+            left: -6px; /* Компенсируем border родителя */
+            width: 104px; /* 92px (width) + 2*6px (border) = 104px */
+            height: 104px; /* 92px (height) + 2*6px (border) = 104px */
+            border-radius: 50%;
+            
+            /* Стиль рамки */
+            background-image: url('Aurora Fox.gif');
+            background-size: cover;
+            background-position: center;
+            
+            /* Z-index должен быть самым высоким */
+            z-index: 15; 
+            
+            pointer-events: none; /* Не мешаем кликать по профилю */
+        }
+
 
         .discord-status-dot {
             position: absolute;
@@ -316,7 +326,7 @@
             border: 4px solid #1a1a1a; 
             background-color: #747f8d; 
             box-shadow: 0 0 5px rgba(0,0,0,0.5);
-            z-index: 12; /* Статус поверх всего */
+            z-index: 16; /* Статус поверх рамки */
         }
         .status-online { background-color: #3ba55c; box-shadow: 0 0 8px #3ba55c; }
         .status-idle { background-color: #faa61a; box-shadow: 0 0 8px #faa61a; }
@@ -456,7 +466,7 @@
             <div class="volume-icon" tabindex="0">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
                     <path d="M4 9v6h4l5 5V4L8 9H4z" fill="#fff"/>
-                    <path d="M16 7.82A6 6 0 0 1 16 16.18" stroke="#fff" stroke-width="2" fill="none"/>
+                    <path d="M16 7.82A6 6 6 0 1 16 16.18" stroke="#fff" stroke-width="2" fill="none"/>
                 </svg>
             </div>
             <input type="range" min="0" max="100" value="50" class="volume-slider">
@@ -469,6 +479,9 @@
                 <div class="profile-content">
                     <div id="discord-avatar-container" class="discord-avatar-container">
                         <img id="discord-pfp" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Avatar" class="discord-avatar">
+                        
+                        <div id="avatar-frame-overlay"></div>
+                        
                         <div id="discord-status" class="discord-status-dot status-offline"></div>
                     </div>
                     <div id="discord-name" class="discord-username">Loading...</div>
@@ -546,6 +559,7 @@
             const bannerElement = document.getElementById('discord-banner'); 
             const tagElement = document.getElementById('discord-tag');
             const statusMessageElement = document.getElementById('dynamic-status-message');
+            const frameOverlay = document.getElementById('avatar-frame-overlay');
             
             if (data.accent_color && data.accent_color !== "0") {
                 const primaryColor = '#' + data.accent_color;
@@ -574,15 +588,11 @@
             }
 
             // Логика кастомной рамки
-            if (CUSTOM_FRAME_URL.trim() !== "" && !APPLY_PFP_FRAME) {
-                avatarContainer.classList.add('custom-frame');
-                avatarContainer.style.backgroundImage = `url('${CUSTOM_FRAME_URL}')`;
-            } else if (APPLY_PFP_FRAME) {
-                avatarContainer.classList.add('custom-frame'); 
-                avatarContainer.style.backgroundImage = `linear-gradient(to right, #7289da, #99aab5)`; 
+            if (CUSTOM_FRAME_URL.trim() !== "") {
+                frameOverlay.style.display = 'block';
+                frameOverlay.style.backgroundImage = `url('${CUSTOM_FRAME_URL}')`;
             } else {
-                avatarContainer.classList.remove('custom-frame');
-                avatarContainer.style.backgroundImage = 'none';
+                frameOverlay.style.display = 'none';
             }
 
             let avatarUrl;

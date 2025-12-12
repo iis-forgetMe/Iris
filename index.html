@@ -296,33 +296,30 @@
             box-sizing: border-box;
         }
 
-        /* ОВЕРЛЕЙ-РАМКА (СКОРРЕКТИРОВАННЫЙ РАЗМЕР) */
+        /* ОВЕРЛЕЙ-РАМКА (114x114px, КВАДРАТ) */
         #avatar-frame-overlay {
             position: absolute;
-            /* Уменьшаем размер до 114x114px, как нужно */
-            top: -11px; /* (114 - 92) / 2 = 11px */
+            top: -11px; 
             left: -11px; 
             
             width: 114px; 
             height: 114px; 
             
-            /* КРИТИЧНОЕ ИЗМЕНЕНИЕ: Оставляем квадратным, чтобы не обрезалась */
             border-radius: 0; 
             
             background-image: url('Aurora Fox.gif');
             background-size: cover;
             background-position: center;
             
-            z-index: 15; 
+            z-index: 17; /* ИЗМЕНЕНИЕ: Рамка СВЕРХУ статуса */
             pointer-events: none; 
         }
 
 
         .discord-status-dot {
             position: absolute;
-            /* Корректируем позицию для 114px рамки */
-            bottom: -15px; 
-            right: -15px; 
+            top: 75px; 
+            left: 75px; 
             
             width: 20px;
             height: 20px;
@@ -332,7 +329,7 @@
             
             background-color: #747f8d; 
             box-shadow: 0 0 5px rgba(0,0,0,0.5);
-            z-index: 16; 
+            z-index: 16; /* ИЗМЕНЕНИЕ: Статус ПОД рамкой, но над аватаром */
         }
         .status-online { background-color: #3ba55c; box-shadow: 0 0 8px #3ba55c; }
         .status-idle { background-color: #faa61a; box-shadow: 0 0 8px #faa61a; }
@@ -391,17 +388,6 @@
             }
         }
 
-        .afk-hidden {opacity:0;pointer-events:none;}
-        .afk-gif {
-            position:fixed;left:32px;bottom:32px;width:300px;max-width:24vw;max-height:24vh;height:auto;z-index:10;
-            border-radius:16px;box-shadow:0 0 36px #8B000080;opacity:0;pointer-events:none;
-            transition:opacity 1.1s,width 0.7s,max-width 0.7s,max-height 0.7s,left 0.7s,bottom 0.7s;
-        }
-        .afk-gif.afk-active{opacity:1;pointer-events:auto;}
-        
-        @media (max-width:600px) {
-            .afk-gif{display:none!important;}
-        }
         #loading-overlay {
             position:fixed;left:0;top:0;right:0;bottom:0;z-index:1000;background:rgba(0,0,0,0.75);
             backdrop-filter:blur(18px);display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -486,9 +472,9 @@
                     <div id="discord-avatar-container" class="discord-avatar-container">
                         <img id="discord-pfp" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Avatar" class="discord-avatar">
                         
-                        <div id="avatar-frame-overlay"></div>
-                        
                         <div id="discord-status" class="discord-status-dot status-offline"></div>
+                        
+                        <div id="avatar-frame-overlay"></div>
                     </div>
                     <div id="discord-name" class="discord-username">Loading...</div>
                     <div id="discord-tag" class="discord-tag">@username</div>
@@ -502,8 +488,6 @@
             <div class="discord-activity-box"></div>
         </div>
     </div>
-
-    <img src="zetsy-lemonss-kuiper.gif" alt="AFK GIF" class="afk-gif" id="afk-gif">
 
     <div id="darken-overlay"></div>
 
@@ -559,7 +543,6 @@
         function updateDiscordUI(data) {
             const pfpContainer = document.getElementById('discord-profile-container');
             const pfpElement = document.getElementById('discord-pfp');
-            const avatarContainer = document.getElementById('discord-avatar-container');
             const statusElement = document.getElementById('discord-status');
             const nameElement = document.getElementById('discord-name');
             const bannerElement = document.getElementById('discord-banner'); 
@@ -593,7 +576,6 @@
                 }
             }
 
-            // Логика кастомной рамки
             if (CUSTOM_FRAME_URL.trim() !== "") {
                 frameOverlay.style.display = 'block';
                 frameOverlay.style.backgroundImage = `url('${CUSTOM_FRAME_URL}')`;
@@ -660,59 +642,6 @@
         document.addEventListener('cut', e => e.preventDefault());
         document.addEventListener('contextmenu', e => e.preventDefault());
 
-        let afkTimer = null;
-        let afkState = false;
-        let afkEnabled = false;
-
-        function isMobileDevice() {
-            return window.innerWidth <= 900;
-        }
-        
-        function setAfkTimer() {
-            if (!afkEnabled) return;
-            clearTimeout(afkTimer);
-            removeAfk();
-            afkTimer = setTimeout(showAfk, 8000);
-        }
-        function showAfk() {
-            if (!afkEnabled) return;
-            afkState = true;
-            const banner = document.getElementById("discord-profile-container");
-            const gif = document.getElementById("afk-gif");
-            if (isMobileDevice()) {
-                banner.classList.add("afk-hidden");
-                gif.classList.remove("afk-active");
-            } else {
-                banner.classList.add("afk-hidden");
-                gif.classList.add("afk-active");
-            }
-        }
-        function removeAfk() {
-            if (!afkEnabled) return;
-            afkState = false;
-            const banner = document.getElementById("discord-profile-container");
-            const gif = document.getElementById("afk-gif");
-            gif.classList.remove("afk-active");
-            banner.classList.remove("afk-hidden");
-        }
-        function enableAfkFeature() {
-            if (afkEnabled) return;
-            afkEnabled = true;
-            window.addEventListener("mousemove", setAfkTimer);
-            window.addEventListener("keydown", setAfkTimer);
-            window.addEventListener("touchstart", setAfkTimer);
-            window.addEventListener("mousedown", setAfkTimer);
-            document.addEventListener("visibilitychange", function () {
-                if (!afkEnabled) return;
-                if (document.hidden) {
-                    if (afkTimer) setTimeout(() => { if (afkTimer) showAfk(); }, 8000);
-                } else {
-                    removeAfk();
-                    setAfkTimer();
-                }
-            });
-            setAfkTimer();
-        }
 
         const volumeSlider = document.querySelector('.volume-controller .volume-slider');
         const videoBg = document.getElementById('video-bg');
@@ -817,8 +746,6 @@
                 mainInterface.classList.add('active-interface');
                 backButton.classList.add('visible'); 
 
-                enableAfkFeature();
-
             }, 800);
         }
 
@@ -867,10 +794,6 @@
         loadingOverlay.addEventListener('touchend', revealCards);
 
         function goBackToSelection() {
-            afkEnabled = false;
-            clearTimeout(afkTimer);
-            removeAfk();
-
             mainInterface.classList.remove('active-interface');
             backButton.classList.remove('visible');
             
@@ -895,6 +818,10 @@
         backButton.addEventListener('click', goBackToSelection);
         
         window.addEventListener('resize', updateCarousel);
+        
+        function isMobileDevice() {
+            return window.innerWidth <= 900;
+        }
         
     </script>
     

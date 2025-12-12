@@ -238,7 +238,7 @@
             background-color: #1a1a1a;
             display: flex;
             flex-direction: column;
-            overflow-y: visible; /* ИЗМЕНЕНО: visible для предотвращения обрезки */
+            overflow-y: visible; 
             padding-bottom: 20px;
             z-index: 1; 
         }
@@ -275,7 +275,7 @@
             border: none; 
             background-color: #1a1a1a;
             
-            overflow: visible !important; /* КРИТИЧНОЕ ИЗМЕНЕНИЕ: visible, чтобы все выступало */
+            overflow: visible !important; 
         }
         
         /* САМ АВАТАР */
@@ -296,17 +296,17 @@
             box-sizing: border-box;
         }
 
-        /* ОВЕРЛЕЙ-РАМКА (НОВЫЙ ЭЛЕМЕНТ) */
+        /* ОВЕРЛЕЙ-РАМКА (СКОРРЕКТИРОВАННЫЙ РАЗМЕР) */
         #avatar-frame-overlay {
             position: absolute;
-            /* УВЕЛИЧЕННЫЙ КВАДРАТ: 150x150px, чтобы покрыть выступающую рамку */
-            top: -29px; /* (150 - 92) / 2 = 29px */
-            left: -29px; /* (150 - 92) / 2 = 29px */
+            /* Уменьшаем размер до 114x114px, как нужно */
+            top: -11px; /* (114 - 92) / 2 = 11px */
+            left: -11px; 
             
-            width: 150px; 
-            height: 150px; 
+            width: 114px; 
+            height: 114px; 
             
-            /* КРИТИЧНОЕ ИЗМЕНЕНИЕ: УБИРАЕМ border-radius: 50%;, чтобы рамка не обрезалась */
+            /* КРИТИЧНОЕ ИЗМЕНЕНИЕ: Оставляем квадратным, чтобы не обрезалась */
             border-radius: 0; 
             
             background-image: url('Aurora Fox.gif');
@@ -320,9 +320,9 @@
 
         .discord-status-dot {
             position: absolute;
-            /* Корректируем позицию для 150px рамки */
-            bottom: -30px; 
-            right: -30px; 
+            /* Корректируем позицию для 114px рамки */
+            bottom: -15px; 
+            right: -15px; 
             
             width: 20px;
             height: 20px;
@@ -332,7 +332,7 @@
             
             background-color: #747f8d; 
             box-shadow: 0 0 5px rgba(0,0,0,0.5);
-            z-index: 16; /* Статус поверх рамки */
+            z-index: 16; 
         }
         .status-online { background-color: #3ba55c; box-shadow: 0 0 8px #3ba55c; }
         .status-idle { background-color: #faa61a; box-shadow: 0 0 8px #faa61a; }

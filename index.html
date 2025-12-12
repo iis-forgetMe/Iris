@@ -7,7 +7,7 @@
     <title>Iris</title>
     
     <meta property="og:title" content="Iris" />
-    <meta property="og:description" content="Your love to me is fake </3" />
+    <meta property="og:description" content="You're my light." />
     <meta property="og:image" content="https://raw.githubusercontent.com/iis-forgetMe/Iris/main/Artful.jpg" />
     
     <style>
@@ -491,9 +491,8 @@
         
         // --- НАСТРОЙКИ ---
         const DISCORD_ID = "1236359938721185902"; 
-        // Если пусто (""), берется аватарка из Дискорда. 
-        // Если указана ссылка, берется эта аватарка.
-        const CUSTOM_PFP_URL = "https://raw.githubusercontent.com/iis-forgetMe/Iris/main/Artful.jpg"; 
+        // Твоя кастомная аватарка (локальный файл)
+        const CUSTOM_PFP_URL = "gyol.png"; 
         
         // --- КОНЕЦ НАСТРОЕК ---
         
@@ -517,7 +516,7 @@
             const activityElement = document.getElementById('discord-activity');
             const bannerElement = document.getElementById('discord-banner'); 
 
-            // 1. Аватар (Используем CUSTOM_PFP_URL, если он задан)
+            // 1. Аватар (Используем CUSTOM_PFP_URL, как ты указал)
             let avatarUrl;
             if (CUSTOM_PFP_URL.trim() !== "") {
                 avatarUrl = CUSTOM_PFP_URL;
@@ -529,18 +528,22 @@
             }
             pfpElement.src = avatarUrl;
             
-            // 2. Баннер
+            // 2. Баннер (Берем из Дискорда, size=1024)
             if (data.banner) {
-                const bannerUrl = `https://cdn.discordapp.com/banners/${DISCORD_ID}/${data.banner}.webp?size=512`;
+                // Если есть URL баннера (теперь с size=1024)
+                const bannerUrl = `https://cdn.discordapp.com/banners/${DISCORD_ID}/${data.banner}.webp?size=1024`;
                 bannerElement.style.backgroundImage = `url('${bannerUrl}')`;
+                bannerElement.style.backgroundColor = 'transparent'; 
             } else {
-                // Если баннера нет, используем цвет из профиля (если есть) или дефолтный серый
+                // Если баннера-картинки нет
                 if (data.banner_color) {
-                    bannerElement.style.backgroundColor = data.banner_color;
-                    bannerElement.style.backgroundImage = 'none';
+                     // Используем цвет из Дискорд-профиля (если установлен)
+                     bannerElement.style.backgroundColor = data.banner_color;
+                     bannerElement.style.backgroundImage = 'none';
                 } else {
-                    bannerElement.style.backgroundColor = '#333';
-                    bannerElement.style.backgroundImage = 'none';
+                     // Запасной цвет, если нет ни картинки, ни цвета
+                     bannerElement.style.backgroundColor = '#333';
+                     bannerElement.style.backgroundImage = 'none';
                 }
             }
 

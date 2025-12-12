@@ -63,29 +63,44 @@
             pointer-events: auto;
         }
 
+        /* --- КОНТЕЙНЕР ВЫБОРА КАРТОЧЕК --- */
         #card-selection-screen {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: #000; z-index: 500;
             display: none;
-            flex-direction: row; justify-content: center; align-items: center;
-            gap: 50px;
+            /* Flex center для ПК по умолчанию, но внутри будет логика карусели */
+            justify-content: center; 
+            align-items: center;
             opacity: 0; transition: opacity 0.8s ease;
+            overflow: hidden; /* Скрываем вылезающие за края карточки на ПК */
         }
         
+        /* Контейнер для самих карточек */
+        .cards-wrapper {
+            position: relative;
+            width: 100%;
+            height: 400px; /* Высота области карусели */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1000px; /* Для 3D эффекта */
+        }
+
         .card {
             width: 280px;
             height: 280px;
-            cursor: pointer;
-            position: relative;
             border-radius: 12px;
-            
             background: #000; 
             border: none;
             box-shadow: none;
             box-sizing: border-box;
             overflow: hidden;
-            
-            transition: transform 0.4s ease;
+            position: absolute; /* Абсолютное позиционирование для карусели */
+            transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         
         .card img {
@@ -94,11 +109,41 @@
             object-fit: cover; 
             display: block;
             border-radius: 10px;
+            pointer-events: none; /* Чтобы клик проходил сквозь картинку на карточку */
         }
 
-        .card:hover {
-            transform: scale(1.1) translateY(-10px);
+        /* --- СТИЛИ ДЛЯ КАРУСЕЛИ (ПК) --- */
+        
+        /* Активная карточка (Центр) */
+        .card[data-status="active"] {
+            transform: translateX(0) scale(1.1);
             z-index: 10;
+            filter: brightness(1);
+            opacity: 1;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2); /* Легкое свечение активной */
+        }
+
+        /* Соседние карточки (Слева/Справа) */
+        .card[data-status="left"] {
+            transform: translateX(-110%) scale(0.85);
+            z-index: 5;
+            filter: brightness(0.4); /* Затемнение */
+            opacity: 0.7;
+        }
+        
+        .card[data-status="right"] {
+            transform: translateX(110%) scale(0.85);
+            z-index: 5;
+            filter: brightness(0.4); /* Затемнение */
+            opacity: 0.7;
+        }
+
+        /* Дальние карточки (Скрыты или очень далеко) */
+        .card[data-status="hidden"] {
+            transform: translateX(0) scale(0.5);
+            z-index: 1;
+            opacity: 0;
+            pointer-events: none;
         }
 
         .back-button-controller {
@@ -180,6 +225,8 @@
             transition:opacity 1.1s,width 0.7s,max-width 0.7s,max-height 0.7s,left 0.7s,bottom 0.7s;
         }
         .afk-gif.afk-active{opacity:1;pointer-events:auto;}
+        
+        /* --- МОБИЛЬНЫЙ АДАПТИВ --- */
         @media (max-width:900px) {
             .top-box{left:6px;right:6px;top:10px;min-height:38px;padding:0 12px;font-size:18px;}
             .top-box-left{font-size:18px;padding-right:12px;}
@@ -188,9 +235,34 @@
             .volume-controller:hover,.volume-controller:focus-within{width:134px;}
             .volume-slider{width:65px;}
             .volume-percent{font-size:13px;min-width:22px;}
-            #card-selection-screen { flex-direction: column; gap: 20px; }
             
-            .card { width: 60vw; height: auto; aspect-ratio: 1/1; } 
+            /* На мобильных включаем вертикальный скролл */
+            #card-selection-screen {
+                align-items: flex-start; /* Старт сверху */
+                padding-top: 80px; /* Отступ сверху */
+                overflow-y: auto; /* Вертикальный скролл */
+                -webkit-overflow-scrolling: touch; /* Плавность на iOS */
+            }
+
+            .cards-wrapper {
+                flex-direction: column; /* Вертикальная колонка */
+                height: auto; /* Высота по содержимому */
+                width: 100%;
+                gap: 30px; /* Расстояние между карточками */
+                padding-bottom: 100px;
+                display: flex;
+            }
+            
+            .card { 
+                position: relative !important; /* Отключаем абсолют */
+                width: 70vw; 
+                height: auto; 
+                aspect-ratio: 1/1; 
+                transform: none !important; /* Убираем 3D эффекты */
+                opacity: 1 !important;
+                filter: none !important; /* Убираем затемнение */
+                margin: 0 auto; /* Центрируем */
+            } 
             
             .back-button-controller {
                 left: 10px;
@@ -252,17 +324,8 @@
     </div>
 
     <div id="card-selection-screen">
-        <div class="card" data-video="DWELLING.mp4">
-            <img src="Terenry.png" alt="Terenry">
-        </div>
-        
-        <div class="card" data-video="ULTRASONIC FAITH.mp4">
-            <img src="gracee.jpg" alt="gracee">
-        </div>
-        
-        <div class="card" data-video="007n7.mp4">
-            <img src="007n7.jpg" alt="007n7">
-        </div>
+        <div class="cards-wrapper" id="cards-container">
+            </div>
     </div>
 
     <video loop playsinline id="video-bg" preload="auto">
@@ -321,6 +384,16 @@
     <div id="darken-overlay"></div>
 
     <script>
+        // ----- КОНФИГУРАЦИЯ ВИДЕО ----- //
+        // Просто добавь сюда новые карточки
+        const videos = [
+            { id: 0, img: "Terenry.png", video: "DWELLING.mp4" },
+            { id: 1, img: "gracee.jpg", video: "ULTRASONIC FAITH.mp4" },
+            { id: 2, img: "007n7.jpg", video: "007n7.mp4" }
+        ];
+
+        let activeCardIndex = 1; // Стартовая карточка (по центру)
+
         function checkRussianFont() {
             const bodyText = document.body.innerText || document.body.textContent;
             if (/[А-Яа-яЁё]/.test(bodyText)) {
@@ -342,8 +415,10 @@
         let afkEnabled = false;
 
         function isMobileDevice() {
-            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|Opera Mini|IEMobile|Mobile/i.test(navigator.userAgent);
+            // Упрощенная проверка ширины экрана для логики карусели
+            return window.innerWidth <= 900;
         }
+        
         function setAfkTimer() {
             if (!afkEnabled) return;
             clearTimeout(afkTimer);
@@ -419,15 +494,113 @@
         const loadingOverlay = document.getElementById('loading-overlay');
         const loadingTitle = document.querySelector('.loading-title');
         const cardScreen = document.getElementById('card-selection-screen');
+        const cardsContainer = document.getElementById('cards-container');
         const mainInterface = document.getElementById('main-interface');
         const backButton = document.getElementById('back-button'); 
         const darkenOverlay = document.getElementById('darken-overlay');
         let overlayClicked = false;
 
+        // ---- ГЕНЕРАЦИЯ И УПРАВЛЕНИЕ КАРТОЧКАМИ ----
+        function renderCards() {
+            cardsContainer.innerHTML = '';
+            videos.forEach((vid, index) => {
+                const card = document.createElement('div');
+                card.classList.add('card');
+                card.dataset.index = index;
+                card.dataset.video = vid.video;
+                
+                const img = document.createElement('img');
+                img.src = vid.img;
+                img.alt = "Card";
+                
+                card.appendChild(img);
+                cardsContainer.appendChild(card);
+                
+                // Клик по карточке
+                card.addEventListener('click', () => handleCardClick(index));
+            });
+            updateCarousel();
+        }
+
+        function updateCarousel() {
+            if (isMobileDevice()) return; // На мобильных не применяем логику карусели
+
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                // Сбрасываем статусы
+                card.removeAttribute('data-status');
+                
+                if (index === activeCardIndex) {
+                    card.setAttribute('data-status', 'active');
+                } else if (index === activeCardIndex - 1) {
+                    card.setAttribute('data-status', 'left');
+                } else if (index === activeCardIndex + 1) {
+                    card.setAttribute('data-status', 'right');
+                } else {
+                    card.setAttribute('data-status', 'hidden');
+                }
+            });
+        }
+
+        function handleCardClick(index) {
+            if (isMobileDevice()) {
+                // На мобильном любой клик запускает видео
+                playVideo(index);
+            } else {
+                // На ПК:
+                if (index === activeCardIndex) {
+                    // Если клик по активной (центральной) -> запуск
+                    playVideo(index);
+                } else {
+                    // Если клик по боковой -> скролл к ней
+                    activeCardIndex = index;
+                    updateCarousel();
+                }
+            }
+        }
+
+        function playVideo(index) {
+            const vidData = videos[index];
+            
+            cardScreen.style.opacity = '0';
+            setTimeout(() => {
+                cardScreen.style.display = 'none';
+                
+                videoBg.src = vidData.video;
+                videoBg.muted = false;
+                videoBg.volume = 0.1;
+                videoBg.play();
+                videoBg.classList.add('video-active');
+
+                mainInterface.classList.add('active-interface');
+                backButton.classList.add('visible'); 
+
+                enableAfkFeature();
+
+            }, 800);
+        }
+
+        // Управление стрелками клавиатуры
+        document.addEventListener('keydown', (e) => {
+            if (cardScreen.style.display !== 'flex' || isMobileDevice()) return;
+            
+            if (e.key === 'ArrowRight' && activeCardIndex < videos.length - 1) {
+                activeCardIndex++;
+                updateCarousel();
+            } else if (e.key === 'ArrowLeft' && activeCardIndex > 0) {
+                activeCardIndex--;
+                updateCarousel();
+            } else if (e.key === 'Enter') {
+                playVideo(activeCardIndex);
+            }
+        });
+
+        // Инициализация при загрузке
         window.addEventListener('DOMContentLoaded', () => {
             loadingOverlay.style.display = '';
             loadingTitle.textContent = 'Click to enter...';
             loadingOverlay.style.cursor = 'pointer';
+            renderCards();
         });
 
         function revealCards() {
@@ -453,30 +626,6 @@
         loadingOverlay.addEventListener('mousedown', e => { if(e.button===0) revealCards(); });
         loadingOverlay.addEventListener('touchend', revealCards);
 
-        const cards = document.querySelectorAll('.card');
-        cards.forEach(card => {
-            card.addEventListener('click', function() {
-                const videoSrc = this.getAttribute('data-video');
-                
-                cardScreen.style.opacity = '0';
-                setTimeout(() => {
-                    cardScreen.style.display = 'none';
-                    
-                    videoBg.src = videoSrc;
-                    videoBg.muted = false;
-                    videoBg.volume = 0.1;
-                    videoBg.play();
-                    videoBg.classList.add('video-active');
-
-                    mainInterface.classList.add('active-interface');
-                    backButton.classList.add('visible'); 
-
-                    enableAfkFeature();
-
-                }, 800);
-            });
-        });
-
         function goBackToSelection() {
             afkEnabled = false;
             clearTimeout(afkTimer);
@@ -498,12 +647,15 @@
                     cardScreen.style.opacity = '1';
                 });
                 darkenOverlay.classList.remove('active');
-            }, 800); 
+            }, 500); 
             
             overlayClicked = false;
         }
 
         backButton.addEventListener('click', goBackToSelection);
+        
+        // Слушаем ресайз окна, чтобы переключать режим (мобильный/ПК)
+        window.addEventListener('resize', updateCarousel);
         
     </script>
     

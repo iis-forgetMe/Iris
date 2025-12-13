@@ -52,7 +52,7 @@ background: #000; pointer-events: none; filter: brightness(0.5); left: 0; top: 0
 }
 
         #main-interface {
-            position: absolute;
+            position: absolute; /* Изменено на absolute для лучшего центрирования большого контента */
 top: 0; left: 0;
             opacity: 0;
             pointer-events: none;
@@ -61,9 +61,9 @@ top: 0; left: 0;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-justify-content: flex-start;
+justify-content: center; /* Центрирует содержимое по вертикали */
             align-items: center;
-            padding: 80px 0;
+            padding: 80px 0; /* Отступ для top-box */
             box-sizing: border-box;
         }
         #main-interface.active-interface {
@@ -76,8 +76,7 @@ pointer-events: auto;
 flex-direction: column;
             align-items: center;
             width: 100%;
-            padding-top: 40px; 
-            padding-bottom: 50px;
+            /* Удалены внутренние отступы, центрирование теперь управляется #main-interface */
 }
 
         #card-selection-screen {
@@ -415,6 +414,7 @@ align-items: center;
 border: none; cursor: pointer;
             color: #b3b3b3; display: flex; align-items: center; justify-content: center;
             transition: color 0.2s, transform 0.2s;
+            padding: 0; /* Убираем лишний padding с кнопки */
 }
         .control-btn:hover { color: #fff; transform: scale(1.1);
 }
@@ -472,6 +472,10 @@ align-items: center;
         }
         .player-volume input { width: 100%;
 }
+        .player-volume-percent-label {
+            color: #fff; min-width: 32px; text-align: right; font-family: monospace;
+            font-size: 12px; margin-left: 0;
+        }
 
         @media (max-width: 900px) {
             #discord-profile-container { 
@@ -580,8 +584,8 @@ pointer-events: auto; }
                     <path d="M15 8a4 4 0 0 1 0 8" stroke="#fff" stroke-width="2" fill="none"/>
                 </svg>
             </div>
-            <input type="range" min="0" max="100" value="50" class="volume-slider">
-            <span class="volume-percent" id="volume-percent">50%</span>
+            <input type="range" min="0" max="100" value="10" class="volume-slider">
+            <span class="volume-percent" id="volume-percent">10%</span>
         </div>
  
         <div class="centered-content">
@@ -653,11 +657,13 @@ pointer-events: auto; }
                     </div>
 
                     <div class="player-volume">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="#b3b3b3">
-        
-                    <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
-                        </svg>
-                        <input type="range" id="player-volume-slider" value="50" min="0" max="100">
+                        <button class="control-btn" id="player-mute-btn">
+                            <svg id="volume-high-icon" viewBox="0 0 24 24" style="fill:#b3b3b3;"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+                            <svg id="volume-low-icon" viewBox="0 0 24 24" style="fill:#b3b3b3; display:none;"><path d="M4 9v6h4l5 5V4L8 9H4zM15 8a4 4 0 0 1 0 8" stroke="#b3b3b3" stroke-width="2" fill="none"/></svg>
+                            <svg id="volume-mute-icon" viewBox="0 0 24 24" style="fill:#b3b3b3; display:none;"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .9-.2 1.77-.57 2.57l1.45 1.45C20.47 15.75 21 13.95 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.27 4.27L17 18.73 13.27 15l-1.39-1.39L4.27 3z"/></svg>
+                        </button>
+                        <input type="range" id="player-volume-slider" value="100" min="0" max="100">
+                        <span id="player-volume-percent" class="player-volume-percent-label">100%</span>
            
           </div>
                 </div>
@@ -799,10 +805,18 @@ const prevBtn = document.getElementById('prev-btn');
         const seekBar = document.getElementById('seek-bar');
 const currentTimeEl = document.getElementById('current-time');
         const totalTimeEl = document.getElementById('total-time');
-        const volumeSlider = document.getElementById('player-volume-slider');
         const trackTitle = document.getElementById('track-title');
         const trackArtist = document.getElementById('track-artist');
 const trackCover = document.getElementById('track-cover');
+
+        // NEW VOLUME ELEMENTS
+        const playerVolumeSlider = document.getElementById('player-volume-slider');
+        const playerVolumePercent = document.getElementById('player-volume-percent');
+        const playerMuteBtn = document.getElementById('player-mute-btn');
+        const volumeHighIcon = document.getElementById('volume-high-icon');
+        const volumeLowIcon = document.getElementById('volume-low-icon');
+        const volumeMuteIcon = document.getElementById('volume-mute-icon');
+        let lastPlayerVolume = 1.0; 
 
         function loadSong(index) {
             const song = songs[index];
@@ -824,6 +838,32 @@ playIcon.style.display = 'none';
 playIcon.style.display = 'block';
             pauseIcon.style.display = 'none';
         }
+
+        function updatePlayerVolumeUI() {
+            const vol = audioPlayer.volume;
+            const volPercent = Math.round(vol * 100);
+            playerVolumePercent.textContent = `${volPercent}%`;
+            playerVolumeSlider.value = volPercent;
+
+            playerVolumeSlider.style.background = `linear-gradient(to right, #008398 0%, #74003e ${volPercent}%, #4f4f4f ${volPercent}%, #4f4f4f 100%)`;
+
+            volumeHighIcon.style.display = 'none';
+            volumeLowIcon.style.display = 'none';
+            volumeMuteIcon.style.display = 'none';
+
+            if (audioPlayer.muted || vol === 0) {
+                volumeMuteIcon.style.display = 'block';
+            } else if (vol < 0.5) {
+                volumeLowIcon.style.display = 'block';
+            } else {
+                volumeHighIcon.style.display = 'block';
+            }
+        }
+        
+        // Initial Volume Setup (100%)
+        audioPlayer.volume = 1.0;
+        playerVolumeSlider.value = 100;
+        updatePlayerVolumeUI();
 
         playPauseBtn.addEventListener('click', () => {
             if (audioPlayer.paused) {
@@ -872,9 +912,31 @@ seekBar.addEventListener('input', () => {
             const duration = audioPlayer.duration;
             audioPlayer.currentTime = (seekBar.value / 100) * duration;
         });
-volumeSlider.addEventListener('input', (e) => {
-            audioPlayer.volume = e.target.value / 100;
+
+        // Player Volume Controls (NEW)
+        playerVolumeSlider.addEventListener('input', (e) => {
+            const newVolume = +e.target.value / 100;
+            audioPlayer.volume = newVolume;
+            audioPlayer.muted = (newVolume === 0);
+            if (newVolume > 0) lastPlayerVolume = newVolume;
+            updatePlayerVolumeUI();
         });
+
+        playerMuteBtn.addEventListener('click', () => {
+            audioPlayer.muted = !audioPlayer.muted;
+            
+            if (audioPlayer.muted) {
+                lastPlayerVolume = audioPlayer.volume > 0 ? audioPlayer.volume : 1.0;
+                audioPlayer.volume = 0;
+            } else {
+                audioPlayer.volume = lastPlayerVolume;
+            }
+            updatePlayerVolumeUI();
+        });
+        
+        audioPlayer.addEventListener('volumechange', updatePlayerVolumeUI);
+        // End Player Volume Controls
+
 function formatTime(time) {
             const minutes = Math.floor(time / 60);
 const seconds = Math.floor(time % 60);
@@ -901,7 +963,7 @@ document.addEventListener('selectstart', e => e.preventDefault());
 const videoVolumeSlider = document.querySelector('.volume-controller .volume-slider');
         const videoBg = document.getElementById('video-bg');
         const volumePercent = document.getElementById('volume-percent');
-function updateVolumePercent() {
+function updateVideoVolumePercent() {
             let show = Math.round(videoBg.muted ? 0 : videoBg.volume * 100);
 volumePercent.textContent = show + "%";
             if(videoBg.muted && videoVolumeSlider.value != "0") videoVolumeSlider.value = 0;
@@ -909,17 +971,17 @@ if(!videoBg.muted && +videoVolumeSlider.value == 0) videoVolumeSlider.value = Ma
 }
         videoBg.volume = 0.1;
 videoVolumeSlider.value = 10
-        updateVolumePercent();
+        updateVideoVolumePercent();
 videoVolumeSlider.addEventListener('input', function () {
             videoBg.volume = +this.value / 100;
             videoBg.muted = (+this.value === 0);
-            updateVolumePercent();
+            updateVideoVolumePercent();
         });
 document.querySelector('.volume-controller .volume-icon').addEventListener('click', function () {
             videoBg.muted = !videoBg.muted;
-            updateVolumePercent();
+            updateVideoVolumePercent();
         });
-videoBg.addEventListener('volumechange', updateVolumePercent);
+videoBg.addEventListener('volumechange', updateVideoVolumePercent);
 
         const loadingOverlay = document.getElementById('loading-overlay');
         const loadingTitle = document.querySelector('.loading-title');

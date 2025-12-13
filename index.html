@@ -50,23 +50,26 @@
         }
 
         #main-interface {
-            position: fixed; 
+            position: absolute; 
             top: 0; left: 0;
             opacity: 0;
             pointer-events: none;
             transition: opacity 1.5s ease-in-out;
-            width: 100vw;
-            height: 100vh;
+            width: 100%;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: center; /* Центрирует по вертикали, когда контента мало */
             align-items: center;
+            padding: 80px 0;
+            box-sizing: border-box;
         }
         #main-interface.active-interface {
             opacity: 1;
             pointer-events: auto;
         }
-
+        
+        /* Стили для экрана выбора карточек (не изменены) */
         #card-selection-screen {
             position: relative; 
             width: 100%; 
@@ -115,7 +118,6 @@
             pointer-events: none;
         }
 
-        /* DESKTOP STYLES (Carousel) */
         @media (min-width: 901px) {
             .card[data-status="active"] {
                 transform: translateX(0) scale(1.1);
@@ -144,7 +146,6 @@
             }
         }
 
-        /* MOBILE STYLES (Vertical List) */
         @media (max-width: 900px) {
             #card-selection-screen {
                 flex-direction: column;
@@ -229,12 +230,13 @@
         .volume-slider { width: 90px; max-width: 36vw; margin-left: 12px; accent-color: rgb(255,8,0);}
         .volume-percent { color: #fff; min-width: 32px; text-align: right; font-family: inherit; font-size: 15px; margin-left: 8px;}
         
+        /* Увеличение главного блока */
         #discord-profile-container {
             position: relative;
             z-index: 1;
             display: flex;
             flex-direction: column;
-            max-width: 420px; 
+            max-width: 700px; /* УВЕЛИЧЕННАЯ ШИРИНА */
             width: 90%;
             height: auto; 
             min-height: 250px; 
@@ -246,6 +248,7 @@
                 0 0 40px 0 rgba(116, 0, 62, 0.5);  
             border: none;
             overflow: hidden;
+            margin-bottom: 25px; /* Добавлено для отступа снизу, если нужно */
         }
         
         .discord-main-block {
@@ -305,9 +308,14 @@
         .discord-bio-box { display: none; }
         .info-section { display: none; }
         .tab-content-wrapper { padding: 0 20px 20px 20px; overflow: visible; }
-
+        
         @media (max-width: 900px) {
-            #discord-profile-container { max-width: 98vw; min-height: auto; height: auto; margin-top: 60px; margin-bottom: 10px; }
+            #discord-profile-container { 
+                max-width: 95%; /* На мобильных остаётся широким */
+                min-height: auto; 
+                height: auto; 
+                margin-top: 0; 
+            }
             .discord-main-block { padding-bottom: 10px; }
             .profile-content { padding: 0 15px; }
             .tab-content-wrapper { padding: 0 15px 15px 15px; }
@@ -384,7 +392,7 @@
             <input type="range" min="0" max="100" value="50" class="volume-slider">
             <span class="volume-percent" id="volume-percent">50%</span>
         </div>
-
+        
         <div id="discord-profile-container">
             <div class="discord-main-block">
                 <div id="discord-banner" class="discord-banner"></div>
@@ -405,11 +413,23 @@
                     
                     <div class="tab-content-wrapper">
                         <div id="dynamic-status-message"></div>
+                        
+                        <div class="custom-large-content" style="margin-top: 20px; padding: 15px; background: #2f3136; border-radius: 8px;">
+                            <h3 style="margin-top: 0; font-size: 24px; color: #fff; border-bottom: 2px solid #5865f2; padding-bottom: 5px;">
+                                Extra Info Section
+                            </h3>
+                            <p style="font-size: 18px; color: #dcddde;">
+                                Теперь у вас много места, чтобы добавить текст, списки или другие элементы HTML, 
+                                которые вы хотели разместить!
+                            </p>
+                        </div>
+
                     </div>
                 </div>
             </div>
             <div class="discord-activity-box"></div>
         </div>
+
     </div>
 
     <div id="darken-overlay"></div>

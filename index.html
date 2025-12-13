@@ -13,10 +13,9 @@
     
     <style>
         html, body {
-            height: 100%;
             margin: 0;
             padding: 0;
-            /* УДАЛЕНО: overflow: hidden !important;, position: fixed;, width: 100vw;, max-width: 100vw; */
+            /* УДАЛЕНО: height: 100%; position: fixed; */
             touch-action: none;
         }
         @font-face {
@@ -67,42 +66,56 @@
         }
 
         #card-selection-screen {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
+            /* УДАЛЕНО: position: fixed; top: 0; left: 0; height: 100vh; */
+            width: 100vw; 
             background: #000; z-index: 500;
             display: none;
-            flex-direction: row; justify-content: center; align-items: center;
+            flex-direction: column; /* Изменено на column для вертикального центрирования */
+            justify-content: center; 
+            align-items: center;
             gap: 50px;
             opacity: 0; transition: opacity 0.8s ease;
-            overflow: hidden;
+            overflow-y: auto; /* Разрешаем вертикальную прокрутку */
+            padding: 50px 0; /* Добавляем отступы сверху/снизу для прокрутки */
         }
         
         .cards-wrapper {
             position: relative;
             width: 100%;
-            height: 400px;
+            height: auto; /* Изменено на auto, чтобы вместить карточки */
             display: flex;
             justify-content: center;
             align-items: center;
             perspective: 1000px;
-            overflow: hidden; /* По умолчанию для десктопа */
+            overflow: hidden; 
+            flex-direction: row; 
+            gap: 40px; /* Расстояние между карточками на десктопе */
         }
         
-        /* СТИЛЬ ДЛЯ МОБИЛЬНОГО (Включаем прокрутку карточек) */
+        /* СТИЛЬ ДЛЯ МОБИЛЬНОГО (Вертикальное расположение карточек) */
         @media (max-width: 900px) {
+            #card-selection-screen {
+                flex-direction: column; /* Вертикальный список */
+                justify-content: flex-start; /* Карточки начинаются сверху */
+                padding: 100px 0 50px 0; /* Отступ сверху, чтобы карточки были ниже шапки */
+                height: 100vh;
+                position: fixed; /* Возвращаем fixed для мобильного, чтобы скрыть контент под ним */
+            }
             .cards-wrapper {
-                justify-content: flex-start;
-                padding: 0 50vw; 
-                overflow-x: auto; 
-                scroll-snap-type: x mandatory; 
-                height: 380px; 
+                flex-direction: column; /* Карточки в колонку */
+                gap: 20px; /* Расстояние между карточками на мобильном */
+                padding: 0 15px; /* Боковые отступы */
+                overflow: visible; /* Убираем overflow, чтобы контент был виден */
+                height: auto; /* Позволяем контейнеру расти по высоте */
             }
 
             .card {
                 position: static; 
                 flex-shrink: 0;
-                margin: 0 10px;
-                scroll-snap-align: center;
+                margin: 10px 0; /* Вертикальный отступ между карточками */
+                width: 90%; /* Ширина на мобильном */
+                max-width: 320px;
+                height: 320px;
             }
             
             /* Отключаем transform и scale для мобильных, чтобы они были в ряд */
@@ -743,7 +756,7 @@
         function updateCarousel() {
             const cards = document.querySelectorAll('.card');
             
-            // Если экран достаточно широкий, используем десктопную карусель
+            // Если экран достаточно широкий, используем десктопную карусель (слайдер)
             if (window.innerWidth >= 901) {
                 cards.forEach((card, index) => {
                     card.removeAttribute('data-status');
@@ -759,7 +772,7 @@
                     }
                 });
             } else {
-                // На мобильных (или узких) экранах сбрасываем статусы
+                // На мобильных: сбрасываем статусы для вертикального списка
                 cards.forEach((card) => {
                     card.removeAttribute('data-status');
                 });
@@ -789,11 +802,11 @@
         }
 
         function handleCardClick(index) {
-            // Для мобильных и десктопа - клик по карточке запускает видео
+            // На мобильных (и узких) экранах клик сразу запускает видео
             if (window.innerWidth < 901) {
                 playVideo(index);
             } else {
-                // Для десктопа: клик по активной карточке запускает, по неактивной - сдвигает
+                // На десктопе: клик по активной карточке запускает, по неактивной - сдвигает
                 if (index === activeCardIndex) {
                     playVideo(index);
                 } else {
@@ -807,6 +820,10 @@
         function playVideo(index) {
             const vidData = videos[index];
             cardScreen.style.opacity = '0';
+            
+            // Сбрасываем фиксированное положение экрана выбора, чтобы вернуться к нормальной прокрутке
+            cardScreen.style.position = 'absolute';
+
             setTimeout(() => {
                 cardScreen.style.display = 'none';
                 
@@ -880,6 +897,10 @@
 
             setTimeout(() => {
                 cardScreen.style.display = 'flex';
+                // При возвращении, восстанавливаем фиксированное положение экрана выбора на мобильном
+                if(window.innerWidth < 901) {
+                    cardScreen.style.position = 'fixed';
+                }
                 requestAnimationFrame(() => {
                     cardScreen.style.opacity = '1';
                 });

@@ -59,7 +59,7 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: center; /* Центрирует по вертикали, когда контента мало */
+            justify-content: flex-start;
             align-items: center;
             padding: 80px 0;
             box-sizing: border-box;
@@ -69,7 +69,16 @@
             pointer-events: auto;
         }
         
-        /* Стили для экрана выбора карточек (не изменены) */
+        /* Контейнер для выравнивания по центру */
+        .centered-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            padding-top: 40px; 
+            padding-bottom: 50px; 
+        }
+
         #card-selection-screen {
             position: relative; 
             width: 100%; 
@@ -209,9 +218,11 @@
         }
         .icon-link:hover .social-icon { filter: brightness(1.2) drop-shadow(0 2px 5px #fff7); transform: scale(1.1);}
         
+        /* Главная регулировка громкости (скрыта, т.к. теперь есть плеер) */
         .volume-controller {
             position: fixed;
-            left: 24px; bottom: 24px; z-index: 20; display: flex; align-items: center; gap: 0;
+            left: 24px; bottom: 24px; z-index: 20; display: none; /* СКРЫТО, ТАК КАК ЕСТЬ ПЛЕЕР */
+            align-items: center; gap: 0;
             background: rgba(40, 40, 40, 0.74); border-radius: 999px;
             box-shadow: 0 3px 18px 0 #0007; padding: 6px;
             width: 44px; height: 44px; transition: width 0.4s; overflow: visible;
@@ -230,13 +241,12 @@
         .volume-slider { width: 90px; max-width: 36vw; margin-left: 12px; accent-color: rgb(255,8,0);}
         .volume-percent { color: #fff; min-width: 32px; text-align: right; font-family: inherit; font-size: 15px; margin-left: 8px;}
         
-        /* Увеличение главного блока */
         #discord-profile-container {
             position: relative;
             z-index: 1;
             display: flex;
             flex-direction: column;
-            max-width: 700px; /* УВЕЛИЧЕННАЯ ШИРИНА */
+            max-width: 700px;
             width: 90%;
             height: auto; 
             min-height: 250px; 
@@ -248,7 +258,7 @@
                 0 0 40px 0 rgba(116, 0, 62, 0.5);  
             border: none;
             overflow: hidden;
-            margin-bottom: 25px; /* Добавлено для отступа снизу, если нужно */
+            margin-bottom: 25px;
         }
         
         .discord-main-block {
@@ -309,9 +319,133 @@
         .info-section { display: none; }
         .tab-content-wrapper { padding: 0 20px 20px 20px; overflow: visible; }
         
+        /* --- СТИЛИ ПЛЕЕРА --- */
+        .music-player-box {
+            width: 95%;
+            max-width: 800px;
+            background: linear-gradient(to right, #008398, #74003e);
+            border-radius: 16px;
+            padding: 3px; 
+            box-shadow: 
+                0 0 20px 0 rgba(0, 131, 152, 0.8), 
+                0 0 40px 0 rgba(116, 0, 62, 0.5);  
+            margin-bottom: 50px;
+            display: flex; flex-direction: column;
+        }
+
+        .music-player-inner {
+            background-color: rgba(20, 20, 20, 0.95);
+            width: 100%;
+            height: 100%;
+            border-radius: 14px;
+            padding: 20px;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .player-cover {
+            width: 100px; height: 100px;
+            border-radius: 8px;
+            object-fit: cover;
+            flex-shrink: 0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+
+        .player-info {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            overflow: hidden;
+        }
+
+        .track-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 4px;
+        }
+
+        .track-artist {
+            font-size: 14px;
+            color: #b3b3b3;
+            margin-bottom: 12px;
+        }
+
+        .player-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 8px;
+        }
+
+        .control-btn {
+            background: none; border: none; cursor: pointer;
+            color: #b3b3b3; display: flex; align-items: center; justify-content: center;
+            transition: color 0.2s, transform 0.2s;
+        }
+        .control-btn:hover { color: #fff; transform: scale(1.1); }
+        .control-btn svg { width: 24px; height: 24px; fill: currentColor; }
+        .control-btn.play-pause svg { width: 32px; height: 32px; }
+
+        .progress-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            font-size: 12px;
+            color: #b3b3b3;
+            font-family: monospace;
+        }
+
+        /* Кастомный слайдер для прогресса */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+            cursor: pointer;
+        }
+        input[type=range]:focus { outline: none; }
+        
+        /* Дорожка слайдера */
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            background: #4f4f4f;
+            border-radius: 2px;
+        }
+        /* Головка слайдера */
+        input[type=range]::-webkit-slider-thumb {
+            height: 12px;
+            width: 12px;
+            border-radius: 50%;
+            background: #fff;
+            -webkit-appearance: none;
+            margin-top: -4px; 
+            box-shadow: 0 0 5px rgba(0,0,0,0.5);
+            opacity: 0; 
+            transition: opacity 0.2s;
+        }
+        .music-player-inner:hover input[type=range]::-webkit-slider-thumb {
+            opacity: 1;
+        }
+
+        .player-volume {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 120px;
+            flex-shrink: 0;
+        }
+        .player-volume input { width: 100%; }
+
         @media (max-width: 900px) {
             #discord-profile-container { 
-                max-width: 95%; /* На мобильных остаётся широким */
+                max-width: 95%; 
                 min-height: auto; 
                 height: auto; 
                 margin-top: 0; 
@@ -319,6 +453,17 @@
             .discord-main-block { padding-bottom: 10px; }
             .profile-content { padding: 0 15px; }
             .tab-content-wrapper { padding: 0 15px 15px 15px; }
+            
+            .music-player-inner {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+                padding: 25px 15px;
+            }
+            .player-cover { width: 140px; height: 140px; margin-bottom: 5px; }
+            .player-info { width: 100%; }
+            .player-controls { justify-content: center; margin-bottom: 15px; }
+            .player-volume { display: none; } /* Скрываем громкость на телефоне для экономии места */
         }
 
         #loading-overlay {
@@ -335,6 +480,9 @@
             transition: background 0.5s ease-out;
         }
         #darken-overlay.active { background: rgba(0, 0, 0, 1); pointer-events: auto; }
+        
+        /* Скрываем YouTube плеер */
+        #hidden-player { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; top: -1000px; }
     </style>
 </head>
 <body 
@@ -393,46 +541,78 @@
             <span class="volume-percent" id="volume-percent">50%</span>
         </div>
         
-        <div id="discord-profile-container">
-            <div class="discord-main-block">
-                <div id="discord-banner" class="discord-banner"></div>
-                <div class="profile-content">
-                    <div id="discord-avatar-container" class="discord-avatar-container">
-                        <img id="discord-pfp" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Avatar" class="discord-avatar">
-                        <div id="avatar-frame-overlay"></div>
-                    </div>
-                    <div id="discord-name" class="discord-username">Loading...</div>
-                    <div id="discord-tag" class="discord-tag">@username</div>
-                    
-                    <div class="discord-badges-container">
-                        <img src="https://img.icons8.com/?size=100&id=u1TI0IQMcE7q&format=png&color=000000" 
-                            alt="HypeSquad Bravery" class="discord-badge" title="HypeSquad Bravery">
-                        <img src="https://img.icons8.com/?size=100&id=S6odLj8qKMjU&format=png&color=000000" 
-                            alt="Nitro" class="discord-badge" title="Discord Nitro">
-                    </div>
-                    
-                    <div class="tab-content-wrapper">
-                        <div id="dynamic-status-message"></div>
+        <div class="centered-content">
+            <div id="discord-profile-container">
+                <div class="discord-main-block">
+                    <div id="discord-banner" class="discord-banner"></div>
+                    <div class="profile-content">
+                        <div id="discord-avatar-container" class="discord-avatar-container">
+                            <img id="discord-pfp" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Avatar" class="discord-avatar">
+                            <div id="avatar-frame-overlay"></div>
+                        </div>
+                        <div id="discord-name" class="discord-username">Loading...</div>
+                        <div id="discord-tag" class="discord-tag">@username</div>
                         
-                        <div class="custom-large-content" style="margin-top: 20px; padding: 15px; background: #2f3136; border-radius: 8px;">
-                            <h3 style="margin-top: 0; font-size: 24px; color: #fff; border-bottom: 2px solid #5865f2; padding-bottom: 5px;">
-                                Extra Info Section
-                            </h3>
-                            <p style="font-size: 18px; color: #dcddde;">
-                                Теперь у вас много места, чтобы добавить текст, списки или другие элементы HTML, 
-                                которые вы хотели разместить!
-                            </p>
+                        <div class="discord-badges-container">
+                            <img src="https://img.icons8.com/?size=100&id=u1TI0IQMcE7q&format=png&color=000000" 
+                                alt="HypeSquad Bravery" class="discord-badge" title="HypeSquad Bravery">
+                            <img src="https://img.icons8.com/?size=100&id=S6odLj8qKMjU&format=png&color=000000" 
+                                alt="Nitro" class="discord-badge" title="Discord Nitro">
+                        </div>
+                        
+                        <div class="tab-content-wrapper">
+                            <div id="dynamic-status-message"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="discord-activity-box"></div>
+            </div>
+
+            <div class="music-player-box">
+                <div class="music-player-inner">
+                    <img src="https://img.youtube.com/vi/Ci_zad39Uhw/maxresdefault.jpg" alt="Track Cover" class="player-cover">
+                    
+                    <div class="player-info">
+                        <div class="track-title">粛聖!! ロリ神レクイエム☆</div>
+                        <div class="track-artist">しぐれうい (Shigure Ui)</div>
+                        
+                        <div class="player-controls">
+                            <button class="control-btn prev-btn">
+                                <svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+                            </button>
+                            <button class="control-btn play-pause" id="play-pause-btn">
+                                <svg viewBox="0 0 24 24" id="play-icon"><path d="M8 5v14l11-7z"/></svg>
+                                <svg viewBox="0 0 24 24" id="pause-icon" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                            </button>
+                            <button class="control-btn next-btn">
+                                <svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+                            </button>
                         </div>
 
+                        <div class="progress-container">
+                            <span id="current-time">0:00</span>
+                            <input type="range" id="seek-bar" value="0" min="0" max="100">
+                            <span id="total-time">0:00</span>
+                        </div>
+                    </div>
+
+                    <div class="player-volume">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="#b3b3b3">
+                            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                        </svg>
+                        <input type="range" id="player-volume-slider" value="50" min="0" max="100">
                     </div>
                 </div>
             </div>
-            <div class="discord-activity-box"></div>
-        </div>
+            </div>
 
     </div>
 
+    <div id="hidden-player"></div>
+
     <div id="darken-overlay"></div>
+
+    <script src="https://www.youtube.com/iframe_api"></script>
 
     <script>
         const videos = [
@@ -557,28 +737,107 @@
         document.addEventListener('copy', e => e.preventDefault());
         document.addEventListener('cut', e => e.preventDefault());
         document.addEventListener('contextmenu', e => e.preventDefault());
-        const volumeSlider = document.querySelector('.volume-controller .volume-slider');
-        const videoBg = document.getElementById('video-bg');
-        const volumePercent = document.getElementById('volume-percent');
-        function updateVolumePercent() {
-            let show = Math.round(videoBg.muted ? 0 : videoBg.volume * 100);
-            volumePercent.textContent = show + "%";
-            if(videoBg.muted && volumeSlider.value != "0") volumeSlider.value = 0;
-            if(!videoBg.muted && +volumeSlider.value == 0) volumeSlider.value = Math.round(videoBg.volume * 100);
+        
+        // --- YOUTUBE PLAYER LOGIC ---
+        var player;
+        var updateTimer;
+
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('hidden-player', {
+                height: '1',
+                width: '1',
+                videoId: 'Ci_zad39Uhw', // ID видео
+                playerVars: {
+                    'playsinline': 1,
+                    'controls': 0,
+                    'disablekb': 1
+                },
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange
+                }
+            });
         }
-        videoBg.volume = 0.1;
-        volumeSlider.value = 10
-        updateVolumePercent();
-        volumeSlider.addEventListener('input', function () {
-            videoBg.volume = +this.value / 100;
-            videoBg.muted = (+this.value === 0);
-            updateVolumePercent();
+
+        function onPlayerReady(event) {
+            updateProgressBar();
+            
+            // Установка начальной громкости
+            const volSlider = document.getElementById('player-volume-slider');
+            if(player && player.setVolume) {
+                player.setVolume(volSlider.value);
+            }
+        }
+
+        function onPlayerStateChange(event) {
+            const playIcon = document.getElementById('play-icon');
+            const pauseIcon = document.getElementById('pause-icon');
+            
+            if (event.data == YT.PlayerState.PLAYING) {
+                playIcon.style.display = 'none';
+                pauseIcon.style.display = 'block';
+                updateTimer = setInterval(updateProgressBar, 500);
+            } else {
+                playIcon.style.display = 'block';
+                pauseIcon.style.display = 'none';
+                clearInterval(updateTimer);
+            }
+        }
+
+        // Управление Play/Pause
+        document.getElementById('play-pause-btn').addEventListener('click', function() {
+            if (!player) return;
+            const state = player.getPlayerState();
+            if (state == YT.PlayerState.PLAYING) {
+                player.pauseVideo();
+            } else {
+                player.playVideo();
+            }
         });
-        document.querySelector('.volume-controller .volume-icon').addEventListener('click', function () {
-            videoBg.muted = !videoBg.muted;
-            updateVolumePercent();
+
+        // Управление Seek bar
+        const seekBar = document.getElementById('seek-bar');
+        seekBar.addEventListener('input', function() {
+            if (!player) return;
+            const duration = player.getDuration();
+            const seekTo = duration * (seekBar.value / 100);
+            player.seekTo(seekTo, true);
         });
-        videoBg.addEventListener('volumechange', updateVolumePercent);
+
+        // Управление громкостью
+        const playerVolSlider = document.getElementById('player-volume-slider');
+        playerVolSlider.addEventListener('input', function() {
+            if (!player) return;
+            player.setVolume(this.value);
+        });
+
+        // Обновление прогресс-бара и времени
+        function updateProgressBar() {
+            if (!player || !player.getDuration) return;
+            
+            const currentTime = player.getCurrentTime();
+            const duration = player.getDuration();
+            
+            if (duration > 0) {
+                seekBar.value = (currentTime / duration) * 100;
+                
+                // Градиент заполнения для ползунка
+                const val = seekBar.value;
+                seekBar.style.background = `linear-gradient(to right, #008398 0%, #74003e ${val}%, #4f4f4f ${val}%, #4f4f4f 100%)`;
+            }
+
+            document.getElementById('current-time').textContent = formatTime(currentTime);
+            document.getElementById('total-time').textContent = formatTime(duration);
+        }
+
+        function formatTime(time) {
+            time = Math.round(time);
+            const minutes = Math.floor(time / 60);
+            const seconds = time - minutes * 60;
+            return minutes + ':' + (seconds < 10 ? '0' + seconds : seconds);
+        }
+        // --- END YOUTUBE PLAYER LOGIC ---
+
 
         const loadingOverlay = document.getElementById('loading-overlay');
         const loadingTitle = document.querySelector('.loading-title');

@@ -10,13 +10,14 @@
     <meta property="og:description" content="You're my light." />
     <meta property="og:image" content="https://raw.githubusercontent.com/iis-forgetMe/Iris/main/Artful.jpg" />
 
-    
     <style>
         html, body {
             margin: 0;
             padding: 0;
-            /* УДАЛЕНО: height: 100%; position: fixed; */
-            touch-action: none;
+            width: 100%;
+            min-height: 100vh;
+            overflow-x: hidden; 
+            touch-action: pan-y; 
         }
         @font-face {
             font-family: 'OMORI';
@@ -29,11 +30,10 @@
             color: #F5F5F5;
             font-size: 20px !important;
             word-break: keep-all;
-            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
             user-select: none; -webkit-user-select: none; -ms-user-select: none;
         }
         body.comic-sans { font-family: "Comic Sans MS", "Comic Sans", cursive !important;
@@ -50,11 +50,13 @@
         }
 
         #main-interface {
+            position: fixed; 
+            top: 0; left: 0;
             opacity: 0;
             pointer-events: none;
             transition: opacity 1.5s ease-in-out;
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -66,67 +68,26 @@
         }
 
         #card-selection-screen {
-            /* УДАЛЕНО: position: fixed; top: 0; left: 0; height: 100vh; */
-            width: 100vw; 
+            position: relative; 
+            width: 100%; 
+            min-height: 100vh;
             background: #000; z-index: 500;
-            display: none;
-            flex-direction: column; /* Изменено на column для вертикального центрирования */
+            display: none; 
+            flex-direction: row; 
             justify-content: center; 
             align-items: center;
-            gap: 50px;
             opacity: 0; transition: opacity 0.8s ease;
-            overflow-y: auto; /* Разрешаем вертикальную прокрутку */
-            padding: 50px 0; /* Добавляем отступы сверху/снизу для прокрутки */
         }
         
         .cards-wrapper {
             position: relative;
             width: 100%;
-            height: auto; /* Изменено на auto, чтобы вместить карточки */
+            height: 400px;
             display: flex;
             justify-content: center;
             align-items: center;
             perspective: 1000px;
-            overflow: hidden; 
-            flex-direction: row; 
-            gap: 40px; /* Расстояние между карточками на десктопе */
         }
-        
-        /* СТИЛЬ ДЛЯ МОБИЛЬНОГО (Вертикальное расположение карточек) */
-        @media (max-width: 900px) {
-            #card-selection-screen {
-                flex-direction: column; /* Вертикальный список */
-                justify-content: flex-start; /* Карточки начинаются сверху */
-                padding: 100px 0 50px 0; /* Отступ сверху, чтобы карточки были ниже шапки */
-                height: 100vh;
-                position: fixed; /* Возвращаем fixed для мобильного, чтобы скрыть контент под ним */
-            }
-            .cards-wrapper {
-                flex-direction: column; /* Карточки в колонку */
-                gap: 20px; /* Расстояние между карточками на мобильном */
-                padding: 0 15px; /* Боковые отступы */
-                overflow: visible; /* Убираем overflow, чтобы контент был виден */
-                height: auto; /* Позволяем контейнеру расти по высоте */
-            }
-
-            .card {
-                position: static; 
-                flex-shrink: 0;
-                margin: 10px 0; /* Вертикальный отступ между карточками */
-                width: 90%; /* Ширина на мобильном */
-                max-width: 320px;
-                height: 320px;
-            }
-            
-            /* Отключаем transform и scale для мобильных, чтобы они были в ряд */
-            .card[data-status] {
-                transform: none !important;
-                filter: brightness(1) !important;
-                opacity: 1 !important;
-                box-shadow: none !important;
-            }
-        }
-        /* Конец мобильных стилей */
 
         .card {
             width: 280px;
@@ -137,7 +98,7 @@
             box-shadow: none;
             box-sizing: border-box;
             overflow: hidden;
-            position: absolute;
+            position: absolute; 
             transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
             cursor: pointer;
             display: flex;
@@ -154,7 +115,7 @@
             pointer-events: none;
         }
 
-        /* Стиль для десктопной карусели */
+        /* DESKTOP STYLES (Carousel) */
         @media (min-width: 901px) {
             .card[data-status="active"] {
                 transform: translateX(0) scale(1.1);
@@ -163,21 +124,18 @@
                 opacity: 1;
                 box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
             }
-
             .card[data-status="left"] {
                 transform: translateX(-110%) scale(0.85);
                 z-index: 5;
                 filter: brightness(0.4);
                 opacity: 0.7;
             }
-            
             .card[data-status="right"] {
                 transform: translateX(110%) scale(0.85);
                 z-index: 5;
                 filter: brightness(0.4);
                 opacity: 0.7;
             }
-
             .card[data-status="hidden"] {
                 transform: translateX(0) scale(0.5);
                 z-index: 1;
@@ -186,44 +144,50 @@
             }
         }
 
+        /* MOBILE STYLES (Vertical List) */
+        @media (max-width: 900px) {
+            #card-selection-screen {
+                flex-direction: column;
+                align-items: center;
+                justify-content: flex-start;
+                padding-top: 80px; 
+                padding-bottom: 50px;
+                height: auto; 
+                overflow-y: visible;
+            }
+            
+            .cards-wrapper {
+                flex-direction: column;
+                height: auto;
+                perspective: none;
+                gap: 20px;
+                padding-bottom: 40px;
+            }
+
+            .card {
+                position: relative; 
+                transform: none !important; 
+                opacity: 1 !important;
+                filter: brightness(1) !important;
+                margin-bottom: 20px;
+                left: auto;
+                right: auto;
+                top: auto;
+                bottom: auto;
+            }
+        }
+
         .back-button-controller {
             position: fixed;
-            left: 24px; 
-            top: 76px;
-            z-index: 22; 
-            display: flex;
-            align-items: center; 
-            justify-content: center;
-            
-            background: rgba(40, 40, 40, 0.74); 
-            border-radius: 999px;
-            box-shadow: 0 3px 18px 0 #0007; 
-            padding: 4px; 
-            width: 32px;
-            height: 32px; 
-            cursor: pointer;
-            transition: opacity 1.5s ease-in-out, transform 0.2s ease;
+            left: 24px; top: 76px; z-index: 22; display: flex; align-items: center; justify-content: center;
+            background: rgba(40, 40, 40, 0.74); border-radius: 999px; box-shadow: 0 3px 18px 0 #0007; padding: 4px; 
+            width: 32px; height: 32px; cursor: pointer; transition: opacity 1.5s ease-in-out, transform 0.2s ease;
             opacity: 0;
             pointer-events: none;
         }
-
-        .back-button-controller.visible {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .back-button-controller:hover {
-            transform: scale(1.1);
-        }
-
-        .back-icon {
-            width: 24px;
-            height: 24px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            transform: translateX(1px);
-        }
+        .back-button-controller.visible { opacity: 1; pointer-events: auto; }
+        .back-button-controller:hover { transform: scale(1.1); }
+        .back-icon { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; transform: translateX(1px); }
 
         .top-box {
             position: fixed;
@@ -233,20 +197,17 @@
             padding: 0 32px; font-size: 22px; font-family: inherit;
             color: #F5F5F5; width: auto;
         }
-        .top-box-left { font-weight: bold; font-size: 22px; padding-right: 28px;
-        }
-        .top-box-right { min-width: 32px; display: flex; align-items: center;
-        }
-        .top-box-right .icon-link { display: inline-flex; align-items: center; margin-left: 16px;
-            transition: transform 0.2s;}
+        .top-box-left { font-weight: bold; font-size: 22px; padding-right: 28px; }
+        .top-box-right { min-width: 32px; display: flex; align-items: center; }
+        .top-box-right .icon-link { display: inline-flex; align-items: center; margin-left: 16px; transition: transform 0.2s;}
         .top-box-right .icon-link:first-child {margin-left: 0;}
         .social-icon { display: block;
             filter: brightness(0.99) drop-shadow(0 2px 4px #0007); transition: filter 0.2s, transform 0.2s; 
             width: 28px; height: 28px; 
             -webkit-user-drag: none; user-select: none;
         }
-        .icon-link:hover .social-icon { filter: brightness(1.2) drop-shadow(0 2px 5px #fff7);
-            transform: scale(1.1);}
+        .icon-link:hover .social-icon { filter: brightness(1.2) drop-shadow(0 2px 5px #fff7); transform: scale(1.1);}
+        
         .volume-controller {
             position: fixed;
             left: 24px; bottom: 24px; z-index: 20; display: flex; align-items: center; gap: 0;
@@ -263,13 +224,10 @@
         .volume-controller:focus-within .volume-slider,
         .volume-controller:hover .volume-percent,
         .volume-controller:focus-within .volume-percent {
-            opacity: 1;
-            pointer-events: auto; transition-delay: 0.38s;
+            opacity: 1; pointer-events: auto; transition-delay: 0.38s;
         }
-        .volume-slider { width: 90px; max-width: 36vw; margin-left: 12px;
-            accent-color: rgb(255,8,0);}
-        .volume-percent { color: #fff; min-width: 32px; text-align: right; font-family: inherit;
-            font-size: 15px; margin-left: 8px;}
+        .volume-slider { width: 90px; max-width: 36vw; margin-left: 12px; accent-color: rgb(255,8,0);}
+        .volume-percent { color: #fff; min-width: 32px; text-align: right; font-family: inherit; font-size: 15px; margin-left: 8px;}
         
         #discord-profile-container {
             position: relative;
@@ -280,18 +238,13 @@
             width: 90%;
             height: auto; 
             min-height: 250px; 
-            
             background: linear-gradient(to right, #008398, #74003e); 
-            
             backdrop-filter: blur(12px);
             border-radius: 16px;
-            
             box-shadow: 
                 0 0 20px 0 rgba(0, 131, 152, 0.8), 
                 0 0 40px 0 rgba(116, 0, 62, 0.5);  
-            
             border: none;
-            
             overflow: hidden;
         }
         
@@ -307,147 +260,57 @@
             z-index: 1;
         }
 
-        .discord-activity-box,
-        .tab-bar {
-            display: none !important;
-        }
+        .discord-activity-box, .tab-bar { display: none !important; }
 
         .discord-banner {
-            width: 100%;
-            height: 120px; 
-            background-size: cover;
-            background-position: center;
-            background-color: #333; 
-            flex-shrink: 0;
-            position: relative;
+            width: 100%; height: 120px; 
+            background-size: cover; background-position: center;
+            background-color: #333; flex-shrink: 0; position: relative;
         }
 
-        .profile-content {
-            padding: 0 20px;
-            margin-top: -60px; 
-        }
+        .profile-content { padding: 0 20px; margin-top: -60px; }
         
-        /* КОНТЕЙНЕР АВАТАРКИ/РАМКИ (РОДИТЕЛЬ) */
         .discord-avatar-container {
-            position: relative;
-            width: 92px; 
-            height: 92px; 
-            flex-shrink: 0;
-            border-radius: 50%;
-            z-index: 10; 
-            
-            border: none; 
-            background-color: #1a1a1a;
-            
-            overflow: visible !important;
+            position: relative; width: 92px; height: 92px; flex-shrink: 0; border-radius: 50%;
+            z-index: 10; border: none; background-color: #1a1a1a; overflow: visible !important;
         }
         
-        /* САМ АВАТАР */
         .discord-avatar {
-            width: 92px;
-            height: 92px;
-            margin: 0; 
-            border-radius: 50%;
-            object-fit: cover;
-            position: relative; 
-            z-index: 15; 
-            
-            pointer-events: none; 
-            -webkit-user-drag: none;
-            user-select: none;
-            
-            border: none;
-            box-sizing: border-box;
+            width: 92px; height: 92px; margin: 0; border-radius: 50%; object-fit: cover;
+            position: relative; z-index: 15; pointer-events: none; -webkit-user-drag: none;
+            user-select: none; border: none; box-sizing: border-box;
         }
 
-        /* АВАТАР ДЕКОРАЦИЯ (РАМКА) */
         #avatar-frame-overlay {
-            position: absolute;
-            top: -11px; 
-            left: -11px; 
-            
-            width: 114px; 
-            height: 114px; 
-            
-            border-radius: 0; 
-            
-            background-image: url('Aurora Fox.gif');
-            background-size: cover;
-            background-position: center;
-            
-            z-index: 16;
-            pointer-events: none; 
+            position: absolute; top: -11px; left: -11px; width: 114px; height: 114px; 
+            border-radius: 0; background-image: url('Aurora Fox.gif');
+            background-size: cover; background-position: center; z-index: 16; pointer-events: none; 
         }
 
-
-        /* ИМЯ: Шрифт OMORI + Градиент */
         .discord-username {
-            font-size: 28px;
-            font-weight: normal; 
-            font-family: 'OMORI', monospace; 
-            margin: 10px 0 2px 0;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            font-size: 28px; font-weight: normal; font-family: 'OMORI', monospace; 
+            margin: 10px 0 2px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
             background-image: linear-gradient(to right, #ba98ff, #acfdff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-fill-color: transparent;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text; text-fill-color: transparent;
         }
-        .discord-tag {
-            font-size: 15px;
-            color: #b9bbbe;
-            margin-bottom: 5px; 
-        }
+        .discord-tag { font-size: 15px; color: #b9bbbe; margin-bottom: 5px; }
         
-        /* Контейнер для бейджей */
-        .discord-badges-container {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px; 
-            height: 24px;
-        }
-
-        /* Стиль для отдельного бейджа */
+        .discord-badges-container { display: flex; align-items: center; margin-bottom: 15px; height: 24px; }
         .discord-badge {
-            width: 24px;
-            height: 24px; 
-            margin-right: 6px; 
-            display: inline-block;
-            filter: drop-shadow(0 0 2px rgba(0,0,0,0.5));
-            -webkit-user-drag: none;
-            user-select: none;
+            width: 24px; height: 24px; margin-right: 6px; display: inline-block;
+            filter: drop-shadow(0 0 2px rgba(0,0,0,0.5)); -webkit-user-drag: none; user-select: none;
         }
 
-        .discord-bio-box {
-            display: none;
-        }
-        .info-section {
-            display: none;
-        }
-        .tab-content-wrapper {
-            padding: 0 20px 20px 20px;
-            overflow: visible;
-        }
+        .discord-bio-box { display: none; }
+        .info-section { display: none; }
+        .tab-content-wrapper { padding: 0 20px 20px 20px; overflow: visible; }
 
         @media (max-width: 900px) {
-            #discord-profile-container {
-                max-width: 98vw;
-                min-height: auto;
-                height: auto;
-                margin-top: 60px;
-                margin-bottom: 10px;
-            }
-            .discord-main-block {
-                padding-bottom: 10px;
-            }
-            .profile-content {
-                padding: 0 15px;
-            }
-            .tab-content-wrapper {
-                padding: 0 15px 15px 15px;
-            }
+            #discord-profile-container { max-width: 98vw; min-height: auto; height: auto; margin-top: 60px; margin-bottom: 10px; }
+            .discord-main-block { padding-bottom: 10px; }
+            .profile-content { padding: 0 15px; }
+            .tab-content-wrapper { padding: 0 15px 15px 15px; }
         }
 
         #loading-overlay {
@@ -459,17 +322,11 @@
         body.content-loaded .loading-title{display:none;}
 
         #darken-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0, 0, 0, 0); 
-            z-index: 900; 
-            pointer-events: none;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0); z-index: 900; pointer-events: none;
             transition: background 0.5s ease-out;
         }
-        #darken-overlay.active {
-            background: rgba(0, 0, 0, 1);
-            pointer-events: auto;
-        }
+        #darken-overlay.active { background: rgba(0, 0, 0, 1); pointer-events: auto; }
     </style>
 </head>
 <body 
@@ -488,10 +345,9 @@
     </div>
 
     <video loop playsinline id="video-bg" preload="auto">
-        </video>
+    </video>
 
     <div class="back-button-controller" id="back-button">
-        
         <div class="back-icon" tabindex="0">
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
                 <path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z" fill="#fff"/>
@@ -501,22 +357,19 @@
     
     <div id="main-interface">
         <div class="top-box">
-            
             <span class="top-box-left">Links</span>
             <span class="top-box-right">
                 <a href="https://discord.com/users/1236359938721185902" target="_blank" class="icon-link" title="Discord">
                 <img src="https://cdn-icons-png.flaticon.com/512/5968/5968756.png" alt="Discord" class="social-icon" />
             </a>
             <a href="https://t.me/iis_forgetMe" target="_blank" class="icon-link" title="Telegram">
-                <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png" 
-                alt="Telegram" class="social-icon" />
+                <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png" alt="Telegram" class="social-icon" />
             </a>
             <a href="https://open.spotify.com/user/312jjwkfbshd5mjnzmyyc363k5ni" target="_blank" class="icon-link" title="Spotify">
                 <img src="https://cdn-icons-png.flaticon.com/512/174/174872.png" alt="Spotify" class="social-icon" />
             </a>
             <a href="https://www.roblox.com/users/703442568/profile" target="_blank" class="icon-link" title="Roblox">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Roblox_Logo.svg/512px-Roblox_Logo.svg.png" alt="Roblox" class="social-icon" />
-  
                 </a>
             </span>
         </div>
@@ -524,63 +377,37 @@
         <div class="volume-controller">
             <div class="volume-icon" tabindex="0">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-                    
                     <path d="M4 9v6h4l5 5V4L8 9H4z" fill="#fff"/>
-                    
                     <path d="M15 8a4 4 0 0 1 0 8" stroke="#fff" stroke-width="2" fill="none"/>
                 </svg>
             </div>
             <input type="range" min="0" max="100" value="50" class="volume-slider">
             <span class="volume-percent" id="volume-percent">50%</span>
-      
         </div>
 
         <div id="discord-profile-container">
-            
             <div class="discord-main-block">
                 <div id="discord-banner" class="discord-banner"></div>
                 <div class="profile-content">
-                
                     <div id="discord-avatar-container" class="discord-avatar-container">
                         <img id="discord-pfp" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Avatar" class="discord-avatar">
-                        
-                        
-                  
                         <div id="avatar-frame-overlay"></div>
                     </div>
                     <div id="discord-name" class="discord-username">Loading...</div>
                     <div id="discord-tag" class="discord-tag">@username</div>
                     
-         
-                            
                     <div class="discord-badges-container">
-                        
-                        <img 
-                   
-                        src="https://img.icons8.com/?size=100&id=u1TI0IQMcE7q&format=png&color=000000" 
-                            alt="HypeSquad Bravery" 
-                            class="discord-badge" 
-                            title="HypeSquad Bravery"
-  
-                        >
-                        
-                        <img 
-                            src="https://img.icons8.com/?size=100&id=S6odLj8qKMjU&format=png&color=000000" 
-                            
-                            alt="Nitro" 
-                            class="discord-badge" 
-                            title="Discord Nitro"
-             
-                        >
+                        <img src="https://img.icons8.com/?size=100&id=u1TI0IQMcE7q&format=png&color=000000" 
+                            alt="HypeSquad Bravery" class="discord-badge" title="HypeSquad Bravery">
+                        <img src="https://img.icons8.com/?size=100&id=S6odLj8qKMjU&format=png&color=000000" 
+                            alt="Nitro" class="discord-badge" title="Discord Nitro">
                     </div>
                     
                     <div class="tab-content-wrapper">
                         <div id="dynamic-status-message"></div>
-   
                     </div>
                 </div>
             </div>
-            
             <div class="discord-activity-box"></div>
         </div>
     </div>
@@ -588,8 +415,7 @@
     <div id="darken-overlay"></div>
 
     <script>
-        const 
-        videos = [
+        const videos = [
             { id: 0, img: "Terenry.png", video: "DWELLING.mp4" },
             { id: 1, img: "gracee.jpg", video: "ULTRASONIC FAITH.mp4" },
             { id: 2, img: "007n7.jpg", video: "007n7.mp4" }
@@ -627,7 +453,6 @@
         function adjustColor(hex, lum) {
             let rgb = hexToRgb(hex);
             let r = rgb.r, g = rgb.g, b = rgb.b;
-
             r = Math.min(255, Math.max(0, r + lum));
             g = Math.min(255, Math.max(0, g + lum));
             b = Math.min(255, Math.max(0, b + lum));
@@ -682,18 +507,12 @@
             nameElement.textContent = data.discord_user.display_name || data.discord_user.username;
             tagElement.textContent = `@${data.discord_user.username}`; 
 
-            
             const customStatus = data.activities.find(a => a.type === 4);
             if (customStatus && customStatus.state) {
                 statusMessageElement.textContent = customStatus.state;
                 statusMessageElement.style.cssText = `
-                    font-size: 17px;
-                    color: #fff;
-                    margin-top: 15px;
-                    padding: 8px 12px;
-                    border-radius: 6px;
-                    background: #25262b;
-                    border-left: 3px solid #7289da; 
+                    font-size: 17px; color: #fff; margin-top: 15px; padding: 8px 12px;
+                    border-radius: 6px; background: #25262b; border-left: 3px solid #7289da; 
                 `;
             } else {
                 statusMessageElement.textContent = '';
@@ -704,10 +523,8 @@
         fetchDiscordStatus();
         setInterval(fetchDiscordStatus, 5000); 
 
-
         function checkRussianFont() {
-            const bodyText = document.body.innerText ||
-            document.body.textContent;
+            const bodyText = document.body.innerText || document.body.textContent;
             if (/[А-Яа-яЁё]/.test(bodyText)) {
                 document.body.classList.add('comic-sans');
             } else {
@@ -743,7 +560,6 @@
         });
         videoBg.addEventListener('volumechange', updateVolumePercent);
 
-
         const loadingOverlay = document.getElementById('loading-overlay');
         const loadingTitle = document.querySelector('.loading-title');
         const cardScreen = document.getElementById('card-selection-screen');
@@ -754,29 +570,21 @@
         let overlayClicked = false;
         
         function updateCarousel() {
+            if (window.innerWidth <= 900) return; 
+
             const cards = document.querySelectorAll('.card');
-            
-            // Если экран достаточно широкий, используем десктопную карусель (слайдер)
-            if (window.innerWidth >= 901) {
-                cards.forEach((card, index) => {
-                    card.removeAttribute('data-status');
-                    
-                    if (index === activeCardIndex) {
-                        card.setAttribute('data-status', 'active');
-                    } else if (index === activeCardIndex - 1) {
-                        card.setAttribute('data-status', 'left');
-                    } else if (index === activeCardIndex + 1) {
-                        card.setAttribute('data-status', 'right');
-                    } else {
-                        card.setAttribute('data-status', 'hidden');
-                    }
-                });
-            } else {
-                // На мобильных: сбрасываем статусы для вертикального списка
-                cards.forEach((card) => {
-                    card.removeAttribute('data-status');
-                });
-            }
+            cards.forEach((card, index) => {
+                card.removeAttribute('data-status');
+                if (index === activeCardIndex) {
+                    card.setAttribute('data-status', 'active');
+                } else if (index === activeCardIndex - 1) {
+                    card.setAttribute('data-status', 'left');
+                } else if (index === activeCardIndex + 1) {
+                    card.setAttribute('data-status', 'right');
+                } else {
+                    card.setAttribute('data-status', 'hidden');
+                }
+            });
         }
         
         function renderCards() {
@@ -786,27 +594,20 @@
                 card.classList.add('card');
                 card.dataset.index = index;
                 card.dataset.video = vid.video;
-                
-          
                 const img = document.createElement('img');
                 img.src = vid.img;
                 img.alt = "Card";
-                
                 card.appendChild(img);
                 cardsContainer.appendChild(card);
-       
-                
                 card.addEventListener('click', () => handleCardClick(index));
             });
             updateCarousel();
         }
 
         function handleCardClick(index) {
-            // На мобильных (и узких) экранах клик сразу запускает видео
-            if (window.innerWidth < 901) {
+            if (window.innerWidth <= 900) {
                 playVideo(index);
             } else {
-                // На десктопе: клик по активной карточке запускает, по неактивной - сдвигает
                 if (index === activeCardIndex) {
                     playVideo(index);
                 } else {
@@ -816,44 +617,32 @@
             }
         }
 
-
         function playVideo(index) {
             const vidData = videos[index];
             cardScreen.style.opacity = '0';
-            
-            // Сбрасываем фиксированное положение экрана выбора, чтобы вернуться к нормальной прокрутке
-            cardScreen.style.position = 'absolute';
-
             setTimeout(() => {
                 cardScreen.style.display = 'none';
-                
                 videoBg.src = vidData.video;
                 videoBg.muted = false;
                 videoBg.volume = 0.1;
-       
                 videoBg.play();
                 videoBg.classList.add('video-active');
-
                 mainInterface.classList.add('active-interface');
                 backButton.classList.add('visible'); 
-
             }, 800);
         }
 
         document.addEventListener('keydown', (e) => {
-            if (cardScreen.style.display !== 'flex' || window.innerWidth < 901) return;
-            
+            if (cardScreen.style.display !== 'flex' || window.innerWidth <= 900) return;
             if (e.key === 'ArrowRight' && activeCardIndex < videos.length - 1) {
                 activeCardIndex++;
                 updateCarousel();
-     
             } else if (e.key === 'ArrowLeft' && activeCardIndex > 0) {
                 activeCardIndex--;
                 updateCarousel();
             } else if (e.key === 'Enter') {
                 playVideo(activeCardIndex);
             }
-     
         });
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -866,20 +655,14 @@
             if (overlayClicked) return;
             overlayClicked = true;
             document.body.classList.add('content-loaded');
-            
             setTimeout(() => {
                 loadingOverlay.style.display = 'none';
-                
                 cardScreen.style.display = 'flex';
-                
                 requestAnimationFrame(() => {
-           
                     requestAnimationFrame(() => {
                         cardScreen.style.opacity = '1';
                     });
                 });
-                
-           
             }, 600); 
         }
 
@@ -888,26 +671,18 @@
         function goBackToSelection() {
             mainInterface.classList.remove('active-interface');
             backButton.classList.remove('visible');
-            
             videoBg.pause();
             videoBg.removeAttribute('src');
             videoBg.load();
             videoBg.classList.remove('video-active');
             darkenOverlay.classList.add('active'); 
-
             setTimeout(() => {
                 cardScreen.style.display = 'flex';
-                // При возвращении, восстанавливаем фиксированное положение экрана выбора на мобильном
-                if(window.innerWidth < 901) {
-                    cardScreen.style.position = 'fixed';
-                }
                 requestAnimationFrame(() => {
                     cardScreen.style.opacity = '1';
                 });
                 darkenOverlay.classList.remove('active');
-       
             }, 500); 
-            
             overlayClicked = false;
         }
 
@@ -922,8 +697,7 @@
 
     <style>
     .binary-trail {
-        position: fixed;
-        pointer-events: none; font-family: 'Consolas', 'Courier New', monospace;
+        position: fixed; pointer-events: none; font-family: 'Consolas', 'Courier New', monospace;
         font-size: 22px; color: rgb(255,20,20); opacity: 0.92; user-select: none;
         transition: opacity 0.7s, transform 1s cubic-bezier(.33,1.13,.83,-0.13);
         z-index: 9999; white-space: nowrap; text-shadow: 0 0 8px #f008, 0 0 18px #400a;

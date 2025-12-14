@@ -235,6 +235,7 @@
         }
         .volume-icon { cursor: pointer; outline: none; user-select: none; display: flex; align-items: center;
             justify-content: center; width: 32px; height: 32px; margin-left: 8px; }
+        .volume-icon svg { fill: #f00; } 
         .volume-slider, .volume-percent { opacity: 0;
             pointer-events: none; transition: opacity 0.44s; transition-delay: 0s; }
         .volume-controller:hover, .volume-controller:focus-within { width: 180px;}
@@ -246,7 +247,7 @@
             pointer-events: auto; transition-delay: 0.38s;
         }
         .volume-slider { width: 90px; max-width: 36vw; margin-left: 12px;
-            accent-color: rgb(255,8,0);}
+            accent-color: #f00;} 
         .volume-percent { color: #fff; min-width: 32px; text-align: right; font-family: inherit;
             font-size: 15px; margin-left: 8px;}
         
@@ -410,11 +411,12 @@
         .control-btn {
             background: none;
             border: none; cursor: pointer;
-            color: #b3b3b3; display: flex; align-items: center; justify-content: center;
+            color: #f00; 
+            display: flex; align-items: center; justify-content: center;
             transition: color 0.2s, transform 0.2s;
             padding: 0;
         }
-        .control-btn:hover { color: #fff; transform: scale(1.1);
+        .control-btn:hover { color: #ff5555; transform: scale(1.1);
         }
         .control-btn svg { width: 24px; height: 24px; fill: currentColor;
         }
@@ -451,7 +453,7 @@
             height: 12px;
             width: 12px;
             border-radius: 50%;
-            background: #fff;
+            background: #f00; 
             -webkit-appearance: none;
             margin-top: -4px; 
             box-shadow: 0 0 5px rgba(0,0,0,0.5);
@@ -461,22 +463,28 @@
         .music-player-inner:hover #seek-bar::-webkit-slider-thumb {
             opacity: 1;
         }
+        #seek-bar {
+            accent-color: #f00;
+        }
 
         /* Стилизация ползунка для громкости плеера */
         #player-volume-slider::-webkit-slider-runnable-track {
             width: 100%;
             height: 4px;
-            background: #4f4f4f; /* Базовый цвет */
+            background: #4f4f4f; 
             border-radius: 2px;
         }
         #player-volume-slider::-webkit-slider-thumb {
             height: 12px;
             width: 12px;
             border-radius: 50%;
-            background: #fff;
+            background: #f00; 
             -webkit-appearance: none;
             margin-top: -4px; 
             box-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
+        #player-volume-slider {
+            accent-color: #f00;
         }
 
         .player-volume {
@@ -492,7 +500,7 @@
             color: #fff; min-width: 32px; text-align: right; font-family: monospace;
             font-size: 12px; margin-left: 0;
         }
-        .player-volume #player-mute-btn svg { fill: #b3b3b3; 
+        .player-volume #player-mute-btn svg { fill: #f00; 
         }
 
         @media (max-width: 900px) {
@@ -596,14 +604,12 @@
 
         <div class="volume-controller">
             <div class="volume-icon" tabindex="0">
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-                    <path d="M4 9v6h4l5 5V4L8 
-9H4z" fill="#fff"/>
-                    <path d="M15 8a4 4 0 0 1 0 8" stroke="#fff" stroke-width="2" fill="none"/>
+                <svg width="26" height="26" viewBox="0 0 24 24">
+                    <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
                 </svg>
             </div>
-            <input type="range" min="0" max="100" value="10" class="volume-slider">
-            <span class="volume-percent" id="volume-percent">10%</span>
+            <input type="range" min="0" max="100" value="100" class="volume-slider" id="video-volume-slider-input">
+            <span class="volume-percent" id="volume-percent">100%</span>
         </div>
  
         <div class="centered-content">
@@ -676,7 +682,7 @@
 
                     <div class="player-volume">
                         <button class="control-btn" id="player-mute-btn">
-                            <svg id="volume-icon" viewBox="0 0 24 24" style="fill:#b3b3b3;">
+                            <svg id="volume-icon" viewBox="0 0 24 24" style="fill:#f00;">
                                 <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
                             </svg>
                         </button>
@@ -808,7 +814,7 @@
                 title: "粛聖!! ロリ神レクイエム☆",
                 artist: "しぐれうい (Shigure Ui)",
                 src: "loli god requiem.mp3",
-                cover: "https://i.imgur.com/k1gEOSd.gif" 
+                cover: "https://i.imgur.com/k1gEOSd.gif"
             }
         ];
 
@@ -826,12 +832,16 @@
         const trackArtist = document.getElementById('track-artist');
         const trackCover = document.getElementById('track-cover');
 
-        // NEW VOLUME ELEMENTS
         const playerVolumeSlider = document.getElementById('player-volume-slider');
         const playerVolumePercent = document.getElementById('player-volume-percent');
         const playerMuteBtn = document.getElementById('player-mute-btn');
         const playerVolumeIconSvg = document.getElementById('volume-icon');
         let lastPlayerVolume = 1.0; 
+
+        let videoFadeInterval = null; 
+        const videoBg = document.getElementById('video-bg');
+        const videoVolumeSlider = document.getElementById('video-volume-slider-input');
+        const volumePercent = document.getElementById('volume-percent');
 
         function loadSong(index) {
             const song = songs[index];
@@ -843,18 +853,48 @@
         }
 
         function playSong() {
+            // Плавное отключение громкости видео (Fade Out)
+            clearInterval(videoFadeInterval);
+            let targetVolume = 0;
+            let duration = 1000; 
+            let startVolume = videoBg.volume;
+            let startTime = null;
+
+            function fadeStep(timestamp) {
+                if (!startTime) startTime = timestamp;
+                const elapsed = timestamp - startTime;
+                const progress = Math.min(1, elapsed / duration);
+
+                videoBg.volume = startVolume + (targetVolume - startVolume) * progress;
+                updateVideoVolumeUI();
+                
+                if (progress < 1) {
+                    videoFadeInterval = requestAnimationFrame(fadeStep);
+                } else {
+                    videoBg.muted = true;
+                    videoBg.volume = startVolume; 
+                    updateVideoVolumeUI();
+                }
+            }
+            videoFadeInterval = requestAnimationFrame(fadeStep);
+            
             audioPlayer.play();
             playIcon.style.display = 'none';
             pauseIcon.style.display = 'block';
         }
 
         function pauseSong() {
+            // Остановка Fade Out, если он активен
+            clearInterval(videoFadeInterval);
+            videoBg.muted = false; 
+            videoBg.volume = parseFloat(videoVolumeSlider.value) / 100;
+            updateVideoVolumeUI();
+
             audioPlayer.pause();
             playIcon.style.display = 'block';
             pauseIcon.style.display = 'none';
         }
 
-        // --- ИСПРАВЛЕНИЕ: ИНИЦИАЛИЗАЦИЯ И ОБНОВЛЕНИЕ ГРОМКОСТИ ПЛЕЕРА ---
         function updatePlayerVolumeUI() {
             const vol = audioPlayer.muted ? 0 : audioPlayer.volume;
             const volPercent = Math.round(vol * 100);
@@ -862,34 +902,27 @@
             playerVolumeSlider.value = volPercent;
 
             const progress = volPercent;
-            playerVolumeSlider.style.background = `linear-gradient(to right, #ba98ff 0%, #acfdff ${progress}%, #4f4f4f ${progress}%, #4f4f4f 100%)`;
+            playerVolumeSlider.style.background = `linear-gradient(to right, #f00 0%, #ff5555 ${progress}%, #4f4f4f ${progress}%, #4f4f4f 100%)`;
 
-            // Обновление иконки громкости (Mute/Volume)
             let iconPath;
             if (audioPlayer.muted || vol === 0) {
-                // Иконка Mute
                 iconPath = `M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .9-.2 1.77-.57 2.57l1.45 1.45C20.47 15.75 21 13.95 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.27 4.27L17 18.73 13.27 15l-1.39-1.39L4.27 3z`;
             } else if (vol < 0.5) {
-                // Иконка Low Volume
                 iconPath = `M4 9v6h4l5 5V4L8 9H4zM15 8a4 4 0 0 1 0 8`;
             } else {
-                // Иконка High Volume
                 iconPath = `M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z`;
             }
 
-            // Удаляем старые пути и вставляем новый
             playerVolumeIconSvg.innerHTML = '';
             const pathEl = document.createElementNS("http://www.w3.org/2000/svg", "path");
             pathEl.setAttribute('d', iconPath);
             playerVolumeIconSvg.appendChild(pathEl);
         }
         
-        // --- ИСПРАВЛЕНИЕ: ИНИЦИАЛИЗАЦИЯ 100% ---
         audioPlayer.volume = 1.0;
         playerVolumeSlider.value = 100;
         updatePlayerVolumeUI();
 
-        // --- ИСПРАВЛЕНИЕ: TOGGLE PLAY/PAUSE ---
         playPauseBtn.addEventListener('click', () => {
             if (audioPlayer.paused) {
                 playSong();
@@ -921,7 +954,7 @@
                 seekBar.value = (currentTime / duration) * 100;
                 const val = seekBar.value;
             
-                seekBar.style.background = `linear-gradient(to right, #008398 0%, #74003e ${val}%, #4f4f4f ${val}%, #4f4f4f 100%)`;
+                seekBar.style.background = `linear-gradient(to right, #f00 0%, #f00 ${val}%, #4f4f4f ${val}%, #4f4f4f 100%)`;
                 currentTimeEl.textContent = formatTime(currentTime);
                 totalTimeEl.textContent = formatTime(duration);
             }
@@ -939,7 +972,6 @@
             audioPlayer.currentTime = (seekBar.value / 100) * duration;
         });
 
-        // Player Volume Controls 
         playerVolumeSlider.addEventListener('input', (e) => {
             const newVolume = +e.target.value / 100;
             audioPlayer.muted = (newVolume === 0);
@@ -952,11 +984,9 @@
             audioPlayer.muted = !audioPlayer.muted;
             
             if (audioPlayer.muted) {
-                // Если мьютим, сохраняем громкость и ставим 0
                 lastPlayerVolume = audioPlayer.volume > 0 ? audioPlayer.volume : 1.0;
-                audioPlayer.volume = 0; // Для правильного отображения ползунка, хотя muted важнее
+                audioPlayer.volume = 0; 
             } else {
-                // Если размьючиваем, восстанавливаем последнюю громкость
                 audioPlayer.volume = lastPlayerVolume;
             }
             updatePlayerVolumeUI();
@@ -988,28 +1018,51 @@
         document.addEventListener('copy', e => e.preventDefault());
         document.addEventListener('cut', e => e.preventDefault());
         document.addEventListener('contextmenu', e => e.preventDefault());
-        const videoVolumeSlider = document.querySelector('.volume-controller .volume-slider');
-        const videoBg = document.getElementById('video-bg');
-        const volumePercent = document.getElementById('volume-percent');
-        function updateVideoVolumePercent() {
-            let show = Math.round(videoBg.muted ? 0 : videoBg.volume * 100);
-            volumePercent.textContent = show + "%";
-            if(videoBg.muted && videoVolumeSlider.value != "0") videoVolumeSlider.value = 0;
-            if(!videoBg.muted && +videoVolumeSlider.value == 0) videoVolumeSlider.value = Math.round(videoBg.volume * 100);
+
+        const videoVolumeIcon = document.querySelector('.volume-controller .volume-icon');
+
+        function updateVideoVolumeUI() {
+            const vol = videoBg.muted ? 0 : videoBg.volume;
+            const volPercent = Math.round(vol * 100);
+            volumePercent.textContent = volPercent + "%";
+            videoVolumeSlider.value = volPercent;
+
+            const progress = volPercent;
+            videoVolumeSlider.style.background = `linear-gradient(to right, #f00 0%, #f00 ${progress}%, #4f4f4f ${progress}%, #4f4f4f 100%)`;
+
+            const svgIcon = videoVolumeIcon.querySelector('svg');
+            let iconPath;
+
+            if (videoBg.muted || vol === 0) {
+                iconPath = `M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .9-.2 1.77-.57 2.57l1.45 1.45C20.47 15.75 21 13.95 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.27 4.27L17 18.73 13.27 15l-1.39-1.39L4.27 3z`;
+            } else if (vol < 0.5) {
+                iconPath = `M4 9v6h4l5 5V4L8 9H4zM15 8a4 4 0 0 1 0 8`;
+            } else {
+                iconPath = `M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z`;
+            }
+            
+            svgIcon.innerHTML = '';
+            const pathEl = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            pathEl.setAttribute('d', iconPath);
+            svgIcon.appendChild(pathEl);
         }
-        videoBg.volume = 0.1;
-        videoVolumeSlider.value = 10
-        updateVideoVolumePercent();
+
+        videoBg.volume = 1.0; 
+        videoVolumeSlider.value = 100;
+        updateVideoVolumeUI();
+
         videoVolumeSlider.addEventListener('input', function () {
             videoBg.volume = +this.value / 100;
             videoBg.muted = (+this.value === 0);
-            updateVideoVolumePercent();
+            updateVideoVolumeUI();
         });
-        document.querySelector('.volume-controller .volume-icon').addEventListener('click', function () {
+        
+        videoVolumeIcon.addEventListener('click', function () {
             videoBg.muted = !videoBg.muted;
-            updateVideoVolumePercent();
+            updateVideoVolumeUI();
         });
-        videoBg.addEventListener('volumechange', updateVideoVolumePercent);
+        
+        videoBg.addEventListener('volumechange', updateVideoVolumeUI);
 
         const loadingOverlay = document.getElementById('loading-overlay');
         const loadingTitle = document.querySelector('.loading-title');
@@ -1075,8 +1128,10 @@
             setTimeout(() => {
                 cardScreen.style.display = 'none';
                 videoBg.src = vidData.video;
-                videoBg.muted = false;
-                videoBg.volume = 0.1;
+                videoBg.muted = false; 
+                videoBg.volume = parseFloat(videoVolumeSlider.value) / 100; // Устанавливаем громкость из ползунка
+                updateVideoVolumeUI();
+
                 videoBg.play();
        
                 videoBg.classList.add('video-active');
@@ -1132,6 +1187,11 @@
             darkenOverlay.classList.add('active'); 
             
             pauseSong(); 
+            clearInterval(videoFadeInterval); 
+            videoBg.muted = false; 
+            videoBg.volume = parseFloat(videoVolumeSlider.value) / 100;
+            updateVideoVolumeUI();
+
 
             setTimeout(() => {
                 cardScreen.style.display = 'flex';

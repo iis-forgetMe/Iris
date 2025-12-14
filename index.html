@@ -865,6 +865,7 @@
         
         const FADE_DURATION_MS = 500;
         let videoFadeInterval = null; 
+        let lastVideoVolume = 1.0; // Хранит последнюю установленную громкость видео (до принудительного мьюта)
 
         function fadeVolume(element, targetVolume, duration = FADE_DURATION_MS) {
             let interval = element === videoBg ? videoFadeInterval : element.fadeInterval;
@@ -924,6 +925,8 @@
         }
 
         function playSong() {
+            // Сохраняем текущую громкость видео перед мьютом
+            lastVideoVolume = videoBg.volume;
             // Плавное отключение громкости видео (Fade Out - 1 секунда)
             fadeVolume(videoBg, 0, 1000);
             
@@ -933,8 +936,8 @@
         }
 
         function pauseSong() {
-            // Плавный возврат громкости видео (Fade In - 1 секунда)
-            const targetVolume = parseFloat(videoVolumeSlider.value) / 100;
+            // Плавный возврат громкости видео (Fade In - 1 секунда) к сохраненному значению
+            const targetVolume = lastVideoVolume;
             videoBg.muted = false; 
             fadeVolume(videoBg, targetVolume, 1000); 
 
@@ -1102,17 +1105,20 @@
         videoVolumeSlider.addEventListener('input', function () {
             // Мгновенное изменение громкости при перетаскивании
             if (videoFadeInterval) cancelAnimationFrame(videoFadeInterval); 
-            videoBg.volume = +this.value / 100;
-            videoBg.muted = (+this.value === 0);
+            const newVolume = +this.value / 100;
+            videoBg.volume = newVolume;
+            videoBg.muted = (newVolume === 0);
+            lastVideoVolume = newVolume; // Обновляем сохраненное значение
             updateVideoVolumeUI();
         });
         
         videoVolumeIcon.addEventListener('click', function () {
             if (videoBg.muted || videoBg.volume < 0.01) {
-                const targetVolume = parseFloat(videoVolumeSlider.value) / 100 || 1.0;
+                const targetVolume = lastVideoVolume; // Используем сохраненную громкость для размьюта
                 videoBg.muted = false;
                 fadeVolume(videoBg, targetVolume); // Плавное размьютирование
             } else {
+                lastVideoVolume = videoBg.volume; // Сохраняем текущую громкость перед мьютом
                 fadeVolume(videoBg, 0); // Плавное мьютирование
             }
         });
@@ -1185,6 +1191,7 @@
                 videoBg.src = vidData.video;
                 videoBg.muted = false; 
                 videoBg.volume = parseFloat(videoVolumeSlider.value) / 100;
+                lastVideoVolume = videoBg.volume; // Устанавливаем начальную громкость
                 updateVideoVolumeUI();
 
                 videoBg.play();
@@ -1244,6 +1251,7 @@
             pauseSong(); 
             videoBg.muted = false; 
             videoBg.volume = parseFloat(videoVolumeSlider.value) / 100;
+            lastVideoVolume = videoBg.volume; 
             updateVideoVolumeUI();
 
 

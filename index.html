@@ -235,7 +235,7 @@
         }
         .volume-icon { cursor: pointer; outline: none; user-select: none; display: flex; align-items: center;
             justify-content: center; width: 32px; height: 32px; margin-left: 8px; }
-        .volume-icon svg { fill: #f00; } 
+        .volume-icon svg { fill: #fff; } 
         .volume-slider, .volume-percent { opacity: 0;
             pointer-events: none; transition: opacity 0.44s; transition-delay: 0s; }
         .volume-controller:hover, .volume-controller:focus-within { width: 180px;}
@@ -250,6 +250,27 @@
             accent-color: #f00;} 
         .volume-percent { color: #fff; min-width: 32px; text-align: right; font-family: inherit;
             font-size: 15px; margin-left: 8px;}
+
+        /* Стилизация ползунка громкости видео */
+        #video-volume-slider-input::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 2px;
+            background: #4f4f4f;
+            border-radius: 1px;
+        }
+        #video-volume-slider-input::-webkit-slider-thumb {
+            height: 10px;
+            width: 10px;
+            border-radius: 50%;
+            background: #f00; 
+            -webkit-appearance: none;
+            margin-top: -4px; 
+            box-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
+        #video-volume-slider-input {
+            accent-color: #f00;
+        }
+
         
         #discord-profile-container {
             position: relative;
@@ -411,12 +432,12 @@
         .control-btn {
             background: none;
             border: none; cursor: pointer;
-            color: #f00; 
+            color: #fff; 
             display: flex; align-items: center; justify-content: center;
             transition: color 0.2s, transform 0.2s;
             padding: 0;
         }
-        .control-btn:hover { color: #ff5555; transform: scale(1.1);
+        .control-btn:hover { color: #f00; transform: scale(1.1);
         }
         .control-btn svg { width: 24px; height: 24px; fill: currentColor;
         }
@@ -500,7 +521,7 @@
             color: #fff; min-width: 32px; text-align: right; font-family: monospace;
             font-size: 12px; margin-left: 0;
         }
-        .player-volume #player-mute-btn svg { fill: #f00; 
+        .player-volume #player-mute-btn svg { fill: #fff; 
         }
 
         @media (max-width: 900px) {
@@ -605,7 +626,7 @@
         <div class="volume-controller">
             <div class="volume-icon" tabindex="0">
                 <svg width="26" height="26" viewBox="0 0 24 24">
-                    <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                    <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" fill="#fff"/>
                 </svg>
             </div>
             <input type="range" min="0" max="100" value="100" class="volume-slider" id="video-volume-slider-input">
@@ -682,7 +703,7 @@
 
                     <div class="player-volume">
                         <button class="control-btn" id="player-mute-btn">
-                            <svg id="volume-icon" viewBox="0 0 24 24" style="fill:#f00;">
+                            <svg id="player-volume-icon" viewBox="0 0 24 24" style="fill:#fff;">
                                 <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
                             </svg>
                         </button>
@@ -783,8 +804,7 @@
                 avatarUrl = CUSTOM_PFP_URL;
             } else {
                 avatarUrl = data.discord_user.avatar 
-                    ?
-`https://cdn.discordapp.com/avatars/${DISCORD_ID}/${data.discord_user.avatar}.png?size=128`
+                    ? `https://cdn.discordapp.com/avatars/${DISCORD_ID}/${data.discord_user.avatar}.png?size=128`
                     : `https://cdn.discordapp.com/embed/avatars/${(data.discord_user.discriminator === '0' ? (BigInt(data.discord_user.id) >> 22n) % 6n : BigInt(data.discord_user.discriminator) % 5n)}.png`;
             }
             pfpElement.src = avatarUrl;
@@ -835,13 +855,64 @@
         const playerVolumeSlider = document.getElementById('player-volume-slider');
         const playerVolumePercent = document.getElementById('player-volume-percent');
         const playerMuteBtn = document.getElementById('player-mute-btn');
-        const playerVolumeIconSvg = document.getElementById('volume-icon');
+        const playerVolumeIconSvg = document.getElementById('player-volume-icon');
         let lastPlayerVolume = 1.0; 
 
-        let videoFadeInterval = null; 
         const videoBg = document.getElementById('video-bg');
         const videoVolumeSlider = document.getElementById('video-volume-slider-input');
         const volumePercent = document.getElementById('volume-percent');
+        const videoVolumeIcon = document.querySelector('.volume-controller .volume-icon');
+        
+        const FADE_DURATION_MS = 500;
+        let videoFadeInterval = null; 
+
+        function fadeVolume(element, targetVolume, duration = FADE_DURATION_MS) {
+            let interval = element === videoBg ? videoFadeInterval : element.fadeInterval;
+            
+            if (interval) {
+                if (element === videoBg) clearInterval(videoFadeInterval);
+                else cancelAnimationFrame(element.fadeInterval);
+            }
+            
+            const startVolume = element.volume;
+            const targetVolumeClamped = Math.min(1.0, Math.max(0, targetVolume));
+            let startTime = null;
+            
+            function fadeStep(timestamp) {
+                if (!startTime) startTime = timestamp;
+                const elapsed = timestamp - startTime;
+                const progress = Math.min(1, elapsed / duration);
+
+                element.volume = startVolume + (targetVolumeClamped - startVolume) * progress;
+                
+                if (element === videoBg) {
+                    element.muted = (element.volume < 0.01);
+                    updateVideoVolumeUI();
+                } else if (element === audioPlayer) {
+                    element.muted = (element.volume < 0.01);
+                    updatePlayerVolumeUI();
+                }
+
+                if (progress < 1) {
+                    if (element === videoBg) {
+                        videoFadeInterval = requestAnimationFrame(fadeStep);
+                    } else {
+                        element.fadeInterval = requestAnimationFrame(fadeStep);
+                    }
+                } else {
+                    element.volume = targetVolumeClamped;
+                    element.muted = (targetVolumeClamped === 0);
+                    if (element === videoBg) updateVideoVolumeUI();
+                    else if (element === audioPlayer) updatePlayerVolumeUI();
+                }
+            }
+            
+            if (element === videoBg) {
+                videoFadeInterval = requestAnimationFrame(fadeStep);
+            } else {
+                element.fadeInterval = requestAnimationFrame(fadeStep);
+            }
+        }
 
         function loadSong(index) {
             const song = songs[index];
@@ -853,30 +924,8 @@
         }
 
         function playSong() {
-            // Плавное отключение громкости видео (Fade Out)
-            clearInterval(videoFadeInterval);
-            let targetVolume = 0;
-            let duration = 1000; 
-            let startVolume = videoBg.volume;
-            let startTime = null;
-
-            function fadeStep(timestamp) {
-                if (!startTime) startTime = timestamp;
-                const elapsed = timestamp - startTime;
-                const progress = Math.min(1, elapsed / duration);
-
-                videoBg.volume = startVolume + (targetVolume - startVolume) * progress;
-                updateVideoVolumeUI();
-                
-                if (progress < 1) {
-                    videoFadeInterval = requestAnimationFrame(fadeStep);
-                } else {
-                    videoBg.muted = true;
-                    videoBg.volume = startVolume; 
-                    updateVideoVolumeUI();
-                }
-            }
-            videoFadeInterval = requestAnimationFrame(fadeStep);
+            // Плавное отключение громкости видео (Fade Out - 1 секунда)
+            fadeVolume(videoBg, 0, 1000);
             
             audioPlayer.play();
             playIcon.style.display = 'none';
@@ -884,11 +933,10 @@
         }
 
         function pauseSong() {
-            // Остановка Fade Out, если он активен
-            clearInterval(videoFadeInterval);
+            // Плавный возврат громкости видео (Fade In - 1 секунда)
+            const targetVolume = parseFloat(videoVolumeSlider.value) / 100;
             videoBg.muted = false; 
-            videoBg.volume = parseFloat(videoVolumeSlider.value) / 100;
-            updateVideoVolumeUI();
+            fadeVolume(videoBg, targetVolume, 1000); 
 
             audioPlayer.pause();
             playIcon.style.display = 'block';
@@ -906,7 +954,7 @@
 
             let iconPath;
             if (audioPlayer.muted || vol === 0) {
-                iconPath = `M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .9-.2 1.77-.57 2.57l1.45 1.45C20.47 15.75 21 13.95 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.27 4.27L17 18.73 13.27 15l-1.39-1.39L4.27 3z`;
+                iconPath = `M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .9-.2 1.77-.57 2.57l1.45 1.45C20.47 15.75 21 13.95 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.27 4.27L17 18.73 13.27 15l-1.39-1.39L4.27 3z`;
             } else if (vol < 0.5) {
                 iconPath = `M4 9v6h4l5 5V4L8 9H4zM15 8a4 4 0 0 1 0 8`;
             } else {
@@ -916,6 +964,7 @@
             playerVolumeIconSvg.innerHTML = '';
             const pathEl = document.createElementNS("http://www.w3.org/2000/svg", "path");
             pathEl.setAttribute('d', iconPath);
+            pathEl.setAttribute('fill', '#fff');
             playerVolumeIconSvg.appendChild(pathEl);
         }
         
@@ -973,6 +1022,7 @@
         });
 
         playerVolumeSlider.addEventListener('input', (e) => {
+            // Мгновенное изменение громкости при перетаскивании
             const newVolume = +e.target.value / 100;
             audioPlayer.muted = (newVolume === 0);
             if (newVolume > 0) audioPlayer.volume = newVolume;
@@ -981,15 +1031,14 @@
         });
 
         playerMuteBtn.addEventListener('click', () => {
-            audioPlayer.muted = !audioPlayer.muted;
-            
             if (audioPlayer.muted) {
-                lastPlayerVolume = audioPlayer.volume > 0 ? audioPlayer.volume : 1.0;
-                audioPlayer.volume = 0; 
+                audioPlayer.muted = false;
+                const targetVolume = lastPlayerVolume;
+                fadeVolume(audioPlayer, targetVolume); // Плавное размьютирование
             } else {
-                audioPlayer.volume = lastPlayerVolume;
+                lastPlayerVolume = audioPlayer.volume > 0 ? audioPlayer.volume : 1.0;
+                fadeVolume(audioPlayer, 0); // Плавное мьютирование
             }
-            updatePlayerVolumeUI();
         });
         
         audioPlayer.addEventListener('volumechange', updatePlayerVolumeUI);
@@ -1019,8 +1068,6 @@
         document.addEventListener('cut', e => e.preventDefault());
         document.addEventListener('contextmenu', e => e.preventDefault());
 
-        const videoVolumeIcon = document.querySelector('.volume-controller .volume-icon');
-
         function updateVideoVolumeUI() {
             const vol = videoBg.muted ? 0 : videoBg.volume;
             const volPercent = Math.round(vol * 100);
@@ -1034,7 +1081,7 @@
             let iconPath;
 
             if (videoBg.muted || vol === 0) {
-                iconPath = `M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .9-.2 1.77-.57 2.57l1.45 1.45C20.47 15.75 21 13.95 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.27 4.27L17 18.73 13.27 15l-1.39-1.39L4.27 3z`;
+                iconPath = `M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .9-.2 1.77-.57 2.57l1.45 1.45C20.47 15.75 21 13.95 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.27 4.27L17 18.73 13.27 15l-1.39-1.39L4.27 3z`;
             } else if (vol < 0.5) {
                 iconPath = `M4 9v6h4l5 5V4L8 9H4zM15 8a4 4 0 0 1 0 8`;
             } else {
@@ -1044,6 +1091,7 @@
             svgIcon.innerHTML = '';
             const pathEl = document.createElementNS("http://www.w3.org/2000/svg", "path");
             pathEl.setAttribute('d', iconPath);
+            pathEl.setAttribute('fill', '#fff'); // Убедиться, что иконка белая
             svgIcon.appendChild(pathEl);
         }
 
@@ -1052,14 +1100,21 @@
         updateVideoVolumeUI();
 
         videoVolumeSlider.addEventListener('input', function () {
+            // Мгновенное изменение громкости при перетаскивании
+            if (videoFadeInterval) cancelAnimationFrame(videoFadeInterval); 
             videoBg.volume = +this.value / 100;
             videoBg.muted = (+this.value === 0);
             updateVideoVolumeUI();
         });
         
         videoVolumeIcon.addEventListener('click', function () {
-            videoBg.muted = !videoBg.muted;
-            updateVideoVolumeUI();
+            if (videoBg.muted || videoBg.volume < 0.01) {
+                const targetVolume = parseFloat(videoVolumeSlider.value) / 100 || 1.0;
+                videoBg.muted = false;
+                fadeVolume(videoBg, targetVolume); // Плавное размьютирование
+            } else {
+                fadeVolume(videoBg, 0); // Плавное мьютирование
+            }
         });
         
         videoBg.addEventListener('volumechange', updateVideoVolumeUI);
@@ -1129,7 +1184,7 @@
                 cardScreen.style.display = 'none';
                 videoBg.src = vidData.video;
                 videoBg.muted = false; 
-                videoBg.volume = parseFloat(videoVolumeSlider.value) / 100; // Устанавливаем громкость из ползунка
+                videoBg.volume = parseFloat(videoVolumeSlider.value) / 100;
                 updateVideoVolumeUI();
 
                 videoBg.play();
@@ -1187,7 +1242,6 @@
             darkenOverlay.classList.add('active'); 
             
             pauseSong(); 
-            clearInterval(videoFadeInterval); 
             videoBg.muted = false; 
             videoBg.volume = parseFloat(videoVolumeSlider.value) / 100;
             updateVideoVolumeUI();

@@ -74,7 +74,9 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            width: 100%;
+            width: 90%; 
+            max-width: 700px;
+            position: relative; 
         }
 
         #card-selection-screen {
@@ -230,7 +232,7 @@
             position: fixed;
             left: 24px; bottom: 24px; z-index: 20; display: flex; align-items: center; gap: 0;
             background: rgba(40, 40, 40, 0.74); border-radius: 999px;
-            box-shadow: 0 3px 18px 0 #0007; padding: 6px;
+            box-shadow: 3px 3px 18px 0 #0007; padding: 6px; /* Increased shadow for better visibility */
             width: 44px; height: 44px; transition: width 0.4s; overflow: visible;
         }
         .volume-icon { cursor: pointer; outline: none; user-select: none; display: flex; align-items: center;
@@ -270,13 +272,68 @@
             accent-color: #f00;
         }
 
+        /* --- WRAPPERS FOR OVERLAY ANIMATION --- */
+        #content-layer {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* No animation on content layer */
+        }
+        
+        #queue-overlay {
+            position: absolute;
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            z-index: 50;
+            display: flex;
+            flex-direction: column;
+            
+            /* Start invisible and off-screen to the right */
+            opacity: 0;
+            pointer-events: none;
+            transform: translateX(100%); 
+            
+            transition: 
+                opacity 0.4s ease-out, /* Fade in */
+                transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); /* Slide in */
+            
+            /* Styling (Matching the other blocks) */
+            background: linear-gradient(to right, #008398, #74003e);
+            border-radius: 16px;
+            padding: 3px;
+            box-shadow: 
+                0 0 20px 0 rgba(0, 131, 152, 0.8), 
+                0 0 40px 0 rgba(116, 0, 62, 0.5);
+        }
+
+        #queue-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateX(0); /* Slide to center */
+        }
+
+        .queue-inner-content {
+            background-color: rgba(20, 20, 20, 0.95);
+            width: 100%;
+            height: 100%;
+            border-radius: 14px;
+            padding: 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* --- MAIN BLOCKS --- */
         #discord-profile-container {
             position: relative;
             z-index: 1;
             display: flex;
             flex-direction: column;
-            max-width: 700px; 
-            width: 90%;
+            width: 100%; 
             height: auto; 
             min-height: 250px; 
             background: linear-gradient(to right, #008398, #74003e);
@@ -364,15 +421,13 @@
         }
         
         .music-player-box {
-            width: 95%;
-            max-width: 700px;
+            width: 100%;
             background: linear-gradient(to right, #008398, #74003e);
             border-radius: 16px;
             padding: 3px;
             box-shadow: 
                 0 0 20px 0 rgba(0, 131, 152, 0.8), 
                 0 0 40px 0 rgba(116, 0, 62, 0.5);
-            margin-bottom: 50px;
             display: flex; flex-direction: column;
         }
 
@@ -519,7 +574,6 @@
 
         @media (max-width: 900px) {
             #discord-profile-container { 
-                max-width: 95%;
                 min-height: auto; 
                 height: auto; 
                 margin-top: 0; 
@@ -544,996 +598,577 @@
             .player-controls { justify-content: center; margin-bottom: 15px;
             }
             .player-volume { display: none;
-            } 
+            }
+            
+            .centered-content { width: 95%; max-width: 95%;}
         }
 
-        #loading-overlay {
-            position:fixed;left:0;top:0;right:0;bottom:0;z-index:1000;background:rgba(0,0,0,0.75);
-            backdrop-filter:blur(18px);display:flex;flex-direction:column;align-items:center;justify-content:center;
-            transition:opacity 0.6s;cursor:default;}
-        .loading-title{font-size:37px;color:#fff;font-family:inherit;font-weight:bold;letter-spacing:2px;margin-bottom:24px;user-select:none;}
-        body.content-loaded #loading-overlay{pointer-events:none;opacity:0;transition:opacity 0.5s;}
-        body.content-loaded .loading-title{display:none;}
-
-        #darken-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0, 0, 0, 0); z-index: 900; pointer-events: none;
-            transition: background 0.5s ease-out;
+        /* --- STYLES INSIDE QUEUE OVERLAY --- */
+        .queue-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
         }
-        #darken-overlay.active { background: rgba(0, 0, 0, 1);
-            pointer-events: auto; }
-
-        /* Queue Side Panel */
-        #queue-panel {
-            position: fixed;
-            top: 20px;
-            right: -370px; 
-            width: 320px;
-            bottom: 20px;
-            background: rgba(20, 20, 20, 0.95);
-            backdrop-filter: blur(16px);
-            border-radius: 16px;
-            box-shadow: 0 0 25px rgba(0,0,0,0.8);
-            z-index: 1000;
-            transition: right 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+        .queue-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #fff;
+        }
+        .queue-close-btn {
+            background: none;
+            border: none;
+            color: #aaa;
+            cursor: pointer;
+            padding: 5px;
+            transition: color 0.2s;
+        }
+        .queue-close-btn:hover {
+            color: #fff;
+        }
+        .queue-list {
+            flex-grow: 1;
+            overflow-y: auto;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
-            border: 1px solid #333;
+            gap: 8px;
+            padding-right: 5px;
         }
-        #queue-panel.open {
-            right: 20px;
-        }
-        .queue-header {
-            padding: 16px;
-            background: rgba(40,40,40,0.5);
-            border-bottom: 1px solid #333;
-            font-weight: bold;
-            font-size: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .queue-content {
-            padding: 16px;
-            overflow-y: auto;
-            flex-grow: 1;
-        }
-        .queue-section-title {
-            font-size: 16px;
-            color: #fff;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
+        .queue-list::-webkit-scrollbar { width: 4px; }
+        .queue-list::-webkit-scrollbar-thumb { background: #555; border-radius: 2px; }
+        
         .queue-item {
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 12px;
             padding: 8px;
-            border-radius: 8px;
+            border-radius: 6px;
+            background: rgba(255,255,255,0.05);
             transition: background 0.2s;
+            cursor: pointer;
         }
         .queue-item:hover {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255,255,255,0.1);
         }
-        .queue-item.current-item {
-            background: rgba(255, 255, 255, 0.1);
+        .queue-item.active {
+            background: rgba(0, 131, 152, 0.3);
+            border: 1px solid rgba(0, 131, 152, 0.5);
         }
-        .queue-item img {
-            width: 48px;
-            height: 48px;
-            border-radius: 6px;
-            object-fit: cover;
+        .q-thumb {
+            width: 40px; height: 40px; border-radius: 4px; object-fit: cover; margin-right: 10px;
         }
-        .queue-item-info {
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-        .queue-item-title {
-            font-size: 15px;
-            color: #fff;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            margin-bottom: 2px;
-        }
-        .queue-item-artist {
-            font-size: 13px;
-            color: #b3b3b3;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        
-        .queue-item.current-item .queue-item-title {
-            color: #f00; 
-        }
+        .q-info { display: flex; flex-direction: column; overflow: hidden; }
+        .q-title { font-size: 14px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: bold; }
+        .q-artist { font-size: 12px; color: #bbb; }
 
-        #close-queue-btn {
-            background: none; border: none; color: #aaa; cursor: pointer;
-            font-size: 24px; line-height: 1;
-        }
-        #close-queue-btn:hover { color: #fff; }
-
-        @media (max-width: 600px) {
-            #queue-panel {
-                width: 85%; right: -100%;
-            }
-            #queue-panel.open {
-                right: 0;
-            }
-        }
     </style>
 </head>
-<body 
-    oncopy="return false" 
-    oncut="return false"
-    onpaste="return false"
-    oncontextmenu="return false"
-    ondragstart="return false">
+<body>
 
-    <div id="loading-overlay">
-        <div class="loading-title">Loading...</div>
-    </div>
+    <video id="video-bg" autoplay muted loop playsinline>
+        <source src="" type="video/mp4">
+    </video>
 
     <div id="card-selection-screen">
-        <div class="cards-wrapper" id="cards-container"></div>
+        <div class="cards-wrapper" id="cards-container">
+            </div>
     </div>
 
-    <video loop playsinline id="video-bg" preload="auto">
-    </video>
-    
-    <audio id="audio-player"></audio>
-
-    <div class="back-button-controller" id="back-button">
-        <div class="back-icon" tabindex="0">
-  
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-                <path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z" fill="#fff"/>
+    <div class="back-button-controller" id="back-to-menu-btn" onclick="backToMenu()">
+        <div class="back-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px;">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
             </svg>
         </div>
     </div>
-    
-    <div id="main-interface">
-        <div class="top-box">
-            <span class="top-box-left">Links</span>
-   
-          <span class="top-box-right">
-                <a href="https://discord.com/users/1236359938721185902" target="_blank" class="icon-link" title="Discord">
-                <img src="https://cdn-icons-png.flaticon.com/512/5968/5968756.png" alt="Discord" class="social-icon" />
-            </a>
-            <a href="https://t.me/iis_forgetMe" target="_blank" class="icon-link" title="Telegram">
-                <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png" alt="Telegram" class="social-icon" />
-  
-          </a>
-            <a href="https://open.spotify.com/user/312jjwkfbshd5mjnzmyyc363k5ni" target="_blank" class="icon-link" title="Spotify">
-                <img src="https://cdn-icons-png.flaticon.com/512/174/174872.png" alt="Spotify" class="social-icon" />
-            </a>
-            <a href="https://www.roblox.com/users/703442568/profile" target="_blank" class="icon-link" title="Roblox">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Roblox_Logo.svg/512px-Roblox_Logo.svg.png" alt="Roblox" class="social-icon" />
-      
-          </a>
-            </span>
-        </div>
 
-        <div class="volume-controller">
-            <div class="volume-icon" tabindex="0">
-                <svg width="26" height="26" viewBox="0 0 24 24">
-                    <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" fill="#fff"/>
-                </svg>
-            </div>
-            <input type="range" min="0" max="100" value="100" class="volume-slider" id="video-volume-slider-input">
-            <span class="volume-percent" id="volume-percent">100%</span>
+    <div class="volume-controller">
+        <div class="volume-icon" id="video-mute-btn">
+             <svg viewBox="0 0 24 24" style="width:24px;height:24px;"><path d="M14,3.23V5.29C16.89,6.15 19,8.83 19,12C19,15.17 16.89,17.84 14,18.7V20.77C18,19.86 21,16.28 21,12C21,7.72 18,4.14 14,3.23M16.5,12C16.5,10.23 15.5,8.71 14,7.97V16.02C15.5,15.29 16.5,13.76 16.5,12M3,9V15H7L12,20V4L7,9H3Z" /></svg>
         </div>
- 
+        <input type="range" id="video-volume-slider-input" class="volume-slider" min="0" max="1" step="0.01" value="0">
+        <div class="volume-percent" id="video-volume-text">0%</div>
+    </div>
+
+    <div class="top-box">
+        <div class="top-box-left" id="top-box-title">OMORI</div>
+        <div class="top-box-right">
+            <a href="https://t.me/Au_rora_Fox" target="_blank" class="icon-link">
+                <img src="telegram.png" alt="TG" class="social-icon">
+            </a>
+            <a href="https://steamcommunity.com/id/Aurora_Fox/" target="_blank" class="icon-link">
+                <img src="steam.png" alt="Steam" class="social-icon">
+            </a>
+            <a href="https://discord.com/users/1112431763784863804" target="_blank" class="icon-link">
+                <img src="discord.png" alt="DS" class="social-icon">
+            </a>
+            <a href="https://open.spotify.com/user/31g226332k35f455i355v5y25a7i" target="_blank" class="icon-link">
+                <img src="Spotify.png" alt="Spotify" class="social-icon">
+            </a>
+            <a href="https://github.com/iis-forgetMe" target="_blank" class="icon-link">
+                <img src="github.png" alt="Git" class="social-icon">
+            </a>
+        </div>
+    </div>
+
+    <div id="main-interface">
         <div class="centered-content">
-            <div id="discord-profile-container">
-                <div class="discord-main-block">
-                    <div id="discord-banner" class="discord-banner"></div>
-                    <div class="profile-content">
-           
-              <div id="discord-avatar-container" class="discord-avatar-container">
-                            <img id="discord-pfp" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Avatar" class="discord-avatar">
-                            <div id="avatar-frame-overlay"></div>
-                        
-</div>
-                        <div id="discord-name" class="discord-username">Loading...</div>
-                        <div id="discord-tag" class="discord-tag">@username</div>
-                        
-                        
-<div class="discord-badges-container">
-                            <img src="https://img.icons8.com/?size=100&id=u1TI0IQMcE7q&format=png&color=000000" 
-                                alt="HypeSquad Bravery" class="discord-badge" title="HypeSquad Bravery">
-                            <img src="https://img.icons8.com/?size=100&id=S6odLj8qKMjU&format=png&color=000000" 
-   
-                              alt="Nitro" class="discord-badge" title="Discord Nitro">
+            
+            <div id="content-layer">
+                <div id="discord-profile-container">
+                    <div class="discord-main-block">
+                         <div class="discord-banner" style="background-image: url('banner.gif');"></div>
+                         <div class="profile-content">
+                             <div class="discord-avatar-container">
+                                 <img src="avatar.gif" alt="Avatar" class="discord-avatar">
+                                 <div id="avatar-frame-overlay"></div>
+                             </div>
+                             <div class="discord-username">Aurora Fox</div>
+                             <div class="discord-tag">aurora_fox_</div>
+                             <div class="discord-badges-container">
+                                 <img src="badge1.png" class="discord-badge" title="Badge 1">
+                                 <img src="badge2.png" class="discord-badge" title="Badge 2">
+                             </div>
+                         </div>
+                    </div>
+                </div>
+
+                <div class="music-player-box">
+                    <div class="music-player-inner">
+                        <img id="player-cover" src="cover.jpg" alt="Cover" class="player-cover">
+                        <div class="player-info">
+                            <div class="track-title" id="track-title">Track Title</div>
+                            <div class="track-artist" id="track-artist">Artist</div>
+                            <div class="player-controls">
+                                <button class="control-btn" id="prev-btn">
+                                    <svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+                                </button>
+                                <button class="control-btn play-pause" id="play-pause-btn">
+                                    <svg id="play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                    <svg id="pause-icon" viewBox="0 0 24 24" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                                </button>
+                                <button class="control-btn" id="next-btn">
+                                    <svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+                                </button>
+                                <button class="control-btn" id="queue-btn" onclick="toggleQueue()">
+                                    <svg viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+                                </button>
+                            </div>
+                            <div class="progress-container">
+                                <span id="current-time">0:00</span>
+                                <input type="range" id="seek-bar" value="0" min="0" max="100" step="0.1">
+                                <span id="duration">0:00</span>
+                            </div>
                         </div>
-                        
-                    
-        <div class="tab-content-wrapper">
-                            <div id="dynamic-status-message"></div>
+                        <div class="player-volume">
+                             <div class="control-btn" id="player-mute-btn" style="cursor:pointer;">
+                                <svg viewBox="0 0 24 24" style="width:20px;height:20px;"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+                             </div>
+                             <input type="range" id="player-volume-slider" min="0" max="1" step="0.01" value="0.5">
+                             <div class="player-volume-percent-label" id="player-vol-text">50%</div>
                         </div>
                     </div>
                 </div>
-      
-          <div class="discord-activity-box"></div>
             </div>
 
-            <div class="music-player-box">
-                <div class="music-player-inner">
-                    <img id="track-cover" src="" alt="Track Cover" class="player-cover">
-                    
-  
-                  <div class="player-info">
-                        <div id="track-title" class="track-title">Title</div>
-                        <div id="track-artist" class="track-artist">Artist</div>
-                        
-     
-                    <div class="player-controls">
-                            <button class="control-btn prev-btn" id="prev-btn">
-                                <svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
-         
-                    </button>
-                            <button class="control-btn play-pause" id="play-pause-btn">
-                                <svg viewBox="0 0 24 24" id="play-icon"><path d="M8 5v14l11-7z"/></svg>
-           
-                      <svg viewBox="0 0 24 24" id="pause-icon" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-                            </button>
-                            <button class="control-btn next-btn" id="next-btn">
-            
-                      <svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
-                            </button>
-                            
-                            <button class="control-btn" id="queue-btn" style="margin-left: 5px;">
-                                <svg viewBox="0 0 24 24">
-                                    <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>
-                                </svg>
-                            </button>
-                        </div>
-
-                    
-        <div class="progress-container">
-                            <span id="current-time">0:00</span>
-                            <input type="range" id="seek-bar" value="0" min="0" max="100">
-                            <span id="total-time">0:00</span>
-    
-                      </div>
-                    </div>
-
-                    <div class="player-volume">
-                        <button class="control-btn" id="player-mute-btn">
-                            <svg id="player-volume-icon" viewBox="0 0 24 24" style="fill:#fff;">
-                                <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+            <div id="queue-overlay">
+                <div class="queue-inner-content">
+                    <div class="queue-header">
+                        <span class="queue-title">Queue</span>
+                        <button class="queue-close-btn" onclick="toggleQueue()">
+                            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
                             </svg>
                         </button>
-                        <input type="range" id="player-volume-slider" value="100" min="0" max="100">
-                        <span id="player-volume-percent" class="player-volume-percent-label">100%</span>
-           
-          </div>
+                    </div>
+                    <div class="queue-list" id="queue-list-container">
+                        </div>
                 </div>
             </div>
 
         </div>
-
     </div>
-
-    <div id="queue-panel">
-        <div class="queue-header">
-            <span>Queue</span>
-            <button id="close-queue-btn">&times;</button>
-        </div>
-        <div class="queue-content">
-            <div class="queue-section-title">Currently Playing</div>
-            <div id="queue-current-container">
-            </div>
-
-            <div class="queue-section-title" style="margin-top: 20px;">Next</div>
-            <div id="queue-list-container">
-            </div>
-        </div>
-    </div>
-
-    <div id="darken-overlay"></div>
-
+    
     <script>
-        const videos = [
-            { id: 0, img: "Terenry.png", video: "DWELLING.mp4" },
-            { id: 1, img: "gracee.jpg", video: "ULTRASONIC FAITH.mp4" },
-            { id: 2, img: "007n7.jpg", video: "007n7.mp4" }
-        ];
-        let activeCardIndex = 1; 
-
-        const DISCORD_ID = "1236359938721185902"; 
-        const CUSTOM_PFP_URL = "gyol.png"; 
-        const CUSTOM_BANNER_URL = "https://cdn.discordapp.com/banners/1236359938721185902/cd8eed09b334a65a412b4c4a91f5f210.webp?size=1024";
-        const CUSTOM_FRAME_URL = "Aurora Fox.gif"; 
-        const APPLY_PFP_FRAME = false; 
-        
-        async function fetchDiscordStatus() {
-            try {
-                const response = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_ID}`);
-                const data = await response.json();
-                
-                if (data.success) {
-                    updateDiscordUI(data.data);
-                }
-            } catch (error) {
-                const nameElement = document.getElementById('discord-name');
-                nameElement.textContent = "Error loading status.";
-            }
-        }
-
-        function hexToRgb(hex) {
-            const bigint = parseInt(hex.slice(1), 16);
-            const r = (bigint >> 16) & 255;
-            const g = (bigint >> 8) & 255;
-            const b = bigint & 255;
-            return { r, g, b };
-        }
-
-        function adjustColor(hex, lum) {
-            let rgb = hexToRgb(hex);
-            let r = rgb.r, g = rgb.g, b = rgb.b;
-            r = Math.min(255, Math.max(0, r + lum));
-            g = Math.min(255, Math.max(0, g + lum));
-            b = Math.min(255, Math.max(0, b + lum));
-            const toHex = c => c.toString(16).padStart(2, '0');
-            return '#' + toHex(r) + toHex(g) + toHex(b);
-        }
-
-        function updateDiscordUI(data) {
-            const pfpContainer = document.getElementById('discord-profile-container');
-            const pfpElement = document.getElementById('discord-pfp');
-            const nameElement = document.getElementById('discord-name');
-            const bannerElement = document.getElementById('discord-banner'); 
-            const tagElement = document.getElementById('discord-tag');
-            const statusMessageElement = document.getElementById('dynamic-status-message');
-            const frameOverlay = document.getElementById('avatar-frame-overlay');
-            
-            if (CUSTOM_BANNER_URL.trim() !== "") {
-                bannerElement.style.backgroundImage = `url('${CUSTOM_BANNER_URL}')`;
-                bannerElement.style.backgroundColor = "transparent";
-            } else if (data.banner) {
-                const bannerUrl = `https://cdn.discordapp.com/banners/${DISCORD_ID}/${data.banner}.webp?size=1024`;
-                bannerElement.style.backgroundImage = `url('${bannerUrl}')`;
-                bannerElement.style.backgroundColor = "transparent"; 
-            } else {
-                if (data.banner_color) {
-                     bannerElement.style.backgroundColor = data.banner_color;
-                     bannerElement.style.backgroundImage = "none";
-                } else {
-                     bannerElement.style.backgroundColor = "#333";
-                     bannerElement.style.backgroundImage = "none";
-                }
-            }
-
-            if (CUSTOM_FRAME_URL.trim() !== "") {
-                frameOverlay.style.display = 'block';
-                frameOverlay.style.backgroundImage = `url('${CUSTOM_FRAME_URL}')`;
-            } else {
-                frameOverlay.style.display = 'none';
-            }
-
-            let avatarUrl;
-            if (CUSTOM_PFP_URL.trim() !== "") {
-                avatarUrl = CUSTOM_PFP_URL;
-            } else {
-                avatarUrl = data.discord_user.avatar 
-                    ? `https://cdn.discordapp.com/avatars/${DISCORD_ID}/${data.discord_user.avatar}.png?size=128`
-                    : `https://cdn.discordapp.com/embed/avatars/${(data.discord_user.discriminator === '0' ? (BigInt(data.discord_user.id) >> 22n) % 6n : BigInt(data.discord_user.discriminator) % 5n)}.png`;
-            }
-            pfpElement.src = avatarUrl;
-            
-            nameElement.textContent = data.discord_user.display_name || data.discord_user.username;
-            tagElement.textContent = `@${data.discord_user.username}`; 
-
-            const customStatus = data.activities.find(a => a.type === 4);
-            if (customStatus && customStatus.state) {
-                statusMessageElement.textContent = customStatus.state;
-                statusMessageElement.style.cssText = `
-                    font-size: 17px;
-                    color: #fff; margin-top: 15px; padding: 8px 12px;
-                    border-radius: 6px; background: #25262b; border-left: 3px solid #7289da; 
-                `;
-            } else {
-                statusMessageElement.textContent = '';
-                statusMessageElement.style.cssText = ''; 
-            }
-        }
-        
-        fetchDiscordStatus();
-        setInterval(fetchDiscordStatus, 5000); 
-
-        const songs = [
-            {
-                title: "粛聖!! ロリ神レクイエム☆",
-                artist: "しぐれうい (Shigure Ui)",
-                src: "loli god requiem.mp3",
-                cover: "https://i.imgur.com/k1gEOSd.gif"
-            }
+        const cardsData = [
+            { title: "OMORI", img: "omori.jpg", video: "omori_video.mp4", music: "omori_music.mp3", author: "OMORI", avatar: "omori_avatar.png" },
+            { title: "Nier", img: "nier.jpg", video: "nier_video.mp4", music: "nier_music.mp3", author: "Nier Automata", avatar: "nier_avatar.png" },
+            { title: "Genshin", img: "genshin.jpg", video: "genshin_video.mp4", music: "genshin_music.mp3", author: "Genshin Impact", avatar: "genshin_avatar.png" },
+            { title: "Hollow Knight", img: "hollow.jpg", video: "hollow_video.mp4", music: "hollow_music.mp3", author: "Hollow Knight", avatar: "hollow_avatar.png" }
         ];
 
-        let currentSongIndex = 0;
-        const audioPlayer = document.getElementById('audio-player');
+        let activeCardIndex = 0;
+        let isInterfaceActive = false;
+        
+        const cardSelectionScreen = document.getElementById('card-selection-screen');
+        const cardsContainer = document.getElementById('cards-container');
+        const mainInterface = document.getElementById('main-interface');
+        const videoBg = document.getElementById('video-bg');
+        const backBtn = document.getElementById('back-to-menu-btn');
+        const topTitle = document.getElementById('top-box-title');
+        
+        // Player Elements
+        const trackTitleEl = document.getElementById('track-title');
+        const trackArtistEl = document.getElementById('track-artist');
+        const playerCoverEl = document.getElementById('player-cover');
         const playPauseBtn = document.getElementById('play-pause-btn');
-        const prevBtn = document.getElementById('prev-btn');
-        const nextBtn = document.getElementById('next-btn');
         const playIcon = document.getElementById('play-icon');
         const pauseIcon = document.getElementById('pause-icon');
         const seekBar = document.getElementById('seek-bar');
         const currentTimeEl = document.getElementById('current-time');
-        const totalTimeEl = document.getElementById('total-time');
-        const trackTitle = document.getElementById('track-title');
-        const trackArtist = document.getElementById('track-artist');
-        const trackCover = document.getElementById('track-cover');
-
-        const playerVolumeSlider = document.getElementById('player-volume-slider');
-        const playerVolumePercent = document.getElementById('player-volume-percent');
+        const durationEl = document.getElementById('duration');
+        const playerVolSlider = document.getElementById('player-volume-slider');
+        const playerVolText = document.getElementById('player-vol-text');
         const playerMuteBtn = document.getElementById('player-mute-btn');
-        const playerVolumeIconSvg = document.getElementById('player-volume-icon');
-        let lastPlayerVolume = 1.0; 
-
-        const videoBg = document.getElementById('video-bg');
-        const videoVolumeSlider = document.getElementById('video-volume-slider-input');
-        const volumePercent = document.getElementById('volume-percent');
-        const videoVolumeIcon = document.querySelector('.volume-controller .volume-icon');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
         
-        const FADE_DURATION_MS = 500;
-        let videoFadeInterval = null; 
-        let lastVideoVolume = 1.0; 
+        // Video Volume Elements
+        const vidVolSlider = document.getElementById('video-volume-slider-input');
+        const vidVolText = document.getElementById('video-volume-text');
+        const vidMuteBtn = document.getElementById('video-mute-btn');
 
-        // Queue logic
-        const queueBtn = document.getElementById('queue-btn');
-        const queuePanel = document.getElementById('queue-panel');
-        const closeQueueBtn = document.getElementById('close-queue-btn');
-        const queueCurrentContainer = document.getElementById('queue-current-container');
-        const queueListContainer = document.getElementById('queue-list-container');
-
-        function toggleQueue() {
-            queuePanel.classList.toggle('open');
-        }
+        let audio = new Audio();
+        let isPlaying = false;
+        let currentTrackIndex = 0;
         
-        queueBtn.addEventListener('click', toggleQueue);
-        closeQueueBtn.addEventListener('click', toggleQueue);
-
-        function updateQueueUI() {
-            // Currently Playing
-            const currentSong = songs[currentSongIndex];
-            queueCurrentContainer.innerHTML = `
-                <div class="queue-item current-item">
-                    <img src="${currentSong.cover}" alt="cover">
-                    <div class="queue-item-info">
-                        <div class="queue-item-title">${currentSong.title}</div>
-                        <div class="queue-item-artist">${currentSong.artist}</div>
-                    </div>
-                </div>
-            `;
-
-            // Next List
-            queueListContainer.innerHTML = '';
-            // Создаем список следующих песен (начиная со следующей и зацикливая или до конца)
-            // В данном случае показываем остальные в списке
-            let nextIndex = currentSongIndex + 1;
-            if (nextIndex >= songs.length) nextIndex = 0; 
-
-            // Если треков мало, просто покажем что есть. Если 1 трек - ничего в Next.
-            if (songs.length > 1) {
-                for (let i = 0; i < songs.length - 1; i++) {
-                    let idx = (currentSongIndex + 1 + i) % songs.length;
-                    const song = songs[idx];
-                    const item = document.createElement('div');
-                    item.className = 'queue-item';
-                    item.innerHTML = `
-                        <img src="${song.cover}" alt="cover">
-                        <div class="queue-item-info">
-                            <div class="queue-item-title">${song.title}</div>
-                            <div class="queue-item-artist">${song.artist}</div>
-                        </div>
-                    `;
-                    queueListContainer.appendChild(item);
-                }
-            } else {
-               // queueListContainer.innerHTML = '<div style="color:#666; font-size:14px;">No more tracks</div>';
-            }
+        // Initial Video Volume State
+        videoBg.volume = 0;
+        vidVolSlider.value = 0;
+        vidVolText.innerText = "0%";
+        
+        // Init Cards
+        function initCards() {
+            cardsContainer.innerHTML = '';
+            cardsData.forEach((data, index) => {
+                const card = document.createElement('div');
+                card.classList.add('card');
+                card.innerHTML = `<img src="${data.img}" alt="${data.title}">`;
+                card.onclick = () => selectCard(index);
+                cardsContainer.appendChild(card);
+            });
+            updateCardsVisual();
+            cardSelectionScreen.style.display = 'flex';
+            setTimeout(() => cardSelectionScreen.style.opacity = '1', 50);
         }
 
-        function fadeVolume(element, targetVolume, duration = FADE_DURATION_MS) {
-            let interval = element === videoBg ? videoFadeInterval : element.fadeInterval;
-            
-            if (interval) {
-                if (element === videoBg) clearInterval(videoFadeInterval);
-                else cancelAnimationFrame(element.fadeInterval);
-            }
-            
-            const startVolume = element.volume;
-            const targetVolumeClamped = Math.min(1.0, Math.max(0, targetVolume));
-            let startTime = null;
-            
-            function fadeStep(timestamp) {
-                if (!startTime) startTime = timestamp;
-                const elapsed = timestamp - startTime;
-                const progress = Math.min(1, elapsed / duration);
-
-                element.volume = startVolume + (targetVolumeClamped - startVolume) * progress;
-                
-                if (element === videoBg) {
-                    element.muted = (element.volume < 0.01);
-                    updateVideoVolumeUI();
-                } else if (element === audioPlayer) {
-                    element.muted = (element.volume < 0.01);
-                    updatePlayerVolumeUI();
-                }
-
-                if (progress < 1) {
-                    if (element === videoBg) {
-                        videoFadeInterval = requestAnimationFrame(fadeStep);
-                    } else {
-                        element.fadeInterval = requestAnimationFrame(fadeStep);
-                    }
+        function updateCardsVisual() {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                card.removeAttribute('data-status');
+                if (window.innerWidth > 900) {
+                    if (index === activeCardIndex) card.setAttribute('data-status', 'active');
+                    else if (index === activeCardIndex - 1) card.setAttribute('data-status', 'left');
+                    else if (index === activeCardIndex + 1) card.setAttribute('data-status', 'right');
+                    else card.setAttribute('data-status', 'hidden');
                 } else {
-                    element.volume = targetVolumeClamped;
-                    element.muted = (targetVolumeClamped === 0);
-                    if (element === videoBg) updateVideoVolumeUI();
-                    else if (element === audioPlayer) updatePlayerVolumeUI();
+                    card.style.transform = 'none'; 
+                    card.style.opacity = '1';
                 }
+            });
+        }
+
+        function selectCard(index) {
+            if (window.innerWidth > 900 && index !== activeCardIndex) {
+                activeCardIndex = index;
+                updateCardsVisual();
+                return;
             }
             
-            if (element === videoBg) {
-                videoFadeInterval = requestAnimationFrame(fadeStep);
-            } else {
-                element.fadeInterval = requestAnimationFrame(fadeStep);
-            }
+            const selected = cardsData[index];
+            currentTrackIndex = index;
+            loadTrack(index);
+
+            // Change Video
+            videoBg.src = selected.video;
+            videoBg.load();
+            videoBg.play().catch(()=>{});
+            videoBg.classList.add('video-active');
+
+            // Hide Selection, Show Interface
+            cardSelectionScreen.style.opacity = '0';
+            setTimeout(() => {
+                cardSelectionScreen.style.display = 'none';
+                mainInterface.classList.add('active-interface');
+                backBtn.classList.add('visible');
+                isInterfaceActive = true;
+                topTitle.innerText = selected.title;
+            }, 800);
         }
 
-        function loadSong(index) {
-            const song = songs[index];
-            trackTitle.textContent = song.title;
-            trackArtist.textContent = song.artist;
-            trackCover.src = song.cover;
-            audioPlayer.src = song.src;
-            audioPlayer.load();
-            updateQueueUI(); // Update queue when song loads
-        }
-
-        function playSong() {
-            lastVideoVolume = videoBg.volume;
-            fadeVolume(videoBg, 0, 1000);
+        function backToMenu() {
+            isInterfaceActive = false;
+            mainInterface.classList.remove('active-interface');
+            backBtn.classList.remove('visible');
+            videoBg.classList.remove('video-active');
             
-            audioPlayer.play();
-            playIcon.style.display = 'none';
-            pauseIcon.style.display = 'block';
-        }
-
-        function pauseSong() {
-            const targetVolume = lastVideoVolume;
-            videoBg.muted = false; 
-            fadeVolume(videoBg, targetVolume, 1000); 
-
-            audioPlayer.pause();
-            playIcon.style.display = 'block';
-            pauseIcon.style.display = 'none';
-        }
-
-        function updatePlayerVolumeUI() {
-            const vol = audioPlayer.muted ? 0 : audioPlayer.volume;
-            const volPercent = Math.round(vol * 100);
-            playerVolumePercent.textContent = `${volPercent}%`;
-            playerVolumeSlider.value = volPercent;
-
-            const progress = volPercent;
-            playerVolumeSlider.style.background = `linear-gradient(to right, #f00 0%, #ff5555 ${progress}%, #4f4f4f ${progress}%, #4f4f4f 100%)`;
-
-            let iconPath;
-            if (audioPlayer.muted || vol === 0) {
-                iconPath = `M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .9-.2 1.77-.57 2.57l1.45 1.45C20.47 15.75 21 13.95 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.27 4.27L17 18.73 13.27 15l-1.39-1.39L4.27 3z`;
-            } else if (vol < 0.5) {
-                iconPath = `M4 9v6h4l5 5V4L8 9H4zM15 8a4 4 0 0 1 0 8`;
-            } else {
-                iconPath = `M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z`;
+            // Close queue if open
+            const queueOverlay = document.getElementById('queue-overlay');
+            if(queueOverlay.classList.contains('active')){
+                queueOverlay.classList.remove('active');
             }
 
-            playerVolumeIconSvg.innerHTML = '';
-            const pathEl = document.createElementNS("http://www.w3.org/2000/svg", "path");
-            pathEl.setAttribute('d', iconPath);
-            pathEl.setAttribute('fill', '#fff');
-            playerVolumeIconSvg.appendChild(pathEl);
+            audio.pause();
+            isPlaying = false;
+            updatePlayIcon();
+            
+            setTimeout(() => {
+                videoBg.pause();
+                videoBg.src = "";
+                cardSelectionScreen.style.display = 'flex';
+                setTimeout(() => cardSelectionScreen.style.opacity = '1', 50);
+            }, 1000);
         }
         
-        audioPlayer.volume = 1.0;
-        playerVolumeSlider.value = 100;
-        updatePlayerVolumeUI();
+        // --- QUEUE LOGIC ---
+        function toggleQueue() {
+            const queueOverlay = document.getElementById('queue-overlay');
+            // contentLayer больше не нужен для изменения opacity/filter, но оставим для справки
+            // const contentLayer = document.getElementById('content-layer'); 
+            const isActive = queueOverlay.classList.contains('active');
+
+            if (!isActive) {
+                renderQueue(); // Refresh list
+                queueOverlay.classList.add('active');
+            } else {
+                queueOverlay.classList.remove('active');
+            }
+        }
+
+        function renderQueue() {
+            const listContainer = document.getElementById('queue-list-container');
+            listContainer.innerHTML = '';
+            cardsData.forEach((track, idx) => {
+                const item = document.createElement('div');
+                item.className = 'queue-item' + (idx === currentTrackIndex ? ' active' : '');
+                item.onclick = () => {
+                    currentTrackIndex = idx;
+                    loadTrack(idx);
+                    if(isPlaying) audio.play();
+                    renderQueue();
+                };
+                item.innerHTML = `
+                    <img src="${track.img}" class="q-thumb">
+                    <div class="q-info">
+                        <div class="q-title">${track.title}</div>
+                        <div class="q-artist">${track.author}</div>
+                    </div>
+                `;
+                listContainer.appendChild(item);
+            });
+        }
+
+        // --- AUDIO PLAYER LOGIC ---
+        function loadTrack(index) {
+            const track = cardsData[index];
+            audio.src = track.music;
+            audio.load();
+            trackTitleEl.innerText = track.title;
+            trackArtistEl.innerText = track.author;
+            playerCoverEl.src = track.img;
+            
+            // Reset Progress
+            seekBar.value = 0;
+            currentTimeEl.innerText = "0:00";
+            
+            // Update Queue highlight if open
+            const qItems = document.querySelectorAll('.queue-item');
+            if(qItems.length > 0) {
+                qItems.forEach(el => el.classList.remove('active'));
+                if(qItems[index]) qItems[index].classList.add('active');
+            }
+        }
 
         playPauseBtn.addEventListener('click', () => {
-            if (audioPlayer.paused) {
-                playSong();
+            if (isPlaying) {
+                audio.pause();
+                isPlaying = false;
             } else {
-                pauseSong();
+                audio.play();
+                isPlaying = true;
+            }
+            updatePlayIcon();
+        });
+
+        function updatePlayIcon() {
+            if (isPlaying) {
+                playIcon.style.display = 'none';
+                pauseIcon.style.display = 'block';
+            } else {
+                playIcon.style.display = 'block';
+                pauseIcon.style.display = 'none';
+            }
+        }
+
+        audio.addEventListener('timeupdate', () => {
+            if(audio.duration) {
+                const pct = (audio.currentTime / audio.duration) * 100;
+                seekBar.value = pct;
+                
+                let curMins = Math.floor(audio.currentTime / 60);
+                let curSecs = Math.floor(audio.currentTime % 60);
+                if (curSecs < 10) curSecs = '0' + curSecs;
+                currentTimeEl.innerText = `${curMins}:${curSecs}`;
+                
+                let durMins = Math.floor(audio.duration / 60);
+                let durSecs = Math.floor(audio.duration % 60);
+                if (durSecs < 10) durSecs = '0' + durSecs;
+                durationEl.innerText = `${durMins}:${durSecs}`;
+            }
+        });
+
+        audio.addEventListener('ended', () => {
+             nextBtn.click();
+        });
+
+        seekBar.addEventListener('input', () => {
+            if(audio.duration) {
+                const seekTime = (seekBar.value / 100) * audio.duration;
+                audio.currentTime = seekTime;
             }
         });
 
         prevBtn.addEventListener('click', () => {
-            currentSongIndex--;
-            if (currentSongIndex < 0) {
-                currentSongIndex = songs.length - 1;
-            }
-            loadSong(currentSongIndex);
-            playSong();
+            currentTrackIndex--;
+            if (currentTrackIndex < 0) currentTrackIndex = cardsData.length - 1;
+            loadTrack(currentTrackIndex);
+            if (isPlaying) audio.play();
         });
+
         nextBtn.addEventListener('click', () => {
-            currentSongIndex++;
-            if (currentSongIndex > songs.length - 1) {
-                currentSongIndex = 0;
-            }
-            loadSong(currentSongIndex);
-            playSong();
-        });
-        audioPlayer.addEventListener('timeupdate', () => {
-            const currentTime = audioPlayer.currentTime;
-            const duration = audioPlayer.duration;
-            if (duration) {
-                seekBar.value = (currentTime / duration) * 100;
-                const val = seekBar.value;
-            
-                seekBar.style.background = `linear-gradient(to right, #f00 0%, #f00 ${val}%, #4f4f4f ${val}%, #4f4f4f 100%)`;
-                currentTimeEl.textContent = formatTime(currentTime);
-                totalTimeEl.textContent = formatTime(duration);
-            }
-        });
-        audioPlayer.addEventListener('ended', () => {
-            currentSongIndex++;
-            if (currentSongIndex > songs.length - 1) {
-                currentSongIndex = 0;
-            }
-            loadSong(currentSongIndex);
-            playSong();
-        });
-        seekBar.addEventListener('input', () => {
-            const duration = audioPlayer.duration;
-            audioPlayer.currentTime = (seekBar.value / 100) * duration;
+            currentTrackIndex++;
+            if (currentTrackIndex >= cardsData.length) currentTrackIndex = 0;
+            loadTrack(currentTrackIndex);
+            if (isPlaying) audio.play();
         });
 
-        playerVolumeSlider.addEventListener('input', (e) => {
-            const newVolume = +e.target.value / 100;
-            audioPlayer.muted = (newVolume === 0);
-            if (newVolume > 0) audioPlayer.volume = newVolume;
-            if (newVolume > 0) lastPlayerVolume = newVolume;
-            updatePlayerVolumeUI();
+        // Player Volume
+        playerVolSlider.addEventListener('input', (e) => {
+            const val = e.target.value;
+            audio.volume = val;
+            playerVolText.innerText = Math.round(val * 100) + '%';
         });
-
+        
         playerMuteBtn.addEventListener('click', () => {
-            if (audioPlayer.muted) {
-                audioPlayer.muted = false;
-                const targetVolume = lastPlayerVolume;
-                fadeVolume(audioPlayer, targetVolume); 
+            if(audio.muted) {
+                audio.muted = false;
+                playerVolText.style.color = "#fff";
             } else {
-                lastPlayerVolume = audioPlayer.volume > 0 ? audioPlayer.volume : 1.0;
-                fadeVolume(audioPlayer, 0); 
+                audio.muted = true;
+                playerVolText.style.color = "#f00";
             }
         });
-        
-        audioPlayer.addEventListener('volumechange', updatePlayerVolumeUI);
 
-
-        function formatTime(time) {
-            const minutes = Math.floor(time / 60);
-            const seconds = Math.floor(time % 60);
-            return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-        }
-
-        loadSong(currentSongIndex);
-        
-        function checkRussianFont() {
-            const bodyText = document.body.innerText ||
-            document.body.textContent;
-            if (/[А-Яа-яЁё]/.test(bodyText)) {
-                document.body.classList.add('comic-sans');
-            } else {
-                document.body.classList.remove('comic-sans');
-            }
-        }
-        document.addEventListener('DOMContentLoaded', checkRussianFont);
-        setInterval(checkRussianFont, 1500);
-        document.addEventListener('selectstart', e => e.preventDefault());
-        document.addEventListener('copy', e => e.preventDefault());
-        document.addEventListener('cut', e => e.preventDefault());
-        document.addEventListener('contextmenu', e => e.preventDefault());
-
-        function updateVideoVolumeUI() {
-            const vol = videoBg.muted ? 0 : videoBg.volume;
-            const volPercent = Math.round(vol * 100);
-            volumePercent.textContent = volPercent + "%";
-            videoVolumeSlider.value = volPercent;
-
-            const progress = volPercent;
-            videoVolumeSlider.style.background = `linear-gradient(to right, #f00 0%, #f00 ${progress}%, #4f4f4f ${progress}%, #4f4f4f 100%)`;
-
-            const svgIcon = videoVolumeIcon.querySelector('svg');
-            let iconPath;
-
-            if (videoBg.muted || vol === 0) {
-                iconPath = `M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .9-.2 1.77-.57 2.57l1.45 1.45C20.47 15.75 21 13.95 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.27 4.27L17 18.73 13.27 15l-1.39-1.39L4.27 3z`;
-            } else if (vol < 0.5) {
-                iconPath = `M4 9v6h4l5 5V4L8 9H4zM15 8a4 4 0 0 1 0 8`;
-            } else {
-                iconPath = `M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z`;
-            }
-            
-            svgIcon.innerHTML = '';
-            const pathEl = document.createElementNS("http://www.w3.org/2000/svg", "path");
-            pathEl.setAttribute('d', iconPath);
-            pathEl.setAttribute('fill', '#fff'); 
-            svgIcon.appendChild(pathEl);
-        }
-
-        videoBg.volume = 1.0; 
-        videoVolumeSlider.value = 100;
-        updateVideoVolumeUI();
-
-        videoVolumeSlider.addEventListener('input', function () {
-            if (videoFadeInterval) cancelAnimationFrame(videoFadeInterval); 
-            const newVolume = +this.value / 100;
-            videoBg.volume = newVolume;
-            videoBg.muted = (newVolume === 0);
-            lastVideoVolume = newVolume; 
-            updateVideoVolumeUI();
+        // Video Volume
+        vidVolSlider.addEventListener('input', (e) => {
+            const val = e.target.value;
+            videoBg.volume = val;
+            vidVolText.innerText = Math.round(val * 100) + '%';
         });
-        
-        videoVolumeIcon.addEventListener('click', function () {
-            if (videoBg.muted || videoBg.volume < 0.01) {
-                const targetVolume = lastVideoVolume; 
+        vidMuteBtn.addEventListener('click', () => {
+            if (videoBg.muted) {
                 videoBg.muted = false;
-                fadeVolume(videoBg, targetVolume); 
+                vidVolText.style.color = "#fff";
             } else {
-                lastVideoVolume = videoBg.volume; 
-                fadeVolume(videoBg, 0); 
+                videoBg.muted = true;
+                vidVolText.style.color = "#f00";
             }
         });
-        
-        videoBg.addEventListener('volumechange', updateVideoVolumeUI);
 
-        const loadingOverlay = document.getElementById('loading-overlay');
-        const loadingTitle = document.querySelector('.loading-title');
-        const cardScreen = document.getElementById('card-selection-screen');
-        const cardsContainer = document.getElementById('cards-container');
-        const mainInterface = document.getElementById('main-interface');
-        const backButton = document.getElementById('back-button'); 
-        const darkenOverlay = document.getElementById('darken-overlay');
-        let overlayClicked = false;
-        function updateCarousel() {
-            if (window.innerWidth <= 900) return;
-            const cards = document.querySelectorAll('.card');
-            cards.forEach((card, index) => {
-                card.removeAttribute('data-status');
-                if (index === activeCardIndex) {
-                    card.setAttribute('data-status', 'active');
-                } else if (index === activeCardIndex - 1) {
-            
-                    card.setAttribute('data-status', 'left');
-                } else if (index === activeCardIndex + 1) {
-                    card.setAttribute('data-status', 'right');
-                } else {
-                    card.setAttribute('data-status', 'hidden');
-       
-                }
-            });
-        }
-        
-        function renderCards() {
-            cardsContainer.innerHTML = '';
-            videos.forEach((vid, index) => {
-                const card = document.createElement('div');
-                card.classList.add('card');
-                card.dataset.index = index;
-                card.dataset.video = vid.video;
-                const img = document.createElement('img');
-       
-                img.src = vid.img;
-                img.alt = "Card";
-                card.appendChild(img);
-                cardsContainer.appendChild(card);
-                card.addEventListener('click', () => handleCardClick(index));
-            });
-            updateCarousel();
-        }
-
-        function handleCardClick(index) {
-            if (window.innerWidth <= 900) {
-                playVideo(index);
-            } else {
-                if (index === activeCardIndex) {
-                    playVideo(index);
-                } else {
-                    activeCardIndex = index;
-                    updateCarousel();
-                }
-            }
-        }
-
-        function playVideo(index) {
-            const vidData = videos[index];
-            cardScreen.style.opacity = '0';
-            setTimeout(() => {
-                cardScreen.style.display = 'none';
-                videoBg.src = vidData.video;
-                videoBg.muted = false; 
-                videoBg.volume = parseFloat(videoVolumeSlider.value) / 100;
-                lastVideoVolume = videoBg.volume; 
-                updateVideoVolumeUI();
-
-                videoBg.play();
-       
-                videoBg.classList.add('video-active');
-                mainInterface.classList.add('active-interface');
-                backButton.classList.add('visible'); 
-            }, 800);
-        }
-
+        // Keyboard & Wheel Support for cards
         document.addEventListener('keydown', (e) => {
-            if (cardScreen.style.display !== 'flex' || window.innerWidth <= 900) return;
-            if (e.key === 'ArrowRight' && activeCardIndex < videos.length - 1) {
-                activeCardIndex++;
-                updateCarousel();
-            } else if 
-            (e.key === 'ArrowLeft' && activeCardIndex > 0) {
-                activeCardIndex--;
-                updateCarousel();
-            } else if (e.key === 'Enter') {
-                playVideo(activeCardIndex);
+            if (!isInterfaceActive) {
+                if (e.key === 'ArrowRight') {
+                    if (activeCardIndex < cardsData.length - 1) {
+                        activeCardIndex++;
+                        updateCardsVisual();
+                    }
+                } else if (e.key === 'ArrowLeft') {
+                    if (activeCardIndex > 0) {
+                        activeCardIndex--;
+                        updateCardsVisual();
+                    }
+                } else if (e.key === 'Enter') {
+                    selectCard(activeCardIndex);
+                }
             }
         });
-        window.addEventListener('DOMContentLoaded', () => {
-            loadingOverlay.style.display = '';
-            loadingTitle.textContent = 'Click to enter...';
-            loadingOverlay.style.cursor = 'pointer';
-            renderCards();
+
+        cardsContainer.addEventListener('wheel', (e) => {
+            if (!isInterfaceActive && window.innerWidth > 900) {
+                if (e.deltaY > 0) {
+                    if (activeCardIndex < cardsData.length - 1) {
+                        activeCardIndex++;
+                        updateCardsVisual();
+                    }
+                } else {
+                    if (activeCardIndex > 0) {
+                        activeCardIndex--;
+                        updateCardsVisual();
+                    }
+                }
+            }
         });
-        function revealCards() {
-            if (overlayClicked) return;
-            overlayClicked = true;
-            document.body.classList.add('content-loaded');
-            setTimeout(() => {
-                loadingOverlay.style.display = 'none';
-                cardScreen.style.display = 'flex';
-                requestAnimationFrame(() => {
-                    requestAnimationFrame(() => {
-                     
-                        cardScreen.style.opacity = '1';
-                    });
-                });
-            }, 600);
+
+        // Title Animation
+        let phrases = [
+            "Welcome to the space.",
+            "Choose your destiny.",
+            "Music satisfies the soul.",
+            "Aurora Fox presents..."
+        ];
+        let phrase = "";
+        let displayText = "";
+        let index = 0;
+        let direction = 1; 
+        let cursorVisible = true;
+        let lastIndex = -1;
+
+        const typeSpeed = 100;
+        const deleteSpeed = 50;
+        const pauseSpeed = 2000;
+        const blankPause = 500;
+        const blinkSpeed = 500;
+
+        function pickRandomPhrase() {
+          let newIndex;
+          do { newIndex = Math.floor(Math.random() * phrases.length); } while (newIndex === lastIndex && phrases.length > 1);
+          lastIndex = newIndex;
+          return phrases[newIndex];
         }
-
-        loadingOverlay.addEventListener('mousedown', e => { if(e.button===0) revealCards(); });
-        loadingOverlay.addEventListener('touchend', revealCards);
-        function goBackToSelection() {
-            mainInterface.classList.remove('active-interface');
-            backButton.classList.remove('visible');
-            videoBg.pause();
-            videoBg.removeAttribute('src');
-            videoBg.load();
-            videoBg.classList.remove('video-active');
-            darkenOverlay.classList.add('active'); 
-            
-            pauseSong(); 
-            videoBg.muted = false; 
-            videoBg.volume = parseFloat(videoVolumeSlider.value) / 100;
-            lastVideoVolume = videoBg.volume; 
-            updateVideoVolumeUI();
-
-
-            setTimeout(() => {
-                cardScreen.style.display = 'flex';
-                requestAnimationFrame(() => {
-                    cardScreen.style.opacity = '1';
-                });
-                darkenOverlay.classList.remove('active');
-      
-            }, 500); 
-            overlayClicked = false;
+        function blinkCursor() {
+          document.title = displayText + (cursorVisible ? "_" : "");
+          cursorVisible = !cursorVisible;
+          setTimeout(blinkCursor, blinkSpeed);
         }
-
-        backButton.addEventListener('click', goBackToSelection);
-        window.addEventListener('resize', updateCarousel);
-        
-    </script>
-    
-    <div style="position: fixed; right: 22px; bottom: 16px; z-index: 40; color: #f5f5f5; opacity: 0.38; font-size: 17px; font-family: inherit; pointer-events: none; background: none; text-shadow: 0 3px 16px #000a; white-space: nowrap; user-select: none;">
-      This person inspired me: diram1x
-    </div>
-
-    <style>
-    .binary-trail {
-        position: fixed;
-        pointer-events: none; font-family: 'Consolas', 'Courier New', monospace;
-        font-size: 22px; color: rgb(255,20,20); opacity: 0.92; user-select: none;
-        transition: opacity 0.7s, transform 1s cubic-bezier(.33,1.13,.83,-0.13);
-        z-index: 9999; white-space: nowrap; text-shadow: 0 0 8px #f008, 0 0 18px #400a;
-        will-change: opacity, transform;
-    }
-    </style>
-    <script>
-    document.addEventListener('mousemove', function(e) {
-        createBinaryTrail(e.clientX, e.clientY);
-    });
-    function createBinaryTrail(x, y) {
-        const span = document.createElement('span');
-        span.className = 'binary-trail';
-        span.textContent = randomBinary(1);
-        span.style.left = (x - 4 + Math.random()*3) + 'px';
-        span.style.top = (y - 8 + Math.random()*3) + 'px';
-        document.body.appendChild(span);
-        let life = 0;
-        const changeInterval = setInterval(() => {
-            span.textContent = randomBinary(1);
-            life += 1;
-            if (life > 10) clearInterval(changeInterval);
-        }, 50);
-        setTimeout(() => {
-            const dx = (Math.random()-0.5)*120;
-            const dy = -40 - Math.random()*40;
-            span.style.transform = `translate(${dx}px, ${dy}px)`;
-            span.style.opacity = '0';
-        }, 50);
-        setTimeout(() => { if (span.parentNode) span.parentNode.removeChild(span); }, 900);
-    }
-    function randomBinary(len) {
-        let str = '';
-        for (let i = 0; i < len; ++i) str += Math.random() > 0.5 ? '1' : '0';
-        return str;
-    }
-    </script>
-
-<script>
-    const phrases = [
-      "iis_forgetMe", "furry", "silly :3", "Iris", ">:3c", "Meosssy <3", "Mr Kinako <3"
-    ];
-    let lastIndex = -1, phrase = "", index = 0, direction = 1, displayText = "", cursorVisible = true;
-    const typeSpeed = 450, pauseSpeed = 950, blankPause = 600, blinkSpeed = 500;
-
-    function pickRandomPhrase() {
-      let newIndex;
-      do { newIndex = Math.floor(Math.random() * phrases.length); } while (newIndex === lastIndex && phrases.length > 1);
-      lastIndex = newIndex;
-      return phrases[newIndex];
-    }
-    function blinkCursor() {
-      document.title = displayText + (cursorVisible ? "_" : "");
-      cursorVisible = !cursorVisible;
-      setTimeout(blinkCursor, blinkSpeed);
-    }
-    function animateTitle() {
-      if (direction === 1 && index <= phrase.length) {
-        displayText = phrase.slice(0, index++);
-        setTimeout(animateTitle, typeSpeed);
-      } else if (direction === -1 && index >= 0) {
-        displayText = phrase.slice(0, index--);
-        setTimeout(animateTitle, typeSpeed);
-      } else {
-        setTimeout(() => {
-          if (direction === 1) { direction = -1; index = phrase.length - 1; } 
-          else {
-            displayText = ""; document.title = "";
-            setTimeout(() => { direction = 1; phrase = pickRandomPhrase(); index = 0; animateTitle(); }, blankPause);
-            return;
+        function animateTitle() {
+          if (direction === 1 && index <= phrase.length) {
+            displayText = phrase.slice(0, index++);
+            setTimeout(animateTitle, typeSpeed);
+          } else if (direction === -1 && index >= 0) {
+            displayText = phrase.slice(0, index--);
+            setTimeout(animateTitle, deleteSpeed); 
+          } else {
+            setTimeout(() => {
+              if (direction === 1) { direction = -1; index = phrase.length - 1; } 
+              else {
+                displayText = ""; 
+                setTimeout(() => { direction = 1; phrase = pickRandomPhrase(); index = 0; animateTitle(); }, blankPause);
+                return;
+              }
+              animateTitle();
+            }, pauseSpeed);
           }
-          animateTitle();
-        }, pauseSpeed);
-    }
-    }
-    phrase = pickRandomPhrase();
-    blinkCursor();
-    animateTitle();
-</script>
-    <script>
-    document.addEventListener('keydown', e => {
-      if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'i') || (e.ctrlKey && e.key.toLowerCase() === 'u')) {
-        e.preventDefault(); e.stopPropagation(); return false;
-      }
-    });
-    document.addEventListener('contextmenu', e => e.preventDefault());
+        }
+
+        // Start
+        phrase = pickRandomPhrase();
+        blinkCursor();
+        animateTitle();
+        initCards();
+        
     </script>
 </body>
 </html>

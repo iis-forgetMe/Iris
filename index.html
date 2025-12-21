@@ -251,26 +251,21 @@
         .volume-percent { color: #fff; min-width: 32px; text-align: right; font-family: inherit;
             font-size: 15px; margin-left: 8px;}
 
-       #video-volume-slider-input::-webkit-slider-runnable-track,
-#seek-bar::-webkit-slider-runnable-track,
-#player-volume-slider::-webkit-slider-runnable-track {
-    width: 100%;
-    height: 6px !important;
-    background: #4f4f4f;
-    border-radius: 999px !important;
-}
-
-#video-volume-slider-input::-webkit-slider-thumb,
-#seek-bar::-webkit-slider-thumb,
-#player-volume-slider::-webkit-slider-thumb {
-    height: 14px !important;
-    width: 14px !important;
-    border-radius: 50% !important;
-    background: #f00; 
-    -webkit-appearance: none;
-    margin-top: -4px !important; 
-    box-shadow: 0 0 5px rgba(0,0,0,0.5);
-}
+        #video-volume-slider-input::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 2px;
+            background: #4f4f4f;
+            border-radius: 1px;
+        }
+        #video-volume-slider-input::-webkit-slider-thumb {
+            height: 10px;
+            width: 10px;
+            border-radius: 50%;
+            background: #f00; 
+            -webkit-appearance: none;
+            margin-top: -4px; 
+            box-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
         #video-volume-slider-input {
             accent-color: #f00;
         }
@@ -391,7 +386,6 @@
             display: flex;
             align-items: center;
             gap: 20px;
-            transition: opacity 0.3s ease, transform 0.3s ease;
         }
 
         .player-cover {
@@ -962,9 +956,75 @@
             },
             {
                 title: "Human",
-                artist: "FLAFOR FOLEY",
+                artist: "FLAVOR FOLEY",
                 src: "human.mp3",
                 cover: "https://i.imgur.com/68K5nFl.jpeg"
+            },
+            { 
+                title: "Insomnia",
+                artist: "Eve",
+                src: "Insomnia.mp3",
+                cover: "https://i.imgur.com/bAmAdVE.jpeg"
+            },
+            {
+                title: "Cotton Candy",
+                artist: "Helluva Boss",
+                src: "Cotton Candy.mp3",
+                cover: "https://i.imgur.com/QGPjUOW.jpeg"
+            },
+            {
+                title: "Роскомнадзор",
+                artist: "Paul Baldhill",
+                src: "RKN.mp3",
+                cover: "https://i.imgur.com/j0SbhoC.jpeg"
+            },
+            {
+                title: "BAKENOHANA rus",
+                artist: "VOLume Sound Box",
+                src: "bake no hana rus.mp3",
+                cover: "https://i.imgur.com/V1K61uy.jpeg"
+            },
+            {
+                title: "Xevel",
+                artist: "Tatsh",
+                src: "Xevel.mp3",
+                cover: "https://i.imgur.com/0YWdch2.png"
+            },
+            {
+                title: "The Ringleader",
+                artist: "PARANOiD DJ",
+                src: "The Ringleader.mp3",
+                cover: "https://i.imgur.com/Zk2f6Mk.jpeg"
+            },
+            {
+                title: "Last Surprise",
+                artist: "Lyn",
+                src: "Last Surprise.mp3",
+                cover: "https://i.imgur.com/rPkF2vo.jpeg"
+            },
+            {
+                title: "Happy Halloween",
+                artist: "Junky",
+                src: "Happy Halloween.mp3",
+                cover: "https://i.imgur.com/SeG0XqW.png"
+            },
+            {
+                title: "BAKENOHANA",
+                artist: "Nightcord at 25:00",
+                src: "bake no hana.mp3",
+                cover: "https://i.imgur.com/jHAUx51.jpeg"
+            },
+            {
+                title: "Bad Apple!!",
+                artist: "RichaadEB",
+                src: "Bad Apple!!.mp3",
+                cover: "https://i.imgur.com/uJ3ByF3.png"
+            },
+            {
+                title: "Alastor's Game",
+                artist: "The Living Tombstone",
+                src: "Alastors game.mp3",
+                cover: "https://i.imgur.com/jR2tiGb.jpeg"
             }
         ];
 
@@ -1100,34 +1160,15 @@
             }
         }
 
-       function loadSong(index, direction = 'next') {
-    const playerInner = document.querySelector('.music-player-inner');
-    const shiftAmount = direction === 'next' ? '50px' : '-50px';
-
-    // Анимация ухода
-    playerInner.style.opacity = '0';
-    playerInner.style.transform = `translateX(${-parseInt(shiftAmount)}px)`;
-
-    setTimeout(() => {
-        const song = songs[index];
-        document.getElementById('track-title').textContent = song.title;
-        document.getElementById('track-artist').textContent = song.artist;
-        document.getElementById('track-cover').src = song.cover;
-        audioPlayer.src = song.src;
-        audioPlayer.load();
-        updateQueueUI();
-
-        // Сброс позиции для анимации появления
-        playerInner.style.transition = 'none';
-        playerInner.style.transform = `translateX(${shiftAmount})`;
-        playerInner.offsetHeight; // Принудительный пересчет
-
-        // Анимация появления
-        playerInner.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-        playerInner.style.opacity = '1';
-        playerInner.style.transform = 'translateX(0)';
-    }, 300);
-}
+        function loadSong(index) {
+            const song = songs[index];
+            trackTitle.textContent = song.title;
+            trackArtist.textContent = song.artist;
+            trackCover.src = song.cover;
+            audioPlayer.src = song.src;
+            audioPlayer.load();
+            updateQueueUI(); // Update queue when song loads
+        }
 
         function playSong() {
             lastVideoVolume = videoBg.volume;
@@ -1565,31 +1606,6 @@
       }
     });
     document.addEventListener('contextmenu', e => e.preventDefault());
-    </script>
-    <script>
-        // Громкость видео
-document.getElementById('video-volume-slider-input').addEventListener('input', (e) => {
-    videoBg.volume = e.target.value / 100;
-    document.getElementById('volume-percent').textContent = e.target.value + '%';
-});
-
-// Громкость музыки
-document.getElementById('player-volume-slider').addEventListener('input', (e) => {
-    audioPlayer.volume = e.target.value / 100;
-    document.getElementById('player-volume-percent').textContent = e.target.value + '%';
-});
-
-// Перемотка трека
-const seekBar = document.getElementById('seek-bar');
-audioPlayer.addEventListener('timeupdate', () => {
-    if (!isNaN(audioPlayer.duration)) {
-        seekBar.value = (audioPlayer.currentTime / audioPlayer.duration) * 100;
-        document.getElementById('current-time').textContent = formatTime(audioPlayer.currentTime);
-    }
-});
-seekBar.addEventListener('input', (e) => {
-    audioPlayer.currentTime = (e.target.value / 100) * audioPlayer.duration;
-});
     </script>
 </body>
 </html>

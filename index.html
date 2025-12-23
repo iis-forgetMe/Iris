@@ -666,6 +666,19 @@
                 right: 0;
             }
         }
+        .glitch-active {
+            animation: glitch-effect 0.2s infinite;
+            pointer-events: none;
+        }
+
+        @keyframes glitch-effect {
+            0% { transform: translate(2px, -2px); clip-path: inset(10% 0 30% 0); }
+            20% { transform: translate(-2px, 2px); clip-path: inset(40% 0 15% 0); }
+            40% { transform: translate(2px, 2px); clip-path: inset(5% 0 60% 0); }
+            60% { transform: translate(-2px, -2px); clip-path: inset(70% 0 5% 0); }
+            80% { transform: translate(1px, 1px); clip-path: inset(25% 0 35% 0); }
+            100% { transform: translate(0, 0); clip-path: inset(0 0 0 0); }
+        }
     </style>
 </head>
 <body 
@@ -1606,6 +1619,20 @@
       }
     });
     document.addEventListener('contextmenu', e => e.preventDefault());
+    </script>
+    <script>
+        let idleTimer;
+        function handleActivity() {
+            document.body.classList.remove('glitch-active');
+            clearTimeout(idleTimer);
+            idleTimer = setTimeout(() => {
+                document.body.classList.add('glitch-active');
+            }, 10000);
+        }
+        ['mousemove', 'keydown', 'mousedown', 'touchstart', 'scroll'].forEach(e => {
+            window.addEventListener(e, handleActivity);
+        });
+        handleActivity();
     </script>
 </body>
 </html>
